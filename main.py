@@ -40,6 +40,24 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 ALPHABET = string.ascii_uppercase + string.digits
 
 
+def get_payfast_config() -> dict:
+    """Read PayFast settings: env vars take priority over DB (for Railway deployments)."""
+    import os
+    db = get_settings([
+        "payfast_merchant_id", "payfast_merchant_key",
+        "payfast_passphrase", "payfast_server_url",
+        "payfast_sandbox", "mikrotik_sync_api_key",
+    ])
+    return {
+        "payfast_merchant_id":  os.getenv("PAYFAST_MERCHANT_ID",  db.get("payfast_merchant_id", "")),
+        "payfast_merchant_key": os.getenv("PAYFAST_MERCHANT_KEY", db.get("payfast_merchant_key", "")),
+        "payfast_passphrase":   os.getenv("PAYFAST_PASSPHRASE",   db.get("payfast_passphrase", "")),
+        "payfast_server_url":   os.getenv("PAYFAST_SERVER_URL",   db.get("payfast_server_url", "")),
+        "payfast_sandbox":      os.getenv("PAYFAST_SANDBOX",      db.get("payfast_sandbox", "true")),
+        "mikrotik_sync_api_key": os.getenv("MIKROTIK_SYNC_API_KEY", db.get("mikrotik_sync_api_key", "")),
+    }
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_db()
@@ -338,14 +356,7 @@ def list_portal_plans() -> list[dict]:
 
 @app.get("/settings/payfast", response_model=PayFastSettingsResponse)
 def get_payfast_settings() -> PayFastSettingsResponse:
-    s = get_settings([
-        "payfast_merchant_id",
-        "payfast_merchant_key",
-        "payfast_passphrase",
-        "payfast_server_url",
-        "payfast_sandbox",
-        "mikrotik_sync_api_key",
-    ])
+    s = get_payfast_config()
     merchant_id = s.get("payfast_merchant_id", "")
     return PayFastSettingsResponse(
         merchant_id=merchant_id,
@@ -399,13 +410,7 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
             detail="This plan has no price set. Contact staff for assistance.",
         )
 
-    pf = get_settings([
-        "payfast_merchant_id",
-        "payfast_merchant_key",
-        "payfast_passphrase",
-        "payfast_server_url",
-        "payfast_sandbox",
-    ])
+    pf = get_payfast_config()
     merchant_id = pf.get("payfast_merchant_id", "")
     merchant_key = pf.get("payfast_merchant_key", "")
     server_url = pf.get("payfast_server_url", "").rstrip("/")
@@ -473,11 +478,7 @@ async def payment_notify(request: Request) -> dict:
     form_data = await request.form()
     data = dict(form_data)
 
-    pf = get_settings([
-        "payfast_merchant_id",
-        "payfast_passphrase",
-        "payfast_sandbox",
-    ])
+    pf = get_payfast_config()
     passphrase = pf.get("payfast_passphrase", "")
     sandbox = pf.get("payfast_sandbox", "true").lower() != "false"
 
@@ -580,7 +581,7 @@ def pull_vouchers_for_mikrotik(api_key: str = Query(...)) -> dict:
         id|code|password|profile
     Easy to parse with RouterOS string operations.
     """
-    saved_key = get_settings(["mikrotik_sync_api_key"]).get("mikrotik_sync_api_key", "")
+    saved_key = get_payfast_config().get("mikrotik_sync_api_key", "")
     if not saved_key or not secrets.compare_digest(api_key, saved_key):
         raise HTTPException(status_code=403, detail="Invalid API key.")
 
@@ -604,7 +605,7 @@ def confirm_mikrotik_sync(api_key: str = Query(...), ids: str = Query(...)) -> d
 
     ids: comma-separated voucher IDs e.g. '42,43,44'
     """
-    saved_key = get_settings(["mikrotik_sync_api_key"]).get("mikrotik_sync_api_key", "")
+    saved_key = get_payfast_config().get("mikrotik_sync_api_key", "")
     if not saved_key or not secrets.compare_digest(api_key, saved_key):
         raise HTTPException(status_code=403, detail="Invalid API key.")
 
