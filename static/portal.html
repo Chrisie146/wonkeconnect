@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonke Connect — Buy WiFi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/portal.css">
+</head>
+<body>
+
+    <header class="portal-header">
+        <div class="wc-brand">
+            <div class="wc-icon" aria-hidden="true">
+                <span class="wc-arc top"></span>
+                <span class="wc-arc mid"></span>
+                <span class="wc-dot"></span>
+                <span class="wc-accent left"></span>
+                <span class="wc-accent right"></span>
+            </div>
+            <div class="wc-wordmark">
+                <span class="wonke">Won<span class="k">k</span>e</span>
+                <span class="connect">Connect</span>
+            </div>
+        </div>
+        <p class="portal-tagline">Buy WiFi — pay and connect instantly.</p>
+    </header>
+
+    <main class="portal-main">
+
+        <!-- Screen: plan selection -->
+        <section class="portal-screen is-active" id="screen-plans">
+            <h1 class="portal-title">Choose your package</h1>
+            <div id="plan-list" class="plan-list">
+                <div class="plan-skeleton"></div>
+                <div class="plan-skeleton"></div>
+                <div class="plan-skeleton"></div>
+            </div>
+        </section>
+
+        <!-- Screen: buyer details -->
+        <section class="portal-screen" id="screen-details">
+            <button class="portal-back" id="back-button" type="button">← Back</button>
+            <h1 class="portal-title">Your details</h1>
+            <div class="selected-plan-summary" id="selected-plan-summary"></div>
+
+            <form class="portal-form" id="buyer-form" novalidate>
+                <div class="portal-field-row">
+                    <div class="portal-field">
+                        <label for="buyer-first-name">First name</label>
+                        <input type="text" id="buyer-first-name" autocomplete="given-name" placeholder="Thabo" required>
+                    </div>
+                    <div class="portal-field">
+                        <label for="buyer-last-name">Last name</label>
+                        <input type="text" id="buyer-last-name" autocomplete="family-name" placeholder="Dlamini" required>
+                    </div>
+                </div>
+
+                <div class="portal-field">
+                    <label for="buyer-phone">Phone number</label>
+                    <input type="tel" id="buyer-phone" autocomplete="tel" placeholder="e.g. 0821234567" required>
+                </div>
+
+                <div id="form-error" class="portal-error" style="display:none;"></div>
+
+                <button class="portal-pay-button" id="pay-button" type="submit">
+                    Pay <span id="pay-amount"></span>
+                </button>
+
+                <p class="portal-secure-note">
+                    🔒 Processed securely by <strong>PayFast</strong>. We never see your card details.
+                </p>
+            </form>
+        </section>
+
+        <!-- Screen: processing (after PayFast return) -->
+        <section class="portal-screen" id="screen-success">
+            <div class="result-icon result-icon--ok">✓</div>
+            <h1 class="portal-title">Payment confirmed!</h1>
+            <p class="portal-subtitle">Your WiFi voucher is ready.</p>
+
+            <div id="voucher-loading" class="voucher-loading">
+                <div class="portal-spinner"></div>
+                <p>Generating your voucher…</p>
+            </div>
+
+            <div id="voucher-reveal" class="voucher-reveal" style="display:none;">
+                <p class="voucher-label">Your voucher code</p>
+                <div class="voucher-code" id="voucher-code"></div>
+                <p class="voucher-instructions">
+                    Enter this code on the WiFi login page to connect.<br>
+                    <strong>Username and password are both the code above.</strong>
+                </p>
+                <button class="portal-copy-button" id="copy-code-button" type="button">Copy code</button>
+            </div>
+        </section>
+
+        <!-- Screen: cancelled -->
+        <section class="portal-screen" id="screen-cancel">
+            <div class="result-icon result-icon--cancel">✕</div>
+            <h1 class="portal-title">Payment cancelled</h1>
+            <p class="portal-subtitle">No charge was made. You can try again below.</p>
+            <button class="portal-pay-button" id="try-again-button" type="button">Choose a package</button>
+        </section>
+
+        <!-- Screen: error -->
+        <section class="portal-screen" id="screen-error">
+            <div class="result-icon result-icon--cancel">!</div>
+            <h1 class="portal-title">Something went wrong</h1>
+            <p class="portal-subtitle" id="error-message">An error occurred. Please try again or ask staff for help.</p>
+            <button class="portal-pay-button" id="error-back-button" type="button">Try again</button>
+        </section>
+
+    </main>
+
+    <footer class="portal-footer">
+        Powered by <strong>Wonke Connect</strong>
+    </footer>
+
+    <script src="/static/portal.js"></script>
+</body>
+</html>

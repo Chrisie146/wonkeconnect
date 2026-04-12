@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonke Connect Voucher Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/print.css">
+</head>
+<body>
+    <div class="print-actions">
+        <button type="button" onclick="window.print()">Print</button>
+        <button type="button" onclick="window.close()">Close</button>
+    </div>
+
+    <main class="sheet-page">
+        <div class="wc-band"></div>
+        <section class="sheet-content">
+            <div class="sheet-header">
+                <div class="wc-brand">
+                    <div class="wc-icon" aria-hidden="true">
+                        <span class="wc-arc top"></span>
+                        <span class="wc-arc mid"></span>
+                        <span class="wc-dot"></span>
+                        <span class="wc-accent left"></span>
+                        <span class="wc-accent left-mid"></span>
+                        <span class="wc-accent right-mid"></span>
+                        <span class="wc-accent right"></span>
+                    </div>
+                    <div class="wc-wordmark">
+                        <span class="wonke">Won<span class="k">k</span>e</span>
+                        <span class="connect">Connect</span>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="wc-kicker">Voucher Sheet</p>
+                    <h1 class="sheet-title">Shop WiFi Vouchers</h1>
+                    <p class="sheet-subtitle">Print at 100% scale and cut along the card edges.</p>
+                </div>
+            </div>
+
+            <section class="wc-vouchers" id="print-vouchers"></section>
+
+            <div class="sheet-footer">
+                <strong>Username and password are the same.</strong><br>
+                Issue the voucher code shown on each card at the counter.
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const vouchers = JSON.parse(localStorage.getItem("wonke-connect-last-batch") || "[]");
+        const container = document.getElementById("print-vouchers");
+
+        if (!vouchers.length) {
+            container.innerHTML = '<div class="empty-state">No generated voucher batch found. Return to the dashboard and create vouchers first.</div>';
+        } else {
+            container.innerHTML = vouchers.map((voucher) => {
+                const hotspotUserProfile = voucher.hotspot_user_profile || voucher.profile;
+                return `
+                    <article class="wc-voucher">
+                        <div class="wc-voucher-top">
+                            <div class="wc-brand wc-mini-brand">
+                                <div class="wc-icon" aria-hidden="true">
+                                    <span class="wc-arc top"></span>
+                                    <span class="wc-arc mid"></span>
+                                    <span class="wc-dot"></span>
+                                    <span class="wc-accent left"></span>
+                                    <span class="wc-accent right"></span>
+                                </div>
+                                <div class="wc-wordmark">
+                                    <span class="wonke">Won<span class="k">k</span>e</span>
+                                    <span class="connect">Connect</span>
+                                </div>
+                            </div>
+                            <span class="wc-badge">${escapeHtml(voucher.badge_label || getVoucherBadge(hotspotUserProfile))}</span>
+                        </div>
+                        <div class="wc-voucher-grid">
+                            <div class="wc-field"><span class="wc-field-label">Package</span><span class="wc-field-value">${escapeHtml(voucher.plan_name || getVoucherPackage(hotspotUserProfile))}</span></div>
+                            <div class="wc-field"><span class="wc-field-label">Duration</span><span class="wc-field-value">${escapeHtml(voucher.duration_label || getVoucherDuration(hotspotUserProfile))}</span></div>
+                        </div>
+                        <div class="wc-field">
+                            <span class="wc-field-label">Voucher code</span>
+                            <div class="wc-code">${escapeHtml(voucher.code)}</div>
+                        </div>
+                        <div class="wc-note">${escapeHtml(voucher.note || getVoucherNote(hotspotUserProfile))}</div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        }
+
+        function getVoucherPackage(hotspotUserProfile) {
+            const key = String(hotspotUserProfile).toLowerCase();
+            const mapping = {
+                "1hr": "Starter",
+                "1day": "Day Pass",
+                "1gb": "Data Pass",
+                "1week": "Weekly Pass",
+            };
+            return mapping[key] || hotspotUserProfile;
+        }
+
+        function getVoucherDuration(hotspotUserProfile) {
+            const key = String(hotspotUserProfile).toLowerCase();
+            const mapping = {
+                "1hr": "1 hour",
+                "1day": "1 day",
+                "1gb": "1 GB",
+                "1week": "1 week",
+            };
+            return mapping[key] || hotspotUserProfile;
+        }
+
+        function getVoucherBadge(hotspotUserProfile) {
+            const key = String(hotspotUserProfile).toLowerCase();
+            const mapping = {
+                "1hr": "1HR",
+                "1day": "1 DAY",
+                "1gb": "1 GB",
+                "1week": "1 WEEK",
+            };
+            return mapping[key] || hotspotUserProfile;
+        }
+
+        function getVoucherNote(hotspotUserProfile) {
+            const key = String(hotspotUserProfile).toLowerCase();
+            const mapping = {
+                "1hr": "Fast hotspot access. Valid for in-store WiFi use.",
+                "1day": "All-day hotspot access for customers in the area.",
+                "1gb": "Data-based hotspot access with a 1 GB allowance.",
+                "1week": "Extended hotspot access for regular customers.",
+            };
+            return mapping[key] || "Valid for Wonke Connect hotspot access.";
+        }
+    </script>
+</body>
+</html>
