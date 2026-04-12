@@ -40,6 +40,11 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 ALPHABET = string.ascii_uppercase + string.digits
 
 
+def _generate_payment_id() -> str:
+    """Generate a unique merchant payment ID."""
+    return secrets.token_hex(16)
+
+
 def get_payfast_config() -> dict:
     """Read PayFast settings: env vars take priority over DB (for Railway deployments)."""
     import os
