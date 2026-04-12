@@ -550,6 +550,23 @@ async def payment_notify(request: Request) -> dict:
     return {"ok": True}
 
 
+@app.get("/api/debug/orders")
+def debug_orders() -> list:
+    """List recent orders for debugging (last 20)."""
+    rows = fetch_all(
+        """
+        SELECT o.m_payment_id, o.status, o.amount, o.created_at,
+               p.name AS plan_name,
+               v.code AS voucher_code, v.mikrotik_synced
+        FROM orders o
+        JOIN plans p ON p.id = o.plan_id
+        LEFT JOIN vouchers v ON v.id = o.voucher_id
+        ORDER BY o.id DESC LIMIT 20
+        """
+    )
+    return [dict(r) for r in rows]
+
+
 @app.get("/payment/order/{m_payment_id}", response_model=OrderStatusResponse)
 def get_order_status(m_payment_id: str) -> OrderStatusResponse:
     """Poll order status after returning from PayFast."""
