@@ -276,11 +276,13 @@ class PaymentInitiateRequest(BaseModel):
     name_last: str = Field(..., min_length=1, max_length=100)
     cell_number: str = Field(..., min_length=7, max_length=20)
 
-    @validator("name_first", "name_last")
+    @field_validator("name_first", "name_last")
+    @classmethod
     def validate_name(cls, value: str) -> str:
         return value.strip()
 
-    @validator("cell_number")
+    @field_validator("cell_number")
+    @classmethod
     def validate_phone(cls, value: str) -> str:
         cleaned = "".join(c for c in value if c.isdigit() or c in "+() -")
         if len(cleaned.replace(" ", "").replace("-", "")) < 7:
