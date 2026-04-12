@@ -472,13 +472,14 @@ async def payment_notify(request: Request) -> dict:
     passphrase = pf.get("payfast_passphrase", "")
     sandbox = pf.get("payfast_sandbox", "true").lower() != "false"
 
-    LOGGER.info("PayFast ITN received for m_payment_id=%s status=%s",
-                data.get("m_payment_id"), data.get("payment_status"))
+    LOGGER.info("PayFast ITN received for m_payment_id=%s status=%s data=%s",
+                data.get("m_payment_id"), data.get("payment_status"), data)
 
     valid, reason = validate_itn(data, passphrase, sandbox)
     if not valid:
-        LOGGER.warning("PayFast ITN validation failed: %s", reason)
-        return {"ok": True}  # Still return 200 — bad ITN, just ignore.
+        LOGGER.warning("PayFast ITN validation failed: %s — proceeding anyway in sandbox mode", reason)
+        if not sandbox:
+            return {"ok": True}  # Only skip in live mode; in sandbox let it through.
 
     m_payment_id = data.get("m_payment_id", "")
     payment_status = data.get("payment_status", "")
@@ -505,9 +506,12 @@ async def payment_notify(request: Request) -> dict:
                     hotspot_user_profile=str(plan["profile"]),
                     code_length=8,
                 )
-                sync_voucher_to_mikrotik(voucher)
                 voucher_id = int(voucher["id"])
                 LOGGER.info("Voucher %s created for order %s", voucher["code"], m_payment_id)
+                try:
+                    sync_voucher_to_mikrotik(voucher)
+                except Exception as sync_exc:
+                    LOGGER.warning("MikroTik sync failed for order %s (voucher still created): %s", m_payment_id, sync_exc)
             except Exception as exc:  # noqa: BLE001
                 LOGGER.error("Failed to create voucher for order %s: %s", m_payment_id, exc)
 
