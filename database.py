@@ -183,6 +183,13 @@ def apply_migrations(connection: sqlite3.Connection) -> None:
         """)
         connection.commit()
 
+    # Add mikrotik_synced column to vouchers if missing
+    try:
+        cursor.execute("SELECT mikrotik_synced FROM vouchers LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE vouchers ADD COLUMN mikrotik_synced INTEGER NOT NULL DEFAULT 0")
+        connection.commit()
+
 
 def fetch_all(query: str, params: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
     with get_connection() as connection:

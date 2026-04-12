@@ -371,6 +371,15 @@
                             <span>Use Sandbox (test mode)</span>
                         </label>
 
+                        <label class="wc-form-field" style="grid-column: 1 / -1;">
+                            <span>MikroTik Sync API Key</span>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input id="pf-sync-key" name="mikrotik_sync_api_key" type="text" placeholder="Auto-generated on first save" style="flex:1;font-family:monospace;font-size:0.85em;" readonly>
+                                <button class="wc-button wc-button--secondary" type="button" id="copy-sync-key-button" title="Copy key">Copy</button>
+                            </div>
+                            <small style="margin-top:6px;display:block;color:var(--wc-muted);">Paste this key into your MikroTik sync script. Generated automatically — keep it secret.</small>
+                        </label>
+
                         <div class="wc-form-actions">
                             <button class="wc-button" id="save-payfast-button" type="submit">Save PayFast Settings</button>
                         </div>

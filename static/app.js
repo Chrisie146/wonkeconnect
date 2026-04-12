@@ -37,6 +37,8 @@ const elements = {
     payfastPassphrase: document.getElementById("pf-passphrase"),
     payfastServerUrl: document.getElementById("pf-server-url"),
     payfastSandbox: document.getElementById("pf-sandbox"),
+    payfastSyncKey: document.getElementById("pf-sync-key"),
+    copySyncKeyButton: document.getElementById("copy-sync-key-button"),
     payfastMessageBox: document.getElementById("payfast-message-box"),
     printSheetButton: document.getElementById("print-sheet-button"),
     planForm: document.getElementById("plan-form"),
@@ -120,6 +122,15 @@ function bindEvents() {
     elements.payfastForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         await savePayFastSettings();
+    });
+
+    elements.copySyncKeyButton.addEventListener("click", () => {
+        const key = elements.payfastSyncKey.value;
+        if (key) {
+            navigator.clipboard.writeText(key);
+            elements.copySyncKeyButton.textContent = "Copied!";
+            setTimeout(() => { elements.copySyncKeyButton.textContent = "Copy"; }, 2000);
+        }
     });
 
     elements.printSheetButton.addEventListener("click", openPrintSheet);
@@ -224,6 +235,7 @@ async function loadPayFastSettings() {
         elements.payfastPassphrase.value = s.passphrase || "";
         elements.payfastServerUrl.value = s.server_url || "";
         elements.payfastSandbox.checked = Boolean(s.sandbox);
+        elements.payfastSyncKey.value = s.mikrotik_sync_api_key || "";
         if (s.configured) {
             setPayFastMessage(`PayFast settings loaded. ${s.sandbox ? "Sandbox mode." : "LIVE mode."}`, "success");
         }
@@ -239,6 +251,7 @@ async function savePayFastSettings() {
         passphrase: elements.payfastPassphrase.value.trim(),
         server_url: elements.payfastServerUrl.value.trim(),
         sandbox: elements.payfastSandbox.checked,
+        mikrotik_sync_api_key: elements.payfastSyncKey.value.trim(),
     };
 
     if (!payload.merchant_id || !payload.merchant_key) {
@@ -252,7 +265,8 @@ async function savePayFastSettings() {
 
     try {
         setPayFastMessage("Saving…", "");
-        await sendJson("/settings/payfast", payload);
+        const saved = await sendJson("/settings/payfast", payload);
+        elements.payfastSyncKey.value = saved.mikrotik_sync_api_key || "";
         setPayFastMessage(
             `PayFast settings saved. ${payload.sandbox ? "⚠ Sandbox mode is ON — switch to live before going live." : "✓ Live mode."}`,
             payload.sandbox ? "" : "success"

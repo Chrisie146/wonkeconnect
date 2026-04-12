@@ -259,6 +259,7 @@ class PayFastSettingsRequest(BaseModel):
     server_url: str = Field(..., min_length=1, max_length=255,
                             description="Public URL of this server, e.g. https://wifi.myshop.co.za")
     sandbox: bool = True
+    mikrotik_sync_api_key: str = Field(default="", max_length=128)
 
 
 class PayFastSettingsResponse(BaseModel):
@@ -268,6 +269,7 @@ class PayFastSettingsResponse(BaseModel):
     server_url: str = ""
     sandbox: bool = True
     configured: bool = False
+    mikrotik_sync_api_key: str = ""
 
 
 class PaymentInitiateRequest(BaseModel):
@@ -342,6 +344,7 @@ def get_payfast_settings() -> PayFastSettingsResponse:
         "payfast_passphrase",
         "payfast_server_url",
         "payfast_sandbox",
+        "mikrotik_sync_api_key",
     ])
     merchant_id = s.get("payfast_merchant_id", "")
     return PayFastSettingsResponse(
@@ -351,17 +354,22 @@ def get_payfast_settings() -> PayFastSettingsResponse:
         server_url=s.get("payfast_server_url", ""),
         sandbox=s.get("payfast_sandbox", "true").lower() != "false",
         configured=bool(merchant_id),
+        mikrotik_sync_api_key=s.get("mikrotik_sync_api_key", ""),
     )
 
 
 @app.post("/settings/payfast", response_model=PayFastSettingsResponse)
 def save_payfast_settings(payload: PayFastSettingsRequest) -> PayFastSettingsResponse:
+    # Auto-generate a sync API key if none provided and none saved yet
+    existing_key = get_settings(["mikrotik_sync_api_key"]).get("mikrotik_sync_api_key", "")
+    sync_key = payload.mikrotik_sync_api_key.strip() or existing_key or secrets.token_urlsafe(32)
     set_settings({
         "payfast_merchant_id": payload.merchant_id,
         "payfast_merchant_key": payload.merchant_key,
         "payfast_passphrase": payload.passphrase,
         "payfast_server_url": payload.server_url.rstrip("/"),
         "payfast_sandbox": "false" if not payload.sandbox else "true",
+        "mikrotik_sync_api_key": sync_key,
     })
     return PayFastSettingsResponse(
         merchant_id=payload.merchant_id,
@@ -370,6 +378,7 @@ def save_payfast_settings(payload: PayFastSettingsRequest) -> PayFastSettingsRes
         server_url=payload.server_url.rstrip("/"),
         sandbox=payload.sandbox,
         configured=True,
+        mikrotik_sync_api_key=sync_key,
     )
 
 
@@ -561,7 +570,61 @@ def get_order_status(m_payment_id: str) -> OrderStatusResponse:
     )
 
 
-def _generate_payment_id() -> str:
+# ── MikroTik pull-sync endpoints ──────────────────────────────────────────────
+
+@app.get("/api/mikrotik/pull-vouchers")
+def pull_vouchers_for_mikrotik(api_key: str = Query(...)) -> dict:
+    """MikroTik polls this every 15 s to get unsynced vouchers.
+
+    Returns a pipe-delimited plain-text body one voucher per line:
+        id|code|password|profile
+    Easy to parse with RouterOS string operations.
+    """
+    saved_key = get_settings(["mikrotik_sync_api_key"]).get("mikrotik_sync_api_key", "")
+    if not saved_key or not secrets.compare_digest(api_key, saved_key):
+        raise HTTPException(status_code=403, detail="Invalid API key.")
+
+    rows = fetch_all(
+        """
+        SELECT id, code, password, profile
+        FROM vouchers
+        WHERE status = 'unused' AND mikrotik_synced = 0
+        ORDER BY id
+        LIMIT 50
+        """,
+    )
+    lines = [f"{r['id']}|{r['code']}|{r['password']}|{r['profile']}" for r in rows]
+    from fastapi.responses import PlainTextResponse
+    return PlainTextResponse("\n".join(lines))
+
+
+@app.post("/api/mikrotik/confirm-sync")
+def confirm_mikrotik_sync(api_key: str = Query(...), ids: str = Query(...)) -> dict:
+    """MikroTik calls this after creating hotspot users to mark vouchers as synced.
+
+    ids: comma-separated voucher IDs e.g. '42,43,44'
+    """
+    saved_key = get_settings(["mikrotik_sync_api_key"]).get("mikrotik_sync_api_key", "")
+    if not saved_key or not secrets.compare_digest(api_key, saved_key):
+        raise HTTPException(status_code=403, detail="Invalid API key.")
+
+    try:
+        id_list = [int(i.strip()) for i in ids.split(",") if i.strip().isdigit()]
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid ids format.")
+
+    if id_list:
+        placeholders = ",".join("?" * len(id_list))
+        execute(
+            f"UPDATE vouchers SET mikrotik_synced = 1 WHERE id IN ({placeholders})",
+            tuple(id_list),
+        )
+        LOGGER.info("MikroTik confirmed sync for voucher IDs: %s", id_list)
+
+    return {"ok": True, "synced": len(id_list)}
+
+
+
     """Generate a unique merchant payment ID."""
     import time
     rand = secrets.token_hex(4).upper()
