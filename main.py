@@ -12,7 +12,7 @@ from typing import Optional, Union, Any
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 from fastapi.responses import FileResponse, RedirectResponse
 from database import execute, fetch_all, fetch_one, get_connection, get_settings, init_db, set_settings
@@ -65,7 +65,8 @@ class VoucherBase(BaseModel):
     hotspot_user_profile: str = Field(..., min_length=1, max_length=50)
     code_length: int = Field(default=8, ge=6, le=8)
 
-    @validator("hotspot_user_profile")
+    @field_validator("hotspot_user_profile")
+    @classmethod
     def validate_hotspot_user_profile(cls, value: str) -> str:
         value = value.strip()
         if not value:
@@ -90,7 +91,8 @@ class PlanBase(BaseModel):
     price: float = Field(default=0.0, ge=0)
     active: bool = True
 
-    @validator("name", "hotspot_user_profile", "duration_label", "badge_label", "note")
+    @field_validator("name", "hotspot_user_profile", "duration_label", "badge_label", "note")
+    @classmethod
     def validate_text(cls, value: str) -> str:
         value = value.strip()
         if not value:
@@ -181,14 +183,16 @@ class MikroTikSettingsRequest(BaseModel):
     use_ssl: bool = False
     plaintext_login: bool = True
 
-    @validator("host", "username")
+    @field_validator("host", "username")
+    @classmethod
     def validate_setting_text(cls, value: str) -> str:
         value = value.strip()
         if not value:
             raise ValueError("This field is required.")
         return value
 
-    @validator("password")
+    @field_validator("password")
+    @classmethod
     def normalize_password(cls, value: str) -> str:
         return value.strip()
 
@@ -206,23 +210,24 @@ class HotSpotProfileRequest(BaseModel):
     keepalive_timeout: Optional[str] = Field(None, max_length=50)
     login_by: Optional[str] = Field(None, max_length=100)  # e.g., "http-chap,cookie"
 
-    @validator("profile_name")
+    @field_validator("profile_name")
+    @classmethod
     def validate_profile_name(cls, value: str) -> str:
         return value.strip()
 
 
 class WalledGardenRequest(BaseModel):
     dst_host: str = Field(..., min_length=1, max_length=255)
-    action: str = Field(default="allow", regex="^(allow|deny)$")
+    action: str = Field(default="allow", pattern="^(allow|deny)$")
     path: Optional[str] = Field(None, max_length=255)
     method: Optional[str] = Field(None, max_length=50)
 
 
 class IPBindingRequest(BaseModel):
     src_address: str = Field(..., min_length=7, max_length=50)  # IP or range
-    mac_address: str = Field(..., regex=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
+    mac_address: str = Field(..., pattern=r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
     to_address: Optional[str] = Field(None, min_length=7, max_length=50)
-    binding_type: str = Field(default="regular", regex="^(regular|bypassed|blocked)$")
+    binding_type: str = Field(default="regular", pattern="^(regular|bypassed|blocked)$")
 
 
 class VoucherWithLimitsRequest(VoucherBase):
