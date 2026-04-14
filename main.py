@@ -509,20 +509,17 @@ def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
 
     params = {
         "m1": service_key,
-        "m2": m_payment_id,
-        "p2": f"{price:.2f}",
-        "p3": f"Wonke Connect WiFi - {plan['name']}",
-        "m5": f"{server_url}/payment/netcash/notify",
-        "m6": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
-        "m7": f"{server_url}/portal?status=cancel",
+        "m2": "24ade73c-98cf-47b3-99be-cc7b867b3080",  # Netcash default ISV Software Vendor Key
+        "p2": m_payment_id,                              # Unique transaction reference (used once)
+        "p3": f"Wonke Connect WiFi - {plan['name']}",   # Description
+        "p4": f"{price:.2f}",                            # Amount in ZAR
+        "Budget": "Y",                                   # Required by Netcash
     }
     LOGGER.info(
-        "Netcash initiate: ref=%s m1_prefix=%s p2=%s m5=%s m6=%s",
+        "Netcash initiate: ref=%s m1_prefix=%s p4=%s",
         m_payment_id,
         service_key[:8] + "...",
-        params["p2"],
-        params["m5"],
-        params["m6"],
+        params["p4"],
     )
     return {
         "netcash_url": "https://paynow.netcash.co.za/site/paynow.aspx",
