@@ -514,6 +514,9 @@ def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
         "p3": f"Wonke Connect WiFi - {plan['name']}",   # Description
         "p4": f"{price:.2f}",                            # Amount in ZAR
         "Budget": "Y",                                   # Required by Netcash
+        "m5": f"{server_url}/payment/netcash/notify",   # Server-to-server postback
+        "m6": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",  # Success redirect
+        "m7": f"{server_url}/portal?status=cancel",     # Cancel redirect
     }
     LOGGER.info(
         "Netcash initiate: ref=%s m1_prefix=%s p4=%s",
@@ -537,7 +540,7 @@ async def netcash_notify(request: Request) -> dict:
     LOGGER.info("Netcash postback received: %s", data)
 
     transaction_accepted = data.get("TransactionAccepted", "").lower()
-    reference = data.get("Reference", "")
+    reference = data.get("p2", data.get("Reference", ""))
     netcash_order_id = data.get("NetcashOrderId", "")
 
     if transaction_accepted != "true":
