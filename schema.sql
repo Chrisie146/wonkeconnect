@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS orders (
     status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'complete', 'failed', 'cancelled')),
     voucher_id INTEGER REFERENCES vouchers(id),
     pf_payment_id TEXT,
+    payment_method TEXT NOT NULL DEFAULT 'payfast',
+    netcash_order_id TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -295,6 +295,24 @@ class PayFastSettingsResponse(BaseModel):
     mikrotik_sync_api_key: str = ""
 
 
+class NetcashSettingsRequest(BaseModel):
+    service_key: str = Field(..., min_length=1, max_length=100,
+                             description="Pay Now Service Key (GUID) from your Netcash account")
+    server_url: str = Field(..., min_length=1, max_length=255,
+                            description="Public URL of this server, e.g. https://wifi.myshop.co.za")
+
+    @field_validator("service_key", "server_url")
+    @classmethod
+    def validate_setting_text(cls, value: str) -> str:
+        return value.strip()
+
+
+class NetcashSettingsResponse(BaseModel):
+    service_key: str = ""
+    server_url: str = ""
+    configured: bool = False
+
+
 class PaymentInitiateRequest(BaseModel):
     plan_id: int
     name_first: str = Field(..., min_length=1, max_length=100)
@@ -398,7 +416,178 @@ def save_payfast_settings(payload: PayFastSettingsRequest) -> PayFastSettingsRes
     )
 
 
-@app.post("/payment/initiate")
+def get_netcash_config() -> dict:
+    """Read Netcash settings from DB, env vars take priority."""
+    import os
+    db = get_settings(["netcash_service_key", "netcash_server_url"])
+    return {
+        "netcash_service_key": os.getenv("NETCASH_SERVICE_KEY", db.get("netcash_service_key", "")),
+        "netcash_server_url": os.getenv("NETCASH_SERVER_URL", db.get("netcash_server_url", "")),
+    }
+
+
+@app.get("/settings/netcash", response_model=NetcashSettingsResponse)
+def get_netcash_settings() -> NetcashSettingsResponse:
+    cfg = get_netcash_config()
+    service_key = cfg.get("netcash_service_key", "")
+    return NetcashSettingsResponse(
+        service_key=service_key,
+        server_url=cfg.get("netcash_server_url", ""),
+        configured=bool(service_key),
+    )
+
+
+@app.post("/settings/netcash", response_model=NetcashSettingsResponse)
+def save_netcash_settings(payload: NetcashSettingsRequest) -> NetcashSettingsResponse:
+    set_settings({
+        "netcash_service_key": payload.service_key,
+        "netcash_server_url": payload.server_url.rstrip("/"),
+    })
+    return NetcashSettingsResponse(
+        service_key=payload.service_key,
+        server_url=payload.server_url.rstrip("/"),
+        configured=True,
+    )
+
+
+@app.post("/payment/netcash/initiate")
+def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
+    """Create a pending order and return Netcash Pay Now form parameters."""
+    plan = fetch_one(
+        "SELECT id, name, profile, price, active FROM plans WHERE id = ?",
+        (payload.plan_id,),
+    )
+    if not plan or not plan["active"]:
+        raise HTTPException(status_code=404, detail="Plan not found or inactive.")
+
+    price = float(plan["price"] or 0)
+    if price <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="This plan has no price set. Contact staff for assistance.",
+        )
+
+    cfg = get_netcash_config()
+    service_key = cfg.get("netcash_service_key", "")
+    server_url = cfg.get("netcash_server_url", "").rstrip("/")
+
+    if not service_key:
+        raise HTTPException(
+            status_code=503,
+            detail="1Voucher payments are not configured yet. Please contact staff.",
+        )
+    if not server_url:
+        raise HTTPException(
+            status_code=503,
+            detail="Server URL is not configured for payments. Contact staff.",
+        )
+
+    m_payment_id = _generate_payment_id()
+    created_at = utc_now()
+
+    execute(
+        """
+        INSERT INTO orders
+            (m_payment_id, plan_id, buyer_name_first, buyer_name_last,
+             buyer_phone, amount, status, payment_method, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, 'pending', 'netcash', ?, ?)
+        """,
+        (
+            m_payment_id,
+            plan["id"],
+            payload.name_first,
+            payload.name_last,
+            payload.cell_number,
+            price,
+            created_at,
+            created_at,
+        ),
+    )
+
+    return {
+        "netcash_url": "https://paynow.netcash.co.za/site/paynow.aspx",
+        "params": {
+            "m1": service_key,
+            "m2": m_payment_id,
+            "p2": f"{price:.2f}",
+            "p3": f"Wonke Connect WiFi — {plan['name']}",
+            "p4": str(plan["profile"]),
+            "m4": payload.cell_number,
+            "m5": f"{server_url}/payment/netcash/notify",
+            "m6": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
+            "m7": f"{server_url}/portal?status=cancel",
+        },
+        "m_payment_id": m_payment_id,
+    }
+
+
+@app.post("/payment/netcash/notify", status_code=200)
+async def netcash_notify(request: Request) -> dict:
+    """Netcash server-to-server postback. Responds 200 immediately then provisions voucher."""
+    form_data = await request.form()
+    data = dict(form_data)
+
+    LOGGER.info("Netcash postback received: %s", data)
+
+    transaction_accepted = data.get("TransactionAccepted", "").lower()
+    reference = data.get("Reference", "")
+    netcash_order_id = data.get("NetcashOrderId", "")
+
+    if transaction_accepted != "true":
+        LOGGER.info("Netcash payment not accepted for ref=%s status=%s", reference, transaction_accepted)
+        order = fetch_one(
+            "SELECT id, status FROM orders WHERE m_payment_id = ? AND payment_method = 'netcash'",
+            (reference,),
+        )
+        if order and order["status"] == "pending":
+            execute(
+                "UPDATE orders SET status = 'failed', netcash_order_id = ?, updated_at = ? WHERE m_payment_id = ?",
+                (netcash_order_id, utc_now(), reference),
+            )
+        return {"ok": True}
+
+    order = fetch_one(
+        "SELECT id, plan_id, status FROM orders WHERE m_payment_id = ? AND payment_method = 'netcash'",
+        (reference,),
+    )
+    if not order:
+        LOGGER.warning("Netcash postback for unknown reference: %s", reference)
+        return {"ok": True}
+
+    if order["status"] != "pending":
+        LOGGER.info("Netcash postback for already-processed order %s (status=%s)", reference, order["status"])
+        return {"ok": True}
+
+    plan = fetch_one(
+        "SELECT id, name, profile, active FROM plans WHERE id = ?",
+        (order["plan_id"],),
+    )
+    voucher_id: Optional[int] = None
+    if plan and plan["active"]:
+        try:
+            voucher = persist_voucher(
+                hotspot_user_profile=str(plan["profile"]),
+                code_length=8,
+            )
+            voucher_id = int(voucher["id"])
+            LOGGER.info("Voucher %s created for Netcash order %s", voucher["code"], reference)
+            try:
+                sync_voucher_to_mikrotik(voucher)
+            except Exception as sync_exc:
+                LOGGER.warning("MikroTik sync failed for Netcash order %s (voucher still created): %s", reference, sync_exc)
+        except Exception as exc:
+            LOGGER.error("Failed to create voucher for Netcash order %s: %s", reference, exc)
+
+    execute(
+        """
+        UPDATE orders
+        SET status = 'complete', netcash_order_id = ?, voucher_id = ?, updated_at = ?
+        WHERE m_payment_id = ?
+        """,
+        (netcash_order_id, voucher_id, utc_now(), reference),
+    )
+
+    return {"ok": True}
 def initiate_payment(payload: PaymentInitiateRequest) -> dict:
     """Create a pending order and return PayFast payment parameters."""
     plan = fetch_one(
@@ -547,6 +736,13 @@ async def payment_notify(request: Request) -> dict:
             (new_status, pf_payment_id, utc_now(), m_payment_id),
         )
 
+    return {"ok": True}
+
+
+@app.post("/api/debug/reset-sync")
+def debug_reset_sync() -> dict:
+    """Reset all vouchers to unsynced so MikroTik will re-pull them."""
+    execute("UPDATE vouchers SET mikrotik_synced = 0 WHERE status = 'unused'")
     return {"ok": True}
 
 

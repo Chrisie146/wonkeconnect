@@ -65,12 +65,36 @@
 
                 <div id="form-error" class="portal-error" style="display:none;"></div>
 
+                <!-- Payment method selector -->
+                <div class="portal-field" id="payment-method-section">
+                    <label>Pay with</label>
+                    <div class="payment-method-options">
+                        <label class="payment-method-option">
+                            <input type="radio" name="payment_method" value="payfast" id="pm-payfast" checked>
+                            <span class="payment-method-label">
+                                <span class="pm-name">Card / EFT</span>
+                                <span class="pm-sub">via PayFast</span>
+                            </span>
+                        </label>
+                        <label class="payment-method-option">
+                            <input type="radio" name="payment_method" value="netcash" id="pm-netcash">
+                            <span class="payment-method-label">
+                                <span class="pm-name">1Voucher</span>
+                                <span class="pm-sub">via Netcash</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
                 <button class="portal-pay-button" id="pay-button" type="submit">
                     Pay <span id="pay-amount"></span>
                 </button>
 
-                <p class="portal-secure-note">
+                <p class="portal-secure-note" id="secure-note-payfast">
                     🔒 Processed securely by <strong>PayFast</strong>. We never see your card details.
+                </p>
+                <p class="portal-secure-note" id="secure-note-netcash" style="display:none;">
+                    🔒 Processed securely by <strong>Netcash</strong>. Enter your 1Voucher PIN on the next page.
                 </p>
             </form>
         </section>
@@ -89,9 +113,9 @@
             <div id="voucher-reveal" class="voucher-reveal" style="display:none;">
                 <p class="voucher-label">Your voucher code</p>
                 <div class="voucher-code" id="voucher-code"></div>
+                <p id="autoconnect-status" style="display:none;color:#10a6a0;font-weight:700;margin:8px 0 0;">&#10003; Connecting you automatically&hellip;</p>
                 <p class="voucher-instructions">
-                    Enter this code on the WiFi login page to connect.<br>
-                    <strong>Username and password are both the code above.</strong>
+                    If not connected automatically, enter this code on the WiFi login page.
                 </p>
                 <button class="portal-copy-button" id="copy-code-button" type="button">Copy code</button>
             </div>

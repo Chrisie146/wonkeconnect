@@ -190,6 +190,20 @@ def apply_migrations(connection: sqlite3.Connection) -> None:
         cursor.execute("ALTER TABLE vouchers ADD COLUMN mikrotik_synced INTEGER NOT NULL DEFAULT 0")
         connection.commit()
 
+    # Add payment_method column to orders if missing
+    try:
+        cursor.execute("SELECT payment_method FROM orders LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE orders ADD COLUMN payment_method TEXT NOT NULL DEFAULT 'payfast'")
+        connection.commit()
+
+    # Add netcash_order_id column to orders if missing
+    try:
+        cursor.execute("SELECT netcash_order_id FROM orders LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE orders ADD COLUMN netcash_order_id TEXT")
+        connection.commit()
+
 
 def fetch_all(query: str, params: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
     with get_connection() as connection:

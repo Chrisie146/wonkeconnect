@@ -86,6 +86,20 @@ document.getElementById('back-button').addEventListener('click', () => showScree
 document.getElementById('try-again-button').addEventListener('click', () => showScreen('plans'));
 document.getElementById('error-back-button').addEventListener('click', () => showScreen('plans'));
 
+// ── Payment method toggle ────────────────────────────────────────────────────
+function getSelectedPaymentMethod() {
+    const el = document.querySelector('input[name="payment_method"]:checked');
+    return el ? el.value : 'payfast';
+}
+
+document.querySelectorAll('input[name="payment_method"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+        const method = getSelectedPaymentMethod();
+        document.getElementById('secure-note-payfast').style.display = method === 'payfast' ? '' : 'none';
+        document.getElementById('secure-note-netcash').style.display  = method === 'netcash'  ? '' : 'none';
+    });
+});
+
 // ── Payment form ──────────────────────────────────────────────────────────────
 document.getElementById('buyer-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -107,8 +121,11 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
     payButton.disabled = true;
     payButton.textContent = 'Please wait…';
 
+    const method = getSelectedPaymentMethod();
+    const endpoint = method === 'netcash' ? '/payment/netcash/initiate' : '/payment/initiate';
+
     try {
-        const res = await fetch('/payment/initiate', {
+        const res = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -124,12 +141,15 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
             throw new Error(body.detail || 'Payment setup failed. Please try again.');
         }
 
-        const { payfast_url, params } = await res.json();
+        const data = await res.json();
+        const actionUrl = method === 'netcash' ? data.netcash_url : data.payfast_url;
+        const params    = data.params;
 
-        // Auto-submit POST form to PayFast hosted checkout.
+        // Auto-submit POST form to payment provider.
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = payfast_url;
+        form.action = actionUrl;
+        form.target = '_top';
         Object.entries(params).forEach(([key, value]) => {
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -185,6 +205,15 @@ async function pollForVoucher(mPaymentId) {
                 document.getElementById('voucher-loading').style.display = 'none';
                 document.getElementById('voucher-code').textContent = order.voucher_code;
                 document.getElementById('voucher-reveal').style.display = 'block';
+
+                // Send code back to the login page (if still open) so it can auto-connect.
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(
+                        { wonkeVoucher: order.voucher_code },
+                        '*'
+                    );
+                    document.getElementById('autoconnect-status').style.display = 'block';
+                }
                 return;
             }
 
