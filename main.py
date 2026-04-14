@@ -513,7 +513,6 @@ def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
         "p2": f"{price:.2f}",
         "p3": f"Wonke Connect WiFi - {plan['name']}",
         "p4": str(plan["profile"]),
-        "p10": "1Vch",
         "m4": payload.cell_number,
         "m5": f"{server_url}/payment/netcash/notify",
         "m6": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
