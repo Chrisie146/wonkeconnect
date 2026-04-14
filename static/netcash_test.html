@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>Netcash Test</title></head>
+<body>
+<h2>Direct Netcash Test</h2>
+<p>Reference is regenerated fresh on every submit — no duplicate m2 issues.</p>
+<form method="POST" action="https://paynow.netcash.co.za/site/paynow.aspx" target="_top" id="nc-form">
+    <label>m1 (service key):<br>
+    <input type="text" name="m1" value="c182aa78-797a-4627-a208-521035d62275" size="45"></label><br><br>
+    <label>m2 (auto-generated on submit):<br>
+    <input type="text" name="m2" value="" size="45" id="ref" readonly></label><br><br>
+    <label>p2 (amount):<br>
+    <input type="text" name="p2" value="5.00" size="10"></label><br><br>
+    <label>p3 (description):<br>
+    <input type="text" name="p3" value="Wonke WiFi Test" size="45"></label><br><br>
+    <input type="hidden" name="m5" value="https://wonkeconnect-production.up.railway.app/payment/netcash/notify">
+    <input type="hidden" name="m6" value="https://wonkeconnect-production.up.railway.app/portal?status=success">
+    <input type="hidden" name="m7" value="https://wonkeconnect-production.up.railway.app/portal?status=cancel">
+    <button type="submit" style="padding:10px 30px;font-size:16px;">Test Pay Now</button>
+</form>
+<script>
+    document.getElementById('nc-form').addEventListener('submit', function() {
+        // Always regenerate m2 on submit so back+resubmit never reuses a reference
+        document.getElementById('ref').value = 'TEST' + Date.now() + Math.floor(Math.random() * 1000);
+    });
+    // Show a preview of what m2 will look like
+    document.getElementById('ref').value = '(will be set on submit)';
+</script>
+</body>
+</html>
