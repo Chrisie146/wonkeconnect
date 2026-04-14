@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wonke Connect WiFi</title>
+<style>
+:root {
+    --bg: #fffaf2;
+    --panel: #fffdf8;
+    --text: #151515;
+    --muted: #5c5248;
+    --red: #ff3b0a;
+    --orange: #ffab0f;
+    --teal: #10a6a0;
+    --border: rgba(21, 21, 21, 0.08);
+    --shadow: 0 18px 40px rgba(21, 21, 21, 0.12);
+}
+/* ── Connecting view ── */
+#view-connecting {
+    display: none;
+    padding: 40px 24px 36px;
+    text-align: center;
+}
+.big-icon {
+    position: relative;
+    width: 110px;
+    height: 78px;
+    margin: 0 auto 28px;
+}
+.big-arc {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 999px 999px 0 0;
+    border: 12px solid transparent;
+    border-bottom: 0;
+}
+.big-arc.top   { top: 0;   width: 110px; height: 55px; border-top-color: var(--red);    animation: arc-pulse 1.6s ease-in-out infinite; }
+.big-arc.mid   { top: 22px; width: 72px; height: 36px; border-top-color: var(--orange); animation: arc-pulse 1.6s ease-in-out 0.25s infinite; }
+.big-arc.inner { top: 44px; width: 38px; height: 19px; border-top-color: var(--teal);   animation: arc-pulse 1.6s ease-in-out 0.5s infinite; }
+.big-dot {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: dot-pulse 1.6s ease-in-out infinite;
+}
+@keyframes arc-pulse {
+    0%, 100% { opacity: 0.2; }
+    50%       { opacity: 1; }
+}
+@keyframes dot-pulse {
+    0%, 100% { transform: translateX(-50%) scale(0.8); opacity: 0.35; }
+    50%       { transform: translateX(-50%) scale(1.2); opacity: 1; }
+}
+.connecting-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0 0 10px;
+}
+.connecting-sub {
+    color: var(--muted);
+    font-size: 0.97rem;
+    margin: 0 0 28px;
+}
+.progress-bar {
+    height: 6px;
+    border-radius: 99px;
+    background: rgba(21,21,21,0.08);
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--red), var(--orange), var(--teal));
+    animation: progress-run 3.5s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes progress-run {
+    0%  { width: 0%; }
+    60% { width: 82%; }
+    100%{ width: 92%; }
+}
+.connecting-hint { font-size: 0.82rem; color: var(--muted); }
+.connecting-hint a { color: var(--teal); font-weight: 700; }
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at top left, rgba(255, 171, 15, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(16, 166, 160, 0.14), transparent 24%),
+        linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.card {
+    width: min(100%, 430px);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.band {
+    height: 14px;
+    background: linear-gradient(90deg, var(--red) 0 40%, var(--orange) 40% 80%, var(--teal) 80% 100%);
+}
+
+#view-login {
+    padding: 28px 24px 24px;
+    text-align: center;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.icon {
+    position: relative;
+    width: 88px;
+    height: 62px;
+}
+
+.arc {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 999px 999px 0 0;
+    border: 10px solid transparent;
+    border-bottom: 0;
+}
+
+.arc.top {
+    top: 0;
+    width: 88px;
+    height: 44px;
+    border-top-color: var(--red);
+}
+
+.arc.mid {
+    top: 18px;
+    width: 60px;
+    height: 30px;
+    border-top-color: var(--orange);
+}
+
+.dot {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--red);
+}
+
+.accent {
+    position: absolute;
+    bottom: 8px;
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg);
+}
+
+.accent.left {
+    left: 2px;
+    background: var(--teal);
+}
+
+.accent.left-mid {
+    left: 18px;
+    background: var(--orange);
+}
+
+.accent.right-mid {
+    right: 18px;
+    background: var(--orange);
+}
+
+.accent.right {
+    right: 2px;
+    background: var(--teal);
+}
+
+.wordmark {
+    text-align: left;
+    line-height: 0.95;
+}
+
+.wordmark .wonke {
+    display: block;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.wordmark .k {
+    color: var(--orange);
+}
+
+.wordmark .connect {
+    display: block;
+    margin-top: 4px;
+    font-size: 1rem;
+    letter-spacing: 0.42em;
+    color: var(--orange);
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+}
+
+.intro {
+    margin: 0 0 22px;
+    color: var(--muted);
+    font-size: 0.98rem;
+}
+
+form {
+    display: grid;
+    gap: 12px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+    border-radius: 14px;
+    border: 1px solid rgba(21, 21, 21, 0.14);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+input[type="text"]:focus {
+    border-color: var(--teal);
+}
+
+button {
+    width: 100%;
+    padding: 14px 16px;
+    border: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--red), #e73408);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+}
+button:active { transform: scale(0.98); opacity: 0.9; }
+
+.pricing {
+    margin-top: 24px;
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(255, 171, 15, 0.08);
+    border: 1px solid rgba(255, 171, 15, 0.18);
+    text-align: left;
+}
+
+.pricing h2 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(21, 21, 21, 0.08);
+}
+
+.price-row:last-child {
+    border-bottom: 0;
+}
+
+.price {
+    font-weight: 800;
+    color: var(--red);
+}
+
+.footer {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.footer strong {
+    color: var(--text);
+}
+
+.buy-link {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--teal), #0d8f8a);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+.buy-link:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 440px) {
+    .brand {
+        gap: 12px;
+    }
+
+    .icon {
+        width: 72px;
+        height: 54px;
+    }
+
+    .arc.top {
+        width: 72px;
+        height: 36px;
+    }
+
+    .arc.mid {
+        top: 16px;
+        width: 48px;
+        height: 24px;
+    }
+
+    .wordmark .wonke {
+        font-size: 2rem;
+    }
+
+    .wordmark .connect {
+        font-size: 0.86rem;
+    }
+}
+</style>
+</head>
+<body>
+<main class="card">
+    <div class="band"></div>
+    <section id="view-login" class="content">
+        <div class="brand" aria-label="Wonke Connect">
+            <div class="icon" aria-hidden="true">
+                <span class="arc top"></span>
+                <span class="arc mid"></span>
+                <span class="dot"></span>
+                <span class="accent left"></span>
+                <span class="accent left-mid"></span>
+                <span class="accent right-mid"></span>
+                <span class="accent right"></span>
+            </div>
+            <div class="wordmark">
+                <span class="wonke">Won<span class="k">k</span>e</span>
+                <span class="connect">Connect</span>
+            </div>
+        </div>
+
+        <h1>Connect to Wonke WiFi</h1>
+        <p class="intro">Enter your voucher code below to get online.</p>
+
+        <form action="$(link-login-only)" method="post" id="login-form">
+            <input type="hidden" name="dst" value="$(link-orig)">
+            <input id="voucher-input" name="username" type="text" placeholder="Enter voucher code" autocomplete="off" spellcheck="false">
+            <input type="hidden" name="password" id="voucher-password">
+            <button type="submit">Connect</button>
+        </form>
+
+        <section class="pricing" id="pricing-section" aria-labelledby="pricing-title">
+            <div class="price-row"><span class="price">R10</span><span>1 day</span></div>
+            <div class="price-row"><span class="price">R50</span><span>1 week</span></div>
+            <div class="price-row"><span class="price">R150</span><span>1 month</span></div>
+        </section>
+
+        <div class="footer">
+            <strong>Fast. Affordable. Reliable.</strong><br>
+            Vouchers available in the shop or buy online:
+        </div>
+        <a class="buy-link" href="https://wonkeconnect-production.up.railway.app/portal" target="_blank" rel="noopener">Buy a Voucher Online</a>
+    </section>
+
+    <!-- Connecting view (shown on submit) -->
+    <section id="view-connecting" aria-live="polite">
+        <div class="big-icon" aria-hidden="true">
+            <span class="big-arc top"></span>
+            <span class="big-arc mid"></span>
+            <span class="big-arc inner"></span>
+            <span class="big-dot"></span>
+        </div>
+        <p class="connecting-title">Connecting&hellip;</p>
+        <p class="connecting-sub">Getting you online with Wonke WiFi.</p>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <p class="connecting-hint">Taking too long? <a href="http://google.com">Try opening a page</a></p>
+    </section>
+</main>
+<script>
+(function () {
+    var form        = document.getElementById("login-form");
+    var input       = document.getElementById("voucher-input");
+    var pwField     = document.getElementById("voucher-password");
+    var loginView   = document.getElementById("view-login");
+    var connectView = document.getElementById("view-connecting");
+
+    function doConnect(code) {
+        input.value   = code;
+        pwField.value = code;
+        loginView.style.display   = "none";
+        connectView.style.display = "block";
+        form.submit();
+    }
+
+    form.addEventListener("submit", function (e) {
+        var code = input.value.trim();
+        if (!code) { e.preventDefault(); input.focus(); return; }
+        pwField.value = code;
+        loginView.style.display   = "none";
+        connectView.style.display = "block";
+    });
+
+    // Auto-connect when portal tab sends back a purchased voucher code.
+    window.addEventListener("message", function (e) {
+        var code = e.data && typeof e.data.wonkeVoucher === "string"
+            ? e.data.wonkeVoucher.trim()
+            : null;
+        if (!code || !/^[A-Za-z0-9]{4,32}$/.test(code)) return;
+        doConnect(code);
+    });
+}());
+
+(function () {
+    var PORTAL  = "https://wonkeconnect-production.up.railway.app";
+    var section = document.getElementById("pricing-section");
+    fetch(PORTAL + "/portal/plans", { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (plans) {
+            if (!plans || !plans.length) return;
+            var html = "";
+            plans.forEach(function (p) {
+                var price = p.price > 0 ? "R" + Number(p.price).toFixed(0) : "Free";
+                var label = p.duration_label || p.name;
+                html += "<div class=\"price-row\"><span class=\"price\">" + price + "</span><span>" + label + "</span></div>";
+            });
+            section.innerHTML = html;
+        })
+        .catch(function () { /* keep fallback rows */ });
+}());
+</script>
+</body>
+</html>

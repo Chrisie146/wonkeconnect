@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connected — Wonke WiFi</title>
+<style>
+:root {
+    --bg: #fffaf2;
+    --panel: #fffdf8;
+    --text: #151515;
+    --muted: #5c5248;
+    --red: #ff3b0a;
+    --orange: #ffab0f;
+    --teal: #10a6a0;
+    --border: rgba(21, 21, 21, 0.08);
+    --shadow: 0 18px 40px rgba(21, 21, 21, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at top left, rgba(255, 171, 15, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(16, 166, 160, 0.14), transparent 24%),
+        linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.card {
+    width: min(100%, 400px);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    text-align: center;
+}
+
+.band {
+    height: 14px;
+    background: linear-gradient(90deg, var(--teal) 0 40%, var(--orange) 40% 80%, var(--red) 80% 100%);
+}
+
+.content {
+    padding: 36px 24px 32px;
+}
+
+/* Animated check */
+.check-wrap {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), #0d8f8a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pop-in 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes pop-in {
+    0%   { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.check-wrap svg {
+    width: 36px;
+    height: 36px;
+    stroke: #fff;
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: draw-check 0.4s 0.35s ease forwards;
+}
+
+@keyframes draw-check {
+    to { stroke-dashoffset: 0; }
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.sub {
+    color: var(--muted);
+    font-size: 0.97rem;
+    margin: 0 0 28px;
+}
+
+.browse-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 14px 16px;
+    border: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--teal), #0d8f8a);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.1s;
+}
+.browse-btn:active { opacity: 0.9; transform: scale(0.98); }
+
+.countdown {
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+</style>
+</head>
+<body>
+<main class="card">
+    <div class="band"></div>
+    <div class="content">
+        <div class="check-wrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><polyline points="4 12 9 17 20 6"/></svg>
+        </div>
+        <h1>You&rsquo;re connected!</h1>
+        <p class="sub">Enjoy your Wonke WiFi session.</p>
+        <a class="browse-btn" id="browse-btn" href="http://google.com">Start Browsing</a>
+        <p class="countdown" id="countdown">Redirecting in <strong>3</strong>…</p>
+    </div>
+</main>
+<script>
+(function () {
+    // Redirect to link-orig if MikroTik set it, otherwise google.com
+    var dest = '$(link-orig)';
+    if (!dest || dest === '$(link-orig)' || dest.indexOf('$(') === 0) {
+        dest = 'http://google.com';
+    }
+
+    var btn = document.getElementById('browse-btn');
+    btn.href = dest;
+
+    var countEl = document.querySelector('#countdown strong');
+    var secs = 3;
+
+    var timer = setInterval(function () {
+        secs--;
+        if (secs <= 0) {
+            clearInterval(timer);
+            document.getElementById('countdown').textContent = 'Redirecting…';
+            window.location.href = dest;
+        } else {
+            countEl.textContent = secs;
+        }
+    }, 1000);
+}());
+</script>
+</body>
+</html>
