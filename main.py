@@ -4,6 +4,7 @@ import logging
 import secrets
 import sqlite3
 import string
+import sys
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -36,7 +37,9 @@ from mikrotik import (
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 LOGGER = logging.getLogger("wonke-connect")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+logging.basicConfig(level=logging.INFO, handlers=[handler])
 ALPHABET = string.ascii_uppercase + string.digits
 
 
