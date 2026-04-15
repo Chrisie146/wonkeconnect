@@ -25,6 +25,13 @@ def get_connection() -> Iterable[sqlite3.Connection]:
 
 
 def init_db() -> None:
+    # Ensure schema.sql exists before reading
+    if not SCHEMA_PATH.exists():
+        raise FileNotFoundError(
+            f"schema.sql not found at {SCHEMA_PATH}. "
+            f"Make sure schema.sql is deployed with the application."
+        )
+    
     schema = SCHEMA_PATH.read_text(encoding="utf-8")
     with get_connection() as connection:
         connection.executescript(schema)
