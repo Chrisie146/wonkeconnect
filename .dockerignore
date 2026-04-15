@@ -1,0 +1,42 @@
+# Version control
+.git/
+.gitignore
+
+# Dev tool artifacts
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+
+# Local DB
+*.db
+*.sqlite3
+
+# Secrets / env
+.env
+.env.*
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Playwright / Claude tool outputs
+.playwright-mcp/
+.claude/
+
+# Docs / planning (not needed at runtime)
+*.md
+UI_ENHANCEMENT_PLAN.md
+ENHANCEMENTS.md
+HOTSPOT_FEATURES.md
+netcash.md
+payfast.md
+
+# Setup scripts (not needed at runtime)
+setup_db.py
+schema.sql
