@@ -459,18 +459,20 @@ def _try_send_voucher_sms(m_payment_id: str, voucher_code: str, plan_name: str) 
     """Look up buyer phone from the order and send SMS if BulkSMS is configured."""
     cfg = get_bulksms_config()
     token_id = cfg.get("bulksms_token_id", "")
-    token_secret = cfg.get("bulksms_token_secret", "")
-    if not token_id or not token_secret:
-        return  # SMS not configured — skip silently
+    token_secret = cfg.get("bulksms_token_secret", "")  # empty string is valid for combined token
+    if not token_id:
+        LOGGER.info("BulkSMS not configured — skipping SMS for order %s", m_payment_id)
+        return
 
     order = fetch_one(
         "SELECT buyer_phone FROM orders WHERE m_payment_id = ?",
         (m_payment_id,),
     )
     if not order or not order["buyer_phone"]:
-        LOGGER.info("No phone number for order %s — skipping SMS", m_payment_id)
+        LOGGER.warning("No phone number for order %s — skipping SMS", m_payment_id)
         return
 
+    LOGGER.info("Sending SMS for order %s to %s", m_payment_id, order["buyer_phone"])
     send_voucher_sms(
         token_id=token_id,
         token_secret=token_secret,
@@ -854,6 +856,24 @@ def debug_reset_sync() -> dict:
     """Reset all vouchers to unsynced so MikroTik will re-pull them."""
     execute("UPDATE vouchers SET mikrotik_synced = 0 WHERE status = 'unused'")
     return {"ok": True}
+
+
+@app.get("/api/debug/sms-test")
+def sms_test(to: str = Query(..., description="Phone number to send test SMS to")) -> dict:
+    """Fire a test SMS to verify BulkSMS credentials and phone normalisation."""
+    cfg = get_bulksms_config()
+    token_id = cfg.get("bulksms_token_id", "")
+    token_secret = cfg.get("bulksms_token_secret", "")
+    if not token_id:
+        return {"ok": False, "error": "BULKSMS_TOKEN (or BULKSMS_TOKEN_ID) not set in env vars"}
+    ok = send_voucher_sms(
+        token_id=token_id,
+        token_secret=token_secret,
+        to=to,
+        voucher_code="TEST1234",
+        plan_name="Test",
+    )
+    return {"ok": ok, "to": to, "token_id_prefix": token_id[:8] + "..."}
 
 
 @app.get("/api/debug/orders")
