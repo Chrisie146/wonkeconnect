@@ -539,8 +539,8 @@ async def netcash_notify_get(request: Request) -> RedirectResponse:
     cfg = get_netcash_config()
     server_url = cfg.get("netcash_server_url", "").rstrip("/")
     if ref and server_url:
-        return RedirectResponse(url=f"{server_url}/portal?status=success&m_payment_id={ref}")
-    return RedirectResponse(url="/portal?status=success")
+        return RedirectResponse(url=f"{server_url}/portal?status=success&m_payment_id={ref}", status_code=303)
+    return RedirectResponse(url="/portal?status=success", status_code=303)
 
 
 @app.get("/payment/netcash/return")
@@ -553,15 +553,15 @@ async def netcash_return(request: Request) -> RedirectResponse:
     else:
         ref = request.query_params.get("p2", request.query_params.get("Reference", ""))
     if ref:
-        return RedirectResponse(url=f"/portal?status=success&m_payment_id={ref}")
-    return RedirectResponse(url="/portal?status=success")
+        return RedirectResponse(url=f"/portal?status=success&m_payment_id={ref}", status_code=303)
+    return RedirectResponse(url="/portal?status=success", status_code=303)
 
 
 @app.get("/payment/netcash/cancel")
 @app.post("/payment/netcash/cancel")
 async def netcash_cancel(request: Request) -> RedirectResponse:
     """Handles Netcash browser redirect on cancel (GET or POST to m7)."""
-    return RedirectResponse(url="/portal?status=cancel")
+    return RedirectResponse(url="/portal?status=cancel", status_code=303)
 
 
 @app.post("/payment/netcash/notify", status_code=200)
