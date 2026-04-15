@@ -286,6 +286,19 @@ def get_onsite_payment_identifier(
             )
             return None, f"Unexpected response: {body}"
 
+    except urllib.error.HTTPError as exc:
+        # Capture error response from PayFast
+        try:
+            error_body = exc.read().decode().strip()
+            LOGGER.error(
+                "PayFast onsite request failed with HTTP %d: %s",
+                exc.code,
+                error_body,
+            )
+            return None, f"PayFast error (HTTP {exc.code}): {error_body}"
+        except Exception:  # noqa: BLE001
+            LOGGER.error("PayFast onsite request failed: HTTP %d %s", exc.code, exc.reason)
+            return None, f"PayFast error (HTTP {exc.code}): {exc.reason}"
     except urllib.error.URLError as exc:
         LOGGER.error("PayFast onsite request failed: %s", exc)
         return None, f"Request failed: {exc}"
