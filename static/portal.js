@@ -168,9 +168,9 @@ async function initiatePayment(method, payButton) {
             sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
         }
 
-        if (method === 'payfast' && data.uuid) {
-            // PayFast Onsite Payment - redirect to PayFast with UUID
-            window.location.href = `https://www.payfast.co.za/onsite/process?uuid=${data.uuid}`;
+        if (method === 'payfast' && data.redirect_url) {
+            // PayFast redirect flow - go to form page
+            window.location.href = data.redirect_url;
         } else if (method === 'netcash') {
             // Netcash - redirect to hosted checkout
             const form = document.createElement('form');

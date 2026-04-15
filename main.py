@@ -732,7 +732,7 @@ async def netcash_notify(request: Request) -> dict:
 
 @app.post("/payment/initiate")
 def initiate_payment(payload: PaymentInitiateRequest) -> dict:
-    """Create a pending order and return PayFast payment parameters."""
+    """Create a pending order and return redirect URL for PayFast payment form."""
     plan = fetch_one(
         "SELECT id, name, profile, price, active FROM plans WHERE id = ?",
         (payload.plan_id,),
@@ -751,9 +751,6 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
     merchant_id = pf.get("payfast_merchant_id", "")
     merchant_key = pf.get("payfast_merchant_key", "")
     server_url = pf.get("payfast_server_url", "").rstrip("/")
-    passphrase = pf.get("payfast_passphrase", "")
-    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
-    LOGGER.info("PayFast payment initiation: sandbox=%s (raw=%r)", sandbox, pf.get("payfast_sandbox"))
 
     if not merchant_id or not merchant_key:
         raise HTTPException(
@@ -788,32 +785,9 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
         ),
     )
 
-    # Generate onsite payment identifier (requires LIVE mode)
-    identifier, reason = get_onsite_payment_identifier(
-        merchant_id=merchant_id,
-        merchant_key=merchant_key,
-        passphrase=passphrase,
-        sandbox=sandbox,
-        m_payment_id=m_payment_id,
-        amount=f"{price:.2f}",
-        item_name=f"Wonke Connect WiFi — {plan['name']}",
-        return_url=f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
-        cancel_url=f"{server_url}/portal?status=cancel",
-        notify_url=f"{server_url}/payment/notify",
-        name_first=payload.name_first,
-        name_last=payload.name_last,
-        email_address="",  # Optional
-    )
-
-    if not identifier:
-        raise HTTPException(
-            status_code=503,
-            detail=f"Payment processing unavailable: {reason}. Ensure PayFast is in LIVE mode.",
-        )
-
+    # Return redirect URL to payment form (which generates PayFast form)
     return {
-        "uuid": identifier,
-        "onsite_engine_url": "https://www.payfast.co.za/onsite/engine.js",
+        "redirect_url": f"{server_url}/payment/redirect/{m_payment_id}",
         "m_payment_id": m_payment_id,
     }
 
