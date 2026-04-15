@@ -62,7 +62,7 @@ def get_payfast_config() -> dict:
         "payfast_merchant_key": os.getenv("PAYFAST_MERCHANT_KEY", db.get("payfast_merchant_key", "")),
         "payfast_passphrase":   os.getenv("PAYFAST_PASSPHRASE",   db.get("payfast_passphrase", "")),
         "payfast_server_url":   os.getenv("PAYFAST_SERVER_URL",   db.get("payfast_server_url", "")),
-        "payfast_sandbox":      os.getenv("PAYFAST_SANDBOX",      db.get("payfast_sandbox", "true")),
+        "payfast_sandbox":      db.get("payfast_sandbox", "true"),
         "mikrotik_sync_api_key": os.getenv("MIKROTIK_SYNC_API_KEY", db.get("mikrotik_sync_api_key", "")),
     }
 
@@ -799,8 +799,8 @@ async def payment_notify(request: Request) -> dict:
     valid, reason = validate_itn(data, passphrase, sandbox)
     if not valid:
         LOGGER.warning("PayFast ITN validation failed: %s — proceeding anyway in sandbox mode", reason)
-        if not sandbox:
-            return {"ok": True}  # Only skip in live mode; in sandbox let it through.
+        if sandbox:
+            return {"ok": True}  # Only skip validation in sandbox mode; in live mode reject.
 
     m_payment_id = data.get("m_payment_id", "")
     payment_status = data.get("payment_status", "")
