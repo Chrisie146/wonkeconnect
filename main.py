@@ -840,11 +840,43 @@ def payment_redirect(m_payment_id: str) -> HTMLResponse:
         f'<input type="hidden" name="{html_mod.escape(k)}" value="{html_mod.escape(v)}">'
         for k, v in params.items()
     )
+    # POST to local HTTP proxy endpoint instead of directly to PayFast HTTPS
+    # This avoids CNA browser's HTTPS restrictions
     page = f"""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>Redirecting to PayFast\u2026</title>
 <style>body{{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f5}}p{{font-size:1.2rem;color:#333}}</style>
 </head><body>
 <p>Redirecting to PayFast\u2026</p>
+<form id="pf" method="POST" action="/payment/payfast-proxy">
+{fields_html}
+</form>
+<script>document.getElementById('pf').submit();</script>
+</body></html>"""
+    return HTMLResponse(content=page)
+
+
+@app.post("/payment/payfast-proxy")
+async def payfast_proxy(request: Request) -> HTMLResponse:
+    """Server-side proxy to PayFast. Receives form POST from local HTTP client,
+    then returns HTML that auto-submits to PayFast HTTPS.
+    This bypasses CNA browser's direct HTTPS restrictions."""
+    form_data = await request.form()
+    data = dict(form_data)
+    
+    pf = get_payfast_config()
+    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
+    payfast_url = get_payfast_url(sandbox)
+    
+    import html as html_mod
+    fields_html = "\n".join(
+        f'<input type="hidden" name="{html_mod.escape(k)}" value="{html_mod.escape(v)}">'
+        for k, v in data.items()
+    )
+    page = f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Processing Payment...</title>
+<style>body{{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f5}}p{{font-size:1.2rem;color:#333}}</style>
+</head><body>
+<p>Processing payment...</p>
 <form id="pf" method="POST" action="{html_mod.escape(payfast_url)}">
 {fields_html}
 </form>
