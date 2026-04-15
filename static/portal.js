@@ -170,7 +170,22 @@ async function initiatePayment(method, payButton) {
 
         if (method === 'payfast' && data.redirect_url) {
             // Open payment in new browser window (escapes captive portal)
-            window.open(data.redirect_url, '_blank');
+            const paymentWindow = window.open(data.redirect_url, '_blank');
+
+            // Reset button state and show message
+            payButton.disabled = false;
+            payButton.querySelector('.pay-btn-label').style.display = '';
+            payButton.querySelector('.pay-btn-loading').style.display = 'none';
+
+            // Show message to user
+            if (paymentWindow) {
+                errorEl.textContent = '✓ Payment opened in new tab. Complete payment there.';
+                errorEl.style.display = 'block';
+                errorEl.style.color = '#28a745';
+            } else {
+                errorEl.textContent = 'Payment window blocked. Please allow pop-ups and try again.';
+                errorEl.style.display = 'block';
+            }
         } else if (method === 'netcash') {
             // Netcash - redirect to hosted checkout
             const form = document.createElement('form');
