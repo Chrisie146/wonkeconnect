@@ -27,7 +27,13 @@ def send_voucher_sms(
     voucher_code: str,
     plan_name: str = "",
 ) -> bool:
-    """Send voucher code via BulkSMS.  Returns True on success."""
+    """Send voucher code via BulkSMS.  Returns True on success.
+
+    token_id / token_secret can be supplied in two ways:
+      1. Separately:  token_id="abc", token_secret="xyz"  → Basic auth built automatically
+      2. Combined:    token_id="base64string", token_secret=""
+         (paste the Base64 value shown in the BulkSMS 'Basic Auth' field directly as token_id)
+    """
     phone = _normalise_phone(to)
 
     body = f"Your Wonke Connect WiFi code is: {voucher_code}"
@@ -40,11 +46,22 @@ def send_voucher_sms(
         "body": body,
     }
 
+    # Build auth header — support both separate and combined (base64) token formats.
+    if token_secret:
+        # Standard: separate token_id and token_secret
+        auth = (token_id, token_secret)
+        headers = {}
+    else:
+        # Combined: token_id is already the Base64-encoded "tokenId:tokenSecret" string
+        headers = {"Authorization": f"Basic {token_id}"}
+        auth = None
+
     try:
         resp = httpx.post(
             BULKSMS_API_URL,
             json=payload,
-            auth=(token_id, token_secret),
+            auth=auth,
+            headers=headers,
             timeout=15,
         )
         if resp.status_code in (200, 201):

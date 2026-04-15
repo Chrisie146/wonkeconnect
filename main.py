@@ -437,9 +437,18 @@ def get_netcash_config() -> dict:
 
 
 def get_bulksms_config() -> dict:
-    """Read BulkSMS settings: env vars take priority over DB."""
+    """Read BulkSMS settings: env vars take priority over DB.
+
+    Supports two formats:
+      - BULKSMS_TOKEN_ID + BULKSMS_TOKEN_SECRET  (separate)
+      - BULKSMS_TOKEN  (the Base64 'Basic Auth' string shown in the BulkSMS dashboard)
+    """
     import os
-    db = get_settings(["bulksms_token_id", "bulksms_token_secret"])
+    db = get_settings(["bulksms_token_id", "bulksms_token_secret", "bulksms_token"])
+    # Combined token takes priority if set
+    combined = os.getenv("BULKSMS_TOKEN", db.get("bulksms_token", ""))
+    if combined:
+        return {"bulksms_token_id": combined, "bulksms_token_secret": ""}
     return {
         "bulksms_token_id": os.getenv("BULKSMS_TOKEN_ID", db.get("bulksms_token_id", "")),
         "bulksms_token_secret": os.getenv("BULKSMS_TOKEN_SECRET", db.get("bulksms_token_secret", "")),
