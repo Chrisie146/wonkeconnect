@@ -532,9 +532,15 @@ def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
 
 
 @app.get("/payment/netcash/notify", status_code=200)
-async def netcash_notify_get() -> dict:
-    """Handle GET requests to the notify URL (Netcash sometimes GETs it)."""
-    return {"ok": True}
+async def netcash_notify_get(request: Request) -> RedirectResponse:
+    """Netcash sometimes redirects the browser to m5 in test mode. Redirect to portal."""
+    params = dict(request.query_params)
+    ref = params.get("p2", params.get("Reference", ""))
+    cfg = get_netcash_config()
+    server_url = cfg.get("netcash_server_url", "").rstrip("/")
+    if ref and server_url:
+        return RedirectResponse(url=f"{server_url}/portal?status=success&m_payment_id={ref}")
+    return RedirectResponse(url="/portal?status=success")
 
 
 @app.post("/payment/netcash/notify", status_code=200)
