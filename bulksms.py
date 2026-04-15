@@ -44,6 +44,7 @@ def send_voucher_sms(
     payload = {
         "to": phone,
         "body": body,
+        "from": "WonkeWifi",
     }
 
     # Build auth header — support both separate and combined (base64) token formats.
