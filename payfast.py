@@ -176,6 +176,9 @@ def get_onsite_payment_identifier(
     m_payment_id: str,
     amount: str,
     item_name: str,
+    return_url: str = "",
+    cancel_url: str = "",
+    notify_url: str = "",
     name_first: str = "",
     name_last: str = "",
     email_address: str = "",
@@ -193,9 +196,12 @@ def get_onsite_payment_identifier(
         m_payment_id: Your unique merchant payment ID.
         amount: Payment amount (e.g., "79.00").
         item_name: Item/service description.
-        name_first: Customer first name.
-        name_last: Customer last name.
-        email_address: Customer email.
+        return_url: Return URL after payment (required).
+        cancel_url: Cancel URL if user cancels (required).
+        notify_url: Webhook URL for ITN notifications (required).
+        name_first: Customer first name (optional).
+        name_last: Customer last name (optional).
+        email_address: Customer email (optional).
 
     Returns:
         (identifier, reason) tuple. identifier is None if generation fails.
@@ -207,16 +213,20 @@ def get_onsite_payment_identifier(
     host = get_validate_host(sandbox)
 
     # Build request data for the onsite transaction API
-    # Only include required fields - PayFast may reject extra empty fields
+    # Required fields for onsite payments
     data = {
         "merchant_id": merchant_id,
         "merchant_key": merchant_key,
-        "m_payment_id": m_payment_id,
+        "return_url": return_url,
+        "cancel_url": cancel_url,
+        "notify_url": notify_url,
         "amount": amount,
         "item_name": item_name,
     }
 
-    # Add optional fields only if provided
+    # Add optional fields if provided
+    if m_payment_id:
+        data["m_payment_id"] = m_payment_id
     if name_first:
         data["name_first"] = name_first
     if name_last:
@@ -224,8 +234,8 @@ def get_onsite_payment_identifier(
     if email_address:
         data["email_address"] = email_address
 
-    # Build signature using documented field order
-    sig = build_signature(data, passphrase, alphabetical=False)
+    # Build signature using ALPHABETICAL order (required for onsite)
+    sig = build_signature(data, passphrase, alphabetical=True)
     data["signature"] = sig
 
     post_body = urllib.parse.urlencode(data).encode()

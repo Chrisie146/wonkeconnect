@@ -797,6 +797,9 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
         m_payment_id=m_payment_id,
         amount=f"{price:.2f}",
         item_name=f"Wonke Connect WiFi — {plan['name']}",
+        return_url=f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
+        cancel_url=f"{server_url}/portal?status=cancel",
+        notify_url=f"{server_url}/payment/notify",
         name_first=payload.name_first,
         name_last=payload.name_last,
         email_address="",  # Optional
