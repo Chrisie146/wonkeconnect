@@ -36,7 +36,7 @@ def send_voucher_sms(
     """
     phone = _normalise_phone(to)
 
-    body = f"Wonke Connect: your WiFi voucher has been activated"
+    body = f"Wonke Connect: your WiFi voucher is {voucher_code}"
     if plan_name:
         body += f" ({plan_name} plan)"
     body += ". Enter it at the WiFi portal to connect."
