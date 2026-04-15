@@ -456,12 +456,30 @@ body {
 
 /* ── Footer ──────────────────────────────────────── */
 .portal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
     text-align: center;
     padding: 16px;
     font-size: 0.78rem;
     color: var(--p-muted);
     border-top: 1px solid var(--p-border);
 }
+
+.footer-help {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #25d366;
+    text-decoration: none;
+    font-weight: 700;
+    transition: opacity 0.15s;
+}
+
+.footer-help:hover { opacity: 0.75; }
+
+.footer-help svg { flex-shrink: 0; }
 
 /* ── Empty / error states ────────────────────────── */
 .portal-empty {
@@ -478,4 +496,176 @@ body {
 @media (max-width: 400px) {
     .portal-field-row { grid-template-columns: 1fr; }
     .voucher-code { font-size: 1.3rem; }
+    .step-label { font-size: 0.6rem; }
+    .step-dot { width: 22px; height: 22px; font-size: 0.65rem; }
+}
+
+/* ── Step progress bar ───────────────────────────── */
+.step-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: 18px;
+    padding: 0 12px;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.step-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: var(--p-border);
+    color: var(--p-muted);
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+.step-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--p-muted);
+    transition: color 0.3s;
+}
+
+.step-item.is-active .step-dot {
+    background: var(--p-orange);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(255, 171, 15, 0.35);
+}
+
+.step-item.is-active .step-label { color: var(--p-text); }
+
+.step-item.is-done .step-dot {
+    background: var(--p-teal);
+    color: #fff;
+}
+
+.step-item.is-done .step-label { color: var(--p-teal); }
+
+.step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--p-border);
+    margin: 0 6px;
+    margin-bottom: 18px;
+    transition: background 0.3s;
+    min-width: 16px;
+    max-width: 48px;
+}
+
+.step-line.is-done { background: var(--p-teal); }
+
+/* ── Pay button spinner ──────────────────────────── */
+.pay-btn-label,
+.pay-btn-loading { display: inline-flex; align-items: center; gap: 6px; }
+
+.btn-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2.5px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+/* ── Payment method icons ────────────────────────── */
+.pm-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--p-muted);
+    transition: color 0.15s;
+}
+
+.payment-method-option:has(input:checked) .pm-icon { color: var(--p-teal); }
+
+/* ── Voucher progress bar ────────────────────────── */
+.voucher-progress {
+    width: 80%;
+    max-width: 220px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 171, 15, 0.15);
+    margin: 16px auto 0;
+    overflow: hidden;
+}
+
+.voucher-progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    background: var(--p-orange);
+    transition: width 0.5s ease;
+}
+
+.voucher-wait-hint {
+    font-size: 0.78rem;
+    color: var(--p-muted);
+    margin-top: 10px;
+    animation: fadeIn 0.4s ease;
+}
+
+/* ── Voucher plan info ───────────────────────────── */
+.voucher-plan-info {
+    text-align: center;
+    padding: 12px 16px;
+    background: rgba(16, 166, 160, 0.06);
+    border: 1.5px solid rgba(16, 166, 160, 0.2);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 0.88rem;
+    color: var(--p-text);
+}
+
+.voucher-plan-info .vpi-name {
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.voucher-plan-info .vpi-meta {
+    color: var(--p-muted);
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
+/* ── Voucher reveal animation ────────────────────── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes revealUp {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 166, 160, 0.3); }
+    50%      { box-shadow: 0 0 20px 4px rgba(16, 166, 160, 0.15); }
+}
+
+.voucher-reveal.is-visible {
+    display: block !important;
+    animation: revealUp 0.4s ease-out;
+}
+
+.voucher-reveal.is-visible .voucher-code {
+    animation: pulseGlow 2s ease-in-out 0.4s 2;
+    border-color: var(--p-teal);
 }

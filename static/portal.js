@@ -16,9 +16,36 @@ const screens = {
 };
 
 // ── Screen management ─────────────────────────────────────────────────────────
+const stepMap = {
+    plans: 0,
+    details: 1,
+    success: 3,
+    cancel: 0,
+    error: 0,
+};
+
+function updateStepBar(screenName) {
+    const activeIdx = stepMap[screenName] ?? 0;
+    const items = document.querySelectorAll('.step-item');
+    const lines = document.querySelectorAll('.step-line');
+
+    items.forEach((item, i) => {
+        item.classList.toggle('is-done', i < activeIdx);
+        item.classList.toggle('is-active', i === activeIdx);
+    });
+    lines.forEach((line, i) => {
+        line.classList.toggle('is-done', i < activeIdx);
+    });
+
+    // Hide step bar on cancel/error screens
+    const bar = document.getElementById('step-bar');
+    if (bar) bar.style.display = (screenName === 'cancel' || screenName === 'error') ? 'none' : '';
+}
+
 function showScreen(name) {
     Object.values(screens).forEach((s) => s.classList.remove('is-active'));
     screens[name].classList.add('is-active');
+    updateStepBar(name);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -119,7 +146,15 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
 
     const payButton = document.getElementById('pay-button');
     payButton.disabled = true;
-    payButton.textContent = 'Please wait…';
+    payButton.querySelector('.pay-btn-label').style.display = 'none';
+    payButton.querySelector('.pay-btn-loading').style.display = '';
+
+    // Advance step bar to "Payment"
+    updateStepBar('success'); // step index 3 is voucher, but 2 is payment — use a temp value
+    const items = document.querySelectorAll('.step-item');
+    const lines = document.querySelectorAll('.step-line');
+    items.forEach((item, i) => { item.classList.toggle('is-done', i < 2); item.classList.toggle('is-active', i === 2); });
+    lines.forEach((line, i) => { line.classList.toggle('is-done', i < 2); });
 
     const method = getSelectedPaymentMethod();
     const endpoint = method === 'netcash' ? '/payment/netcash/initiate' : '/payment/initiate';
@@ -169,7 +204,9 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
         errorEl.textContent = err.message;
         errorEl.style.display = 'block';
         payButton.disabled = false;
-        payButton.innerHTML = `Pay <span id="pay-amount">R${Number(state.selectedPlan.price).toFixed(2)}</span>`;
+        payButton.querySelector('.pay-btn-label').style.display = '';
+        payButton.querySelector('.pay-btn-loading').style.display = 'none';
+        updateStepBar('details');
     }
 });
 
@@ -197,22 +234,50 @@ async function pollForVoucher(mPaymentId) {
     sessionStorage.removeItem('wonke_m_payment_id'); // Clean up
     showScreen('success');
     document.getElementById('voucher-reveal').style.display = 'none';
+    document.getElementById('voucher-reveal').classList.remove('is-visible');
     document.getElementById('voucher-loading').style.display = 'block';
+
+    // Reset progress bar
+    const progressBar = document.getElementById('voucher-progress-bar');
+    const waitHint = document.getElementById('voucher-wait-hint');
+    if (progressBar) progressBar.style.width = '0%';
+    if (waitHint) waitHint.style.display = 'none';
 
     let attempts = 0;
     const maxAttempts = 24; // 24 × 5 s = 2 minutes
 
     async function attempt() {
         attempts++;
+        // Update progress bar (max 95% until complete)
+        if (progressBar) {
+            const pct = Math.min(95, (attempts / maxAttempts) * 100);
+            progressBar.style.width = pct + '%';
+        }
+        // After 3 attempts (~15s), show wait hint
+        if (attempts >= 3 && waitHint) waitHint.style.display = '';
+
         try {
             const res = await fetch(`/payment/order/${encodeURIComponent(mPaymentId)}`);
             if (!res.ok) throw new Error('Order not found.');
             const order = await res.json();
 
             if (order.status === 'complete' && order.voucher_code) {
+                // Fill progress to 100%
+                if (progressBar) progressBar.style.width = '100%';
+
                 document.getElementById('voucher-loading').style.display = 'none';
                 document.getElementById('voucher-code').textContent = order.voucher_code;
-                document.getElementById('voucher-reveal').style.display = 'block';
+
+                // Show plan info on success
+                const planInfo = document.getElementById('voucher-plan-info');
+                if (planInfo && order.plan_name) {
+                    planInfo.innerHTML = `<div class="vpi-name">${escHtml(order.plan_name)}</div><div class="vpi-meta">R${Number(order.amount).toFixed(2)}</div>`;
+                    planInfo.style.display = '';
+                }
+
+                // Animated reveal
+                const reveal = document.getElementById('voucher-reveal');
+                reveal.classList.add('is-visible');
 
                 // Send code back to the login page (if still open) so it can auto-connect.
                 if (window.opener && !window.opener.closed) {
@@ -279,6 +344,7 @@ function escHtml(str) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+updateStepBar('plans');
 const didHandleReturn = checkReturnState();
 if (!didHandleReturn) {
     loadPlans();
