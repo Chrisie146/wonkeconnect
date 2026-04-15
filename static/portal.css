@@ -772,3 +772,99 @@ body {
     color: var(--p-muted);
     font-variant-numeric: tabular-nums;
 }
+
+/* ── 1Voucher marketing integration ────────────────────────────────────────── */
+
+/* Accepted-payment badge below plan list */
+.accepted-payment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 0.82rem;
+    color: var(--p-muted);
+}
+
+.accepted-payment__label {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.accepted-payment__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    object-fit: cover;
+}
+
+.accepted-payment__name {
+    font-weight: 700;
+    color: var(--p-text);
+}
+
+/* 1Voucher icon inside pay button */
+.v1-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    vertical-align: middle;
+    margin-right: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* Step guide section */
+.guide-1v {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--p-border);
+}
+
+.guide-1v__heading {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--p-text);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.guide-1v__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.guide-1v__img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 12px;
+    display: block;
+}
+
+.guide-1v__caption {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--p-muted);
+    margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+    .guide-1v__grid {
+        grid-template-columns: repeat(3, 68vw);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 10px;
+        padding-bottom: 8px;
+    }
+
+    .guide-1v__img {
+        scroll-snap-align: start;
+        max-height: 180px;
+    }
+}

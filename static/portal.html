@@ -61,6 +61,11 @@
                 <div class="plan-skeleton"></div>
                 <div class="plan-skeleton"></div>
             </div>
+            <div class="accepted-payment">
+                <span class="accepted-payment__label">Accepted payment</span>
+                <img src="/marketing/icons/icon%20Orange.png" alt="1Voucher" class="accepted-payment__icon">
+                <span class="accepted-payment__name">1Voucher</span>
+            </div>
         </section>
 
         <!-- Screen: buyer details -->
@@ -92,7 +97,7 @@
                 <input type="radio" name="payment_method" value="netcash" id="pm-netcash" checked hidden>
 
                 <button class="portal-pay-button" id="pay-button" type="submit">
-                    <span class="pay-btn-label">Pay <span id="pay-amount"></span> with 1Voucher</span>
+                    <span class="pay-btn-label"><img src="/marketing/icons/icon%20Orange.png" alt="" class="v1-icon" aria-hidden="true">Pay <span id="pay-amount"></span> with 1Voucher</span>
                     <span class="pay-btn-loading" style="display:none;">
                         <span class="btn-spinner"></span> Redirecting to payment…
                     </span>
@@ -105,6 +110,23 @@
                     🔒 Processed securely by <strong>Netcash</strong>. Enter your 1Voucher PIN on the next page.
                 </p>
             </form>
+
+            <!-- 1Voucher Step Guide -->
+            <section class="guide-1v" aria-label="How to pay with 1Voucher">
+                <h2 class="guide-1v__heading">How to pay with 1Voucher</h2>
+                <div class="guide-1v__grid">
+                    <img src="/marketing/Step%20Guide/Step%20guide%201.jpg"
+                         alt="Step 1: Select 1Voucher as your payment method at checkout"
+                         class="guide-1v__img" loading="lazy">
+                    <img src="/marketing/Step%20Guide/Step%20guide%202.jpg"
+                         alt="Step 2: Enter your unique 16-digit voucher PIN"
+                         class="guide-1v__img" loading="lazy">
+                    <img src="/marketing/Step%20Guide/Step%20guide%203.jpg"
+                         alt="Step 3: Success — your voucher is redeemed"
+                         class="guide-1v__img" loading="lazy">
+                </div>
+                <p class="guide-1v__caption">Buy 1Voucher at Ackermans, PEP, Flash &amp; more.</p>
+            </section>
         </section>
 
         <!-- Screen: processing (after PayFast return) -->

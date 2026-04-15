@@ -86,6 +86,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/marketing", StaticFiles(directory=BASE_DIR / "1voucher_marketing"), name="marketing")
 
 
 class VoucherBase(BaseModel):
