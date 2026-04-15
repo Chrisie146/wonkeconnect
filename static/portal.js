@@ -169,13 +169,10 @@ async function initiatePayment(method, payButton) {
             sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
         }
 
-        // For PayFast, open in the real system browser (Safari/Chrome) to
-        // bypass Apple CNA limitations with HTTPS connections.
+        // For PayFast, redirect to auto-submit form page.
+        // This page submits the form to PayFast in a way that works on iOS CNA.
         if (method === 'payfast' && data.m_payment_id) {
-            window.open('/payment/redirect/' + encodeURIComponent(data.m_payment_id), '_blank');
-            payButton.disabled = false;
-            payButton.querySelector('.pay-btn-label').style.display = '';
-            payButton.querySelector('.pay-btn-loading').style.display = 'none';
+            window.location.href = '/payment/redirect/' + encodeURIComponent(data.m_payment_id);
             return;
         }
 
