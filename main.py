@@ -521,8 +521,8 @@ def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
         "p4": f"{price:.2f}",                            # Amount in ZAR
         "Budget": "Y",                                   # Required by Netcash
         "m5": f"{server_url}/payment/netcash/notify",   # Server-to-server postback
-        "m6": f"{server_url}/payment/netcash/return?ref={m_payment_id}",  # Success redirect
-        "m7": f"{server_url}/payment/netcash/cancel",   # Cancel redirect (GET or POST)
+        "m6": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",  # Success redirect (same as PayFast)
+        "m7": f"{server_url}/portal?status=cancel",      # Cancel redirect (same as PayFast)
     }
     LOGGER.info(
         "Netcash initiate: ref=%s m1_prefix=%s p4=%s",
