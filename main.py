@@ -531,6 +531,12 @@ def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
     }
 
 
+@app.get("/payment/netcash/notify", status_code=200)
+async def netcash_notify_get() -> dict:
+    """Handle GET requests to the notify URL (Netcash sometimes GETs it)."""
+    return {"ok": True}
+
+
 @app.post("/payment/netcash/notify", status_code=200)
 async def netcash_notify(request: Request) -> dict:
     """Netcash server-to-server postback. Responds 200 immediately then provisions voucher."""
