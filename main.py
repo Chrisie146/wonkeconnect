@@ -97,6 +97,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
+
+class PermissionsPolicyMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: StarletteRequest, call_next):
+        response = await call_next(request)
+        response.headers["Permissions-Policy"] = "payment=*"
+        return response
+
+app.add_middleware(PermissionsPolicyMiddleware)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.mount("/marketing", StaticFiles(directory=BASE_DIR / "1voucher_marketing"), name="marketing")
 
@@ -366,7 +377,7 @@ def serve_dashboard() -> FileResponse:
 
 @app.get("/portal")
 def serve_portal() -> FileResponse:
-    return FileResponse(STATIC_DIR / "portal.html")
+    return FileResponse(STATIC_DIR / "portal.html", headers={"Permissions-Policy": "payment=*"})
 
 
 @app.post("/portal")
