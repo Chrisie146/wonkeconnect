@@ -39,14 +39,13 @@ def init_db() -> None:
         apply_migrations(connection)
         connection.executemany(
             """
-            INSERT OR IGNORE INTO plans (name, profile, duration_label, badge_label, note, active)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO plans (name, profile, duration_label, badge_label, note, price, active)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             [
-                ("Starter", "1hr", "1 hour", "1HR", "Fast hotspot access. Valid for in-store WiFi use.", 1),
-                ("Day Pass", "1day", "1 day", "1 DAY", "All-day hotspot access for customers in the area.", 1),
-                ("Data Pass", "1GB", "1 GB", "1 GB", "Data-based hotspot access with a 1 GB allowance.", 1),
-                ("Weekly Pass", "1week", "1 week", "1 WEEK", "Extended hotspot access for regular customers.", 1),
+                ("1 day", "voucher-daily", "1 day", "1 DAY", "Daily hotspot access. Valid for 24 hours.", 5.0, 1),
+                ("7 days", "voucher-weekly", "7 days", "7 DAYS", "Weekly hotspot access. Valid for 7 days.", 30.0, 1),
+                ("1 month", "voucher-monthly", "1 month", "1 MONTH", "Monthly hotspot access. Valid for 30 days.", 120.0, 1),
             ],
         )
 

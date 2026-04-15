@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 import os
+import socket
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
@@ -26,6 +27,24 @@ def load_dotenv_file() -> None:
         value = value.strip().strip("\"'")
         if key and key not in os.environ:
             os.environ[key] = value
+
+
+def _resolve_to_ips(hostname: str) -> list[str]:
+    """Resolve a hostname to its IPv4 addresses. Returns empty list on failure or wildcard."""
+    if hostname.startswith("*"):
+        return []
+    try:
+        results = socket.getaddrinfo(hostname, None, socket.AF_INET)
+        seen: set[str] = set()
+        ips: list[str] = []
+        for r in results:
+            ip = r[4][0]
+            if ip not in seen:
+                seen.add(ip)
+                ips.append(ip)
+        return ips
+    except socket.gaierror:
+        return []
 
 
 class MikroTikConfigError(Exception):
@@ -220,6 +239,10 @@ class MikroTikClient:
         """Add walled garden rule for bypassing authentication on specific domains/paths."""
         try:
             walled_garden = self.api.get_resource("/ip/hotspot/walled-garden")
+            # Skip if an identical dst-host rule already exists
+            existing = walled_garden.get(**{"dst-host": dst_host})
+            if existing:
+                return
             rule_data = {"dst-host": dst_host, "action": action}
             if path:
                 rule_data["path"] = path
@@ -228,6 +251,60 @@ class MikroTikClient:
             walled_garden.add(**rule_data)
         except Exception as exc:  # pragma: no cover - depends on device/network
             raise MikroTikConnectionError(f"Failed to add walled garden rule for '{dst_host}': {exc}") from exc
+
+    def add_walled_garden_ip(self, *, dst_address: str) -> None:
+        """Add IP-level walled garden rule. Works for HTTPS unlike hostname rules."""
+        try:
+            wg_ip = self.api.get_resource("/ip/hotspot/walled-garden/ip")
+            existing = wg_ip.get(**{"dst-address": dst_address})
+            if existing:
+                return
+            wg_ip.add(**{"dst-address": dst_address})
+        except Exception as exc:  # pragma: no cover - depends on device/network
+            raise MikroTikConnectionError(
+                f"Failed to add walled garden IP rule for '{dst_address}': {exc}"
+            ) from exc
+
+    def setup_netcash_walled_garden(self) -> list[str]:
+        """Add all Netcash/PayNow hostname + IP walled garden entries.
+
+        Hostname entries cover HTTP; IP entries cover HTTPS.
+        Returns a list of entries added.
+        """
+        netcash_hosts = [
+            "paynow.netcash.co.za",
+            "*.netcash.co.za",
+            "netcash.co.za",
+        ]
+        added: list[str] = []
+        for host in netcash_hosts:
+            self.add_walled_garden(dst_host=host, action="allow")
+            added.append(host)
+            for ip in _resolve_to_ips(host):
+                self.add_walled_garden_ip(dst_address=ip)
+                added.append(ip)
+        return added
+
+    def setup_payfast_walled_garden(self) -> list[str]:
+        """Add all PayFast hostname + IP walled garden entries.
+
+        Hostname entries cover HTTP; IP entries cover HTTPS.
+        Returns a list of entries added.
+        """
+        payfast_hosts = [
+            "www.payfast.co.za",
+            "sandbox.payfast.co.za",
+            "*.payfast.co.za",
+            "payfast.co.za",
+        ]
+        added: list[str] = []
+        for host in payfast_hosts:
+            self.add_walled_garden(dst_host=host, action="allow")
+            added.append(host)
+            for ip in _resolve_to_ips(host):
+                self.add_walled_garden_ip(dst_address=ip)
+                added.append(ip)
+        return added
 
     def add_ip_binding(
         self,
@@ -380,6 +457,18 @@ def add_walled_garden(
 ) -> None:
     with MikroTikClient() as client:
         client.add_walled_garden(dst_host=dst_host, action=action, path=path, method=method)
+
+
+def setup_netcash_walled_garden() -> list[str]:
+    """Add all Netcash/PayNow domains to the MikroTik walled garden."""
+    with MikroTikClient() as client:
+        return client.setup_netcash_walled_garden()
+
+
+def setup_payfast_walled_garden() -> list[str]:
+    """Add all PayFast domains to the MikroTik walled garden."""
+    with MikroTikClient() as client:
+        return client.setup_payfast_walled_garden()
 
 
 def add_ip_binding(
