@@ -145,6 +145,12 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
         const actionUrl = method === 'netcash' ? data.netcash_url : data.payfast_url;
         const params    = data.params;
 
+        // Remember the payment ID so we can retrieve it after redirect
+        // (Netcash strips query params from the return URL).
+        if (data.m_payment_id) {
+            sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
+        }
+
         // Auto-submit POST form to payment provider.
         const form = document.createElement('form');
         form.method = 'POST';
@@ -171,7 +177,8 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
 function checkReturnState() {
     const params = new URLSearchParams(window.location.search);
     const status = params.get('status');
-    const mPaymentId = params.get('m_payment_id');
+    // Try URL first, fall back to sessionStorage (Netcash strips query params).
+    const mPaymentId = params.get('m_payment_id') || sessionStorage.getItem('wonke_m_payment_id');
 
     if (status === 'cancel') {
         showScreen('cancel');
@@ -187,6 +194,7 @@ function checkReturnState() {
 }
 
 async function pollForVoucher(mPaymentId) {
+    sessionStorage.removeItem('wonke_m_payment_id'); // Clean up
     showScreen('success');
     document.getElementById('voucher-reveal').style.display = 'none';
     document.getElementById('voucher-loading').style.display = 'block';
