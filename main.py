@@ -840,47 +840,48 @@ def payment_redirect(m_payment_id: str) -> HTMLResponse:
         f'<input type="hidden" name="{html_mod.escape(k)}" value="{html_mod.escape(v)}">'
         for k, v in params.items()
     )
-    # POST to local HTTP proxy endpoint instead of directly to PayFast HTTPS
-    # This avoids CNA browser's HTTPS restrictions
+    # Detect Apple CNA (Captive Network Assistant) via User-Agent.
+    # CNA cannot make HTTPS connections, so we show a prompt to open Safari.
+    # When the user taps "Done" in CNA, iOS opens Safari with the same URL,
+    # and Safari can submit the HTTPS form successfully.
     page = f"""<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Redirecting to PayFast\u2026</title>
-<style>body{{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f5}}p{{font-size:1.2rem;color:#333}}</style>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Complete Payment</title>
+<style>
+*{{box-sizing:border-box}}
+body{{font-family:-apple-system,system-ui,sans-serif;margin:0;padding:24px;background:#f5f5f5;color:#333}}
+.cna-notice{{display:none;text-align:center;padding:32px 16px}}
+.cna-notice h2{{font-size:1.3rem;margin:0 0 12px}}
+.cna-notice p{{font-size:1rem;line-height:1.5;color:#555;margin:8px 0}}
+.cna-notice .arrow{{font-size:2rem;margin:16px 0}}
+.cna-notice .highlight{{background:#007aff;color:#fff;padding:4px 12px;border-radius:6px;font-weight:600}}
+.loading{{text-align:center;padding:48px 16px}}
+.loading p{{font-size:1.1rem}}
+</style>
 </head><body>
-<p>Redirecting to PayFast\u2026</p>
-<form id="pf" method="POST" action="/payment/payfast-proxy">
+<div class="loading" id="loading">
+<p>Redirecting to PayFast&hellip;</p>
+</div>
+<div class="cna-notice" id="cna-notice">
+<h2>One more step</h2>
+<div class="arrow">&uarr;</div>
+<p>Tap <span class="highlight">Done</span> in the top-right corner to open Safari.</p>
+<p>Your payment will continue automatically.</p>
+</div>
+<form id="pf" method="POST" action="{html_mod.escape(payfast_url)}" style="display:none">
 {fields_html}
 </form>
-<script>document.getElementById('pf').submit();</script>
-</body></html>"""
-    return HTMLResponse(content=page)
-
-
-@app.post("/payment/payfast-proxy")
-async def payfast_proxy(request: Request) -> HTMLResponse:
-    """Server-side proxy to PayFast. Receives form POST from local HTTP client,
-    then returns HTML that auto-submits to PayFast HTTPS.
-    This bypasses CNA browser's direct HTTPS restrictions."""
-    form_data = await request.form()
-    data = dict(form_data)
-    
-    pf = get_payfast_config()
-    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
-    payfast_url = get_payfast_url(sandbox)
-    
-    import html as html_mod
-    fields_html = "\n".join(
-        f'<input type="hidden" name="{html_mod.escape(k)}" value="{html_mod.escape(v)}">'
-        for k, v in data.items()
-    )
-    page = f"""<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Processing Payment...</title>
-<style>body{{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f5}}p{{font-size:1.2rem;color:#333}}</style>
-</head><body>
-<p>Processing payment...</p>
-<form id="pf" method="POST" action="{html_mod.escape(payfast_url)}">
-{fields_html}
-</form>
-<script>document.getElementById('pf').submit();</script>
+<script>
+(function(){{
+  var isCNA = /CaptiveNetworkSupport|wispr/i.test(navigator.userAgent);
+  if (isCNA) {{
+    document.getElementById('loading').style.display='none';
+    document.getElementById('cna-notice').style.display='block';
+  }} else {{
+    document.getElementById('pf').submit();
+  }}
+}})();
+</script>
 </body></html>"""
     return HTMLResponse(content=page)
 
