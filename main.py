@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field, field_validator
 from fastapi.responses import FileResponse, RedirectResponse
 from database import execute, fetch_all, fetch_one, get_connection, get_settings, init_db, set_settings
 from payfast import build_signature, get_payfast_url, validate_itn
+from bulksms import send_voucher_sms
 from mikrotik import (
     MikroTikConfigError,
     MikroTikConnectionError,
@@ -435,6 +436,41 @@ def get_netcash_config() -> dict:
     }
 
 
+def get_bulksms_config() -> dict:
+    """Read BulkSMS settings: env vars take priority over DB."""
+    import os
+    db = get_settings(["bulksms_token_id", "bulksms_token_secret"])
+    return {
+        "bulksms_token_id": os.getenv("BULKSMS_TOKEN_ID", db.get("bulksms_token_id", "")),
+        "bulksms_token_secret": os.getenv("BULKSMS_TOKEN_SECRET", db.get("bulksms_token_secret", "")),
+    }
+
+
+def _try_send_voucher_sms(m_payment_id: str, voucher_code: str, plan_name: str) -> None:
+    """Look up buyer phone from the order and send SMS if BulkSMS is configured."""
+    cfg = get_bulksms_config()
+    token_id = cfg.get("bulksms_token_id", "")
+    token_secret = cfg.get("bulksms_token_secret", "")
+    if not token_id or not token_secret:
+        return  # SMS not configured — skip silently
+
+    order = fetch_one(
+        "SELECT buyer_phone FROM orders WHERE m_payment_id = ?",
+        (m_payment_id,),
+    )
+    if not order or not order["buyer_phone"]:
+        LOGGER.info("No phone number for order %s — skipping SMS", m_payment_id)
+        return
+
+    send_voucher_sms(
+        token_id=token_id,
+        token_secret=token_secret,
+        to=order["buyer_phone"],
+        voucher_code=voucher_code,
+        plan_name=plan_name,
+    )
+
+
 @app.get("/settings/netcash", response_model=NetcashSettingsResponse)
 def get_netcash_settings() -> NetcashSettingsResponse:
     cfg = get_netcash_config()
@@ -638,6 +674,13 @@ async def netcash_notify(request: Request) -> dict:
         (netcash_order_id, voucher_id, utc_now(), reference),
     )
 
+    # Send voucher via SMS
+    if voucher_id and plan:
+        try:
+            _try_send_voucher_sms(reference, voucher["code"], plan["name"])
+        except Exception as sms_exc:
+            LOGGER.warning("SMS send failed for Netcash order %s: %s", reference, sms_exc)
+
     return {"ok": True}
 def initiate_payment(payload: PaymentInitiateRequest) -> dict:
     """Create a pending order and return PayFast payment parameters."""
@@ -779,6 +822,13 @@ async def payment_notify(request: Request) -> dict:
             """,
             (pf_payment_id, voucher_id, now, m_payment_id),
         )
+
+        # Send voucher via SMS
+        if voucher_id and plan:
+            try:
+                _try_send_voucher_sms(m_payment_id, voucher["code"], plan["name"])
+            except Exception as sms_exc:
+                LOGGER.warning("SMS send failed for order %s: %s", m_payment_id, sms_exc)
 
     elif payment_status in ("FAILED", "CANCELLED"):
         new_status = "failed" if payment_status == "FAILED" else "cancelled"
