@@ -231,7 +231,7 @@ def get_onsite_payment_identifier(
 
     try:
         req = urllib.request.Request(
-            f"https://{host}/api/onsite/createTransaction",
+            f"https://{host}/onsite/process",
             data=post_body,
             headers={"Content-Type": "application/x-www-form-urlencoded"},
             method="POST",
