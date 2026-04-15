@@ -36,9 +36,7 @@ def send_voucher_sms(
     """
     phone = _normalise_phone(to)
 
-    body = f"Wonke Connect WiFi code: {voucher_code}"
-    if plan_name:
-        body += f" ({plan_name})"
+    body = f"Wonke Connect test SMS. If you received this, BulkSMS is working!"
 
     payload = {
         "to": phone,
