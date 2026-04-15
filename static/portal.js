@@ -163,29 +163,32 @@ async function initiatePayment(method, payButton) {
 
         const data = await res.json();
 
-        // Remember the payment ID so we can retrieve it after redirect
-        // (Netcash strips query params from the return URL).
+        // Remember the payment ID so we can retrieve it after redirect/callback
         if (data.m_payment_id) {
             sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
         }
 
-        const actionUrl = method === 'netcash' ? data.netcash_url : data.payfast_url;
-        const params    = data.params;
-
-        // Auto-submit POST form to payment provider.
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = actionUrl;
-        form.target = '_top';
-        Object.entries(params).forEach(([key, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
-        });
-        document.body.appendChild(form);
-        form.submit();
+        if (method === 'payfast' && data.uuid) {
+            // PayFast Onsite Payment - no redirect needed
+            await handlePayFastOnsitePayment(data, payButton);
+        } else if (method === 'netcash') {
+            // Netcash - redirect to hosted checkout
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = data.netcash_url;
+            form.target = '_top';
+            Object.entries(data.params).forEach(([key, value]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            });
+            document.body.appendChild(form);
+            form.submit();
+        } else {
+            throw new Error('Unexpected payment response. Please try again.');
+        }
     } catch (err) {
         errorEl.textContent = err.message;
         errorEl.style.display = 'block';
@@ -193,6 +196,51 @@ async function initiatePayment(method, payButton) {
         payButton.querySelector('.pay-btn-label').style.display = '';
         payButton.querySelector('.pay-btn-loading').style.display = 'none';
         updateStepBar('details');
+    }
+
+    async function handlePayFastOnsitePayment(data, btn) {
+        // Load PayFast onsite engine script
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = data.onsite_engine_url;
+            script.onload = () => {
+                // PayFast script loaded, now trigger the payment
+                if (window.payfast_do_onsite_payment) {
+                    // Set up callback for payment result
+                    window.payfast_on_abort = () => {
+                        showScreen('cancel');
+                        btn.disabled = false;
+                        btn.querySelector('.pay-btn-label').style.display = '';
+                        btn.querySelector('.pay-btn-loading').style.display = 'none';
+                        updateStepBar('details');
+                        resolve();
+                    };
+
+                    window.payfast_on_return = () => {
+                        const mPaymentId = sessionStorage.getItem('wonke_m_payment_id');
+                        if (mPaymentId) {
+                            pollForVoucher(mPaymentId);
+                        }
+                        resolve();
+                    };
+
+                    // Trigger the payment form
+                    window.payfast_do_onsite_payment({ uuid: data.uuid });
+                } else {
+                    throw new Error('PayFast engine failed to load. Please try again.');
+                }
+            };
+            script.onerror = () => {
+                errorEl.textContent = 'Failed to load payment processor. Please try again.';
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.querySelector('.pay-btn-label').style.display = '';
+                btn.querySelector('.pay-btn-loading').style.display = 'none';
+                updateStepBar('details');
+                resolve();
+            };
+            document.head.appendChild(script);
+        });
     }
 }
 
