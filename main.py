@@ -19,7 +19,6 @@ from fastapi.responses import FileResponse, RedirectResponse
 from database import execute, fetch_all, fetch_one, get_connection, get_settings, init_db, set_settings
 from payfast import (
     build_signature,
-    get_onsite_payment_identifier,
     get_payfast_url,
     validate_itn,
 )
@@ -727,9 +726,9 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
     pf = get_payfast_config()
     merchant_id = pf.get("payfast_merchant_id", "")
     merchant_key = pf.get("payfast_merchant_key", "")
-    server_url = pf.get("payfast_server_url", "").rstrip("/")
     passphrase = pf.get("payfast_passphrase", "")
-    sandbox = pf.get("payfast_sandbox", "true").lower() != "false"
+    server_url = pf.get("payfast_server_url", "").rstrip("/")
+    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
 
     if not merchant_id or not merchant_key:
         raise HTTPException(
@@ -764,30 +763,32 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
         ),
     )
 
-    # Generate onsite payment identifier (requires LIVE mode)
-    identifier, reason = get_onsite_payment_identifier(
-        merchant_id=merchant_id,
-        merchant_key=merchant_key,
-        passphrase=passphrase,
-        sandbox=sandbox,
-        m_payment_id=m_payment_id,
-        amount=f"{price:.2f}",
-        item_name=f"Wonke Connect WiFi — {plan['name']}",
-        name_first=payload.name_first,
-        name_last=payload.name_last,
-        email_address="",  # Optional
-    )
+    # Prepare PayFast form fields for client-side submission with target="_blank"
+    # This allows form submission to escape captive portal webview restrictions
+    plan_name = plan["name"]
 
-    if not identifier:
-        raise HTTPException(
-            status_code=503,
-            detail=f"Payment processing unavailable: {reason}. Ensure PayFast is in LIVE mode.",
-        )
+    params = {
+        "merchant_id": merchant_id,
+        "merchant_key": merchant_key,
+        "return_url": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
+        "cancel_url": f"{server_url}/portal?status=cancel",
+        "notify_url": f"{server_url}/payment/notify",
+        "name_first": payload.name_first,
+        "name_last": payload.name_last,
+        "cell_number": payload.cell_number or "",
+        "m_payment_id": m_payment_id,
+        "amount": f"{price:.2f}",
+        "item_name": f"Wonke Connect WiFi — {plan_name}",
+        "payment_method": "eft",
+    }
+    params["signature"] = build_signature(params, passphrase)
+    payfast_url = get_payfast_url(sandbox)
 
     return {
-        "uuid": identifier,
-        "onsite_engine_url": "https://www.payfast.co.za/onsite/engine.js",
+        "redirect_url": f"{server_url}/payment/redirect/{m_payment_id}",
         "m_payment_id": m_payment_id,
+        "payfast_url": payfast_url,
+        "payfast_fields": params,
     }
 
 

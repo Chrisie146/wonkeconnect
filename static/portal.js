@@ -168,9 +168,26 @@ async function initiatePayment(method, payButton) {
             sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
         }
 
-        if (method === 'payfast' && data.uuid) {
-            // PayFast Onsite Payment - no redirect needed
-            await handlePayFastOnsitePayment(data, payButton);
+        if (method === 'payfast' && data.payfast_url && data.payfast_fields) {
+            // Create and submit PayFast form in new window to escape captive portal webview.
+            // This allows HTTPS connections to PayFast's hosted checkout.
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = data.payfast_url;
+            form.target = '_blank';
+            form.style.display = 'none';
+
+            Object.entries(data.payfast_fields).forEach(([key, value]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = String(value);
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
         } else if (method === 'netcash') {
             // Netcash - redirect to hosted checkout
             const form = document.createElement('form');
@@ -196,51 +213,6 @@ async function initiatePayment(method, payButton) {
         payButton.querySelector('.pay-btn-label').style.display = '';
         payButton.querySelector('.pay-btn-loading').style.display = 'none';
         updateStepBar('details');
-    }
-
-    async function handlePayFastOnsitePayment(data, btn) {
-        // Load PayFast onsite engine script
-        return new Promise((resolve) => {
-            const script = document.createElement('script');
-            script.src = data.onsite_engine_url;
-            script.onload = () => {
-                // PayFast script loaded, now trigger the payment
-                if (window.payfast_do_onsite_payment) {
-                    // Set up callback for payment result
-                    window.payfast_on_abort = () => {
-                        showScreen('cancel');
-                        btn.disabled = false;
-                        btn.querySelector('.pay-btn-label').style.display = '';
-                        btn.querySelector('.pay-btn-loading').style.display = 'none';
-                        updateStepBar('details');
-                        resolve();
-                    };
-
-                    window.payfast_on_return = () => {
-                        const mPaymentId = sessionStorage.getItem('wonke_m_payment_id');
-                        if (mPaymentId) {
-                            pollForVoucher(mPaymentId);
-                        }
-                        resolve();
-                    };
-
-                    // Trigger the payment form
-                    window.payfast_do_onsite_payment({ uuid: data.uuid });
-                } else {
-                    throw new Error('PayFast engine failed to load. Please try again.');
-                }
-            };
-            script.onerror = () => {
-                errorEl.textContent = 'Failed to load payment processor. Please try again.';
-                errorEl.style.display = 'block';
-                btn.disabled = false;
-                btn.querySelector('.pay-btn-label').style.display = '';
-                btn.querySelector('.pay-btn-loading').style.display = 'none';
-                updateStepBar('details');
-                resolve();
-            };
-            document.head.appendChild(script);
-        });
     }
 }
 
