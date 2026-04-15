@@ -354,6 +354,12 @@ def serve_portal() -> FileResponse:
     return FileResponse(STATIC_DIR / "portal.html")
 
 
+@app.post("/portal")
+async def serve_portal_post(request: Request) -> RedirectResponse:
+    """Netcash POSTs to the portal URL — redirect to GET with query params preserved."""
+    return RedirectResponse(url=f"/portal?{request.url.query}", status_code=303)
+
+
 @app.get("/portal/plans")
 def list_portal_plans() -> list[dict]:
     """Public endpoint: return active plans with prices for the customer portal."""
