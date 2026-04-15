@@ -21,6 +21,9 @@ const elements = {
     screenKicker: document.getElementById("screen-kicker"),
     screenTitle: document.getElementById("screen-title"),
     globalRefreshButton: document.getElementById("global-refresh-button"),
+    sidebarToggle: document.getElementById("sidebar-toggle"),
+    sidebarOverlay: document.getElementById("sidebar-overlay"),
+    sidebar: document.querySelector(".app-sidebar"),
     settingsForm: document.getElementById("settings-form"),
     settingsHost: document.getElementById("mikrotik-host"),
     settingsUsername: document.getElementById("mikrotik-username"),
@@ -100,9 +103,17 @@ function boot() {
 }
 
 function bindEvents() {
+    // ── Sidebar toggle (mobile) ──────────────────────────────────────────────
+    elements.sidebarToggle.addEventListener("click", () => {
+        elements.sidebar.classList.toggle("is-open");
+        elements.sidebarOverlay.classList.toggle("is-visible");
+    });
+    elements.sidebarOverlay.addEventListener("click", closeSidebar);
+
     elements.navLinks.forEach((button) => {
         button.addEventListener("click", () => {
             switchScreen(button.dataset.screen);
+            closeSidebar();
         });
     });
 
@@ -311,17 +322,23 @@ async function saveMikroTikSettings() {
 }
 
 async function testMikroTikConnection() {
+    const btn = elements.testSettingsButton;
     try {
+        setButtonLoading(btn, true);
         setSettingsMessage("Testing MikroTik connection...", "");
         setConnectionStatus("idle", "Testing");
         const result = await sendJson("/settings/mikrotik/test", {});
         setSettingsMessage(result.message, result.connected ? "success" : "error");
         setConnectionStatus(result.connected ? "ok" : "fail", result.connected ? "Connected" : "Failed");
         updateConnectionIndicator(result.connected ? "ok" : "fail");
+        showToast(result.connected ? "Router connected" : "Connection failed", result.connected ? "success" : "error");
     } catch (error) {
         setSettingsMessage(error.message, "error");
         setConnectionStatus("fail", "Failed");
         updateConnectionIndicator("error");
+        showToast(error.message, "error");
+    } finally {
+        setButtonLoading(btn, false);
     }
 }
 
@@ -361,6 +378,7 @@ function updateConnectionIndicator(status) {
 
 async function loadPlans() {
     try {
+        elements.planTableBody.innerHTML = skeletonRows(4, 3);
         const plans = await fetchJson("/plans");
         state.plans = plans;
         renderPlanTable();
@@ -391,7 +409,9 @@ async function savePlan() {
         return;
     }
 
+    const btn = document.getElementById("save-plan-button");
     try {
+        setButtonLoading(btn, true);
         setPlanMessage("Saving plan...", "");
         let response;
         if (state.selectedPlanId) {
@@ -411,8 +431,12 @@ async function savePlan() {
             ? " HotSpot user profile synced to MikroTik."
             : ` Saved locally. MikroTik sync failed: ${response.mikrotik_message}`;
         setPlanMessage(`Plan saved.${syncMessage}`, response.mikrotik_synced ? "success" : "error");
+        showToast("Plan saved", response.mikrotik_synced ? "success" : "error");
     } catch (error) {
         setPlanMessage(error.message, "error");
+        showToast(error.message, "error");
+    } finally {
+        setButtonLoading(btn, false);
     }
 }
 
@@ -624,6 +648,7 @@ async function submitVoucherRequest() {
                 ? ` ${response.failed_sync_count} voucher(s) were saved but not synced to MikroTik.`
                 : " All vouchers synced to MikroTik.";
             setMessage(`Created ${response.vouchers.length} vouchers.${syncSummary}`, response.failed_sync_count ? "error" : "success");
+            showToast(`Created ${response.vouchers.length} vouchers`, response.failed_sync_count ? "error" : "success");
             switchScreen("dashboard");
             return;
         }
@@ -638,9 +663,11 @@ async function submitVoucherRequest() {
             ? "Voucher synced to MikroTik."
             : `Voucher saved locally. MikroTik sync failed: ${response.mikrotik_message}`;
         setMessage(`Created voucher ${response.voucher.code}. ${syncSummary}`, response.mikrotik_synced ? "success" : "error");
+        showToast(`Voucher ${response.voucher.code} created`, response.mikrotik_synced ? "success" : "error");
         switchScreen("dashboard");
     } catch (error) {
         setMessage(error.message, "error");
+        showToast(error.message, "error");
     }
 }
 
@@ -657,6 +684,7 @@ async function loadStats() {
 
 async function loadVouchers() {
     try {
+        elements.voucherTableBody.innerHTML = skeletonRows(6, 5);
         const vouchers = await fetchJson("/vouchers?limit=200");
         renderVoucherTable(vouchers);
     } catch (error) {
@@ -665,13 +693,19 @@ async function loadVouchers() {
 }
 
 async function syncVoucherStatus() {
+    const btn = elements.syncStatusButton;
     try {
+        setButtonLoading(btn, true);
         setMessage("Syncing voucher status from MikroTik...", "");
         const result = await sendJson("/sync-status", {});
         await refreshDashboard();
         setMessage(`${result.message} Updated ${result.updated} voucher(s); active users: ${result.active_users}.`, "success");
+        showToast(`Synced — ${result.updated} updated`, "success");
     } catch (error) {
         setMessage(error.message, "error");
+        showToast(error.message, "error");
+    } finally {
+        setButtonLoading(btn, false);
     }
 }
 
@@ -1084,4 +1118,46 @@ function setMonitorMessage(text, type) {
     elements.monitorMessageBox.innerHTML = text
         ? `<div class="wc-message${type ? ` wc-message-${type}` : ''}">${escapeHtml(text)}</div>`
         : "";
+}
+
+// ── UX Helpers ────────────────────────────────────────────────────────────────
+
+function closeSidebar() {
+    elements.sidebar.classList.remove("is-open");
+    elements.sidebarOverlay.classList.remove("is-visible");
+}
+
+// Toast notifications
+function showToast(message, type = "") {
+    const container = document.getElementById("toast-container");
+    if (!container) return;
+    const toast = document.createElement("div");
+    toast.className = `wc-toast${type ? ` wc-toast--${type}` : ""}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.classList.add("is-leaving");
+        toast.addEventListener("animationend", () => toast.remove());
+    }, 3000);
+}
+
+// Skeleton table rows
+function skeletonRows(cols, count = 4) {
+    return Array.from({ length: count }, () =>
+        `<tr class="wc-skeleton-row">${Array.from({ length: cols }, (_, i) =>
+            `<td><div class="wc-skeleton-bar wc-skeleton-bar--${i === 0 ? "long" : "med"}"></div></td>`
+        ).join("")}</tr>`
+    ).join("");
+}
+
+// Button loading state helpers
+function setButtonLoading(button, loading) {
+    if (!button) return;
+    if (loading) {
+        button.classList.add("is-loading");
+        button.disabled = true;
+    } else {
+        button.classList.remove("is-loading");
+        button.disabled = false;
+    }
 }

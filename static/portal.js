@@ -246,12 +246,43 @@ async function pollForVoucher(mPaymentId) {
     let attempts = 0;
     const maxAttempts = 24; // 24 × 5 s = 2 minutes
 
+    const statusMessages = [
+        'Confirming payment…',
+        'Confirming payment…',
+        'Generating your voucher…',
+        'Generating your voucher…',
+        'Almost done…',
+    ];
+
+    function getStatusText(n) {
+        if (n <= 2) return statusMessages[0];
+        if (n <= 5) return statusMessages[2];
+        return statusMessages[4];
+    }
+
     async function attempt() {
         attempts++;
         // Update progress bar (max 95% until complete)
         if (progressBar) {
             const pct = Math.min(95, (attempts / maxAttempts) * 100);
             progressBar.style.width = pct + '%';
+        }
+        // Show progressive status text
+        const loadingEl = document.getElementById('voucher-loading');
+        if (loadingEl) {
+            const statusHtml = `<div class="portal-spinner"></div>
+                <p class="voucher-status-text">${getStatusText(attempts)}</p>
+                <p class="voucher-attempt-counter">Step ${attempts} of ${maxAttempts}</p>`;
+            const existingSpinner = loadingEl.querySelector('.portal-spinner');
+            if (existingSpinner) {
+                // Update text without replacing spinner
+                const statusText = loadingEl.querySelector('.voucher-status-text');
+                const counterText = loadingEl.querySelector('.voucher-attempt-counter');
+                if (statusText) statusText.textContent = getStatusText(attempts);
+                if (counterText) counterText.textContent = `Step ${attempts} of ${maxAttempts}`;
+            } else {
+                loadingEl.innerHTML = statusHtml;
+            }
         }
         // After 3 attempts (~15s), show wait hint
         if (attempts >= 3 && waitHint) waitHint.style.display = '';
@@ -309,7 +340,7 @@ async function pollForVoucher(mPaymentId) {
             setTimeout(attempt, 5000);
         } else {
             document.getElementById('voucher-loading').innerHTML =
-                '<p class="portal-error" style="display:block;">Taking longer than expected.<br>Please show this screen to a staff member.</p>';
+                '<p class="portal-error" style="display:block;">We couldn\'t confirm your voucher yet.<br>Your payment was received — please show this screen to staff, or contact us via WhatsApp for your voucher code.</p>';
         }
     }
 

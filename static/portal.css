@@ -669,3 +669,106 @@ body {
     animation: pulseGlow 2s ease-in-out 0.4s 2;
     border-color: var(--p-teal);
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   UX/UI ENHANCEMENTS — Screen transitions, plan card polish, payment selector
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Reduced motion ────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── C1: Screen transitions ────────────────────────────────────────────────── */
+.portal-screen {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.portal-screen.is-active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 250ms ease, transform 250ms ease;
+}
+
+/* ── C2: Plan card stagger entrance & selection polish ─────────────────────── */
+.plan-card {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: planCardIn 0.35s ease forwards;
+}
+
+.plan-card:nth-child(1) { animation-delay: 0.04s; }
+.plan-card:nth-child(2) { animation-delay: 0.10s; }
+.plan-card:nth-child(3) { animation-delay: 0.16s; }
+.plan-card:nth-child(4) { animation-delay: 0.22s; }
+.plan-card:nth-child(5) { animation-delay: 0.28s; }
+
+@keyframes planCardIn {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.plan-card:active {
+    transform: scale(0.98);
+}
+
+/* ── C3: Payment method selector polish ────────────────────────────────────── */
+.payment-method-option {
+    min-height: 56px;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.payment-method-option:hover {
+    transform: translateY(-1px);
+}
+
+.payment-method-option:active {
+    transform: scale(0.98);
+}
+
+.pm-icon {
+    transition: color 0.2s, transform 0.2s;
+}
+
+.payment-method-option:hover .pm-icon {
+    transform: scale(1.12);
+}
+
+/* ── C4: Success icon animated checkmark ───────────────────────────────────── */
+.result-icon--ok svg {
+    animation: checkDraw 0.5s ease 0.2s both;
+}
+
+@keyframes checkDraw {
+    from { stroke-dashoffset: 40; opacity: 0; }
+    to   { stroke-dashoffset: 0;  opacity: 1; }
+}
+
+.result-icon--ok {
+    animation: iconPop 0.4s ease;
+}
+
+@keyframes iconPop {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── C5: Polling status text styles ────────────────────────────────────────── */
+.voucher-status-text {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--p-text);
+    margin-bottom: 4px;
+}
+
+.voucher-attempt-counter {
+    font-size: 0.72rem;
+    color: var(--p-muted);
+    font-variant-numeric: tabular-nums;
+}

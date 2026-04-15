@@ -950,3 +950,233 @@ button {
         align-self: flex-start;
     }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   UX/UI ENHANCEMENTS — Mobile sidebar, transitions, toasts, skeletons, badges
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Reduced motion ────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── A1: Collapsible sidebar on mobile ─────────────────────────────────────── */
+.sidebar-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: 1px solid var(--wc-border);
+    border-radius: 10px;
+    background: var(--wc-panel-strong);
+    cursor: pointer;
+}
+
+.sidebar-toggle span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--wc-text);
+    transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.app-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: rgba(21, 21, 21, 0.45);
+    opacity: 0;
+    transition: opacity 250ms ease;
+}
+
+.app-sidebar-overlay.is-visible {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 820px) {
+    .sidebar-toggle {
+        display: flex;
+    }
+
+    .app-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .app-sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 100;
+        width: 290px;
+        max-width: 85vw;
+        transform: translateX(-100%);
+        transition: transform 280ms ease;
+        border-right: 1px solid rgba(21, 21, 21, 0.08);
+        border-radius: 0;
+        overflow-y: auto;
+    }
+
+    .app-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    .app-nav {
+        grid-template-columns: 1fr;
+    }
+
+    .app-nav-link {
+        min-height: 48px;
+    }
+}
+
+/* ── A2: Responsive tables ─────────────────────────────────────────────────── */
+@media (max-width: 820px) {
+    .wc-table th,
+    .wc-table td {
+        font-size: 0.82rem;
+        padding: 10px 8px;
+    }
+}
+
+/* ── A3: Touch targets ─────────────────────────────────────────────────────── */
+@media (max-width: 820px) {
+    .wc-form-field input,
+    .wc-form-field select {
+        min-height: 48px;
+    }
+
+    .wc-button,
+    .wc-link-button {
+        min-height: 44px;
+    }
+
+    .wc-action-button {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* ── B1: Skeleton loaders ──────────────────────────────────────────────────── */
+@keyframes wc-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.wc-skeleton-row td {
+    padding: 14px 10px;
+}
+
+.wc-skeleton-bar {
+    height: 14px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(21,21,21,0.06) 25%, rgba(21,21,21,0.10) 50%, rgba(21,21,21,0.06) 75%);
+    background-size: 200% 100%;
+    animation: wc-shimmer 1.4s infinite;
+}
+
+.wc-skeleton-bar--short { width: 60%; }
+.wc-skeleton-bar--med   { width: 80%; }
+.wc-skeleton-bar--long  { width: 100%; }
+
+/* ── B2: Screen transitions ────────────────────────────────────────────────── */
+.app-screen {
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+.app-screen.is-active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+
+/* ── B3: Toast notifications ───────────────────────────────────────────────── */
+.wc-toast-container {
+    position: fixed;
+    top: 22px;
+    right: 22px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.wc-toast {
+    pointer-events: auto;
+    min-width: 260px;
+    max-width: 400px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: var(--wc-panel);
+    border: 1px solid var(--wc-border);
+    box-shadow: 0 8px 28px rgba(21, 21, 21, 0.14);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--wc-text);
+    animation: wc-toast-in 280ms ease forwards;
+}
+
+.wc-toast.is-leaving {
+    animation: wc-toast-out 220ms ease forwards;
+}
+
+.wc-toast--success {
+    border-color: rgba(11, 122, 100, 0.25);
+    color: var(--wc-success);
+}
+
+.wc-toast--error {
+    border-color: rgba(255, 59, 10, 0.25);
+    color: #9f2100;
+}
+
+@keyframes wc-toast-in {
+    from { opacity: 0; transform: translateX(30px) scale(0.95); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes wc-toast-out {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to   { opacity: 0; transform: translateX(30px) scale(0.95); }
+}
+
+/* ── B4: Button loading states ─────────────────────────────────────────────── */
+.wc-button.is-loading,
+.wc-button-secondary.is-loading {
+    pointer-events: none;
+    opacity: 0.7;
+    position: relative;
+}
+
+.wc-button.is-loading::after,
+.wc-button-secondary.is-loading::after {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: 8px;
+    border: 2.5px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: wc-btn-spin 0.7s linear infinite;
+    vertical-align: middle;
+}
+
+.wc-button-secondary.is-loading::after {
+    border-color: rgba(21,21,21,0.15);
+    border-top-color: var(--wc-text);
+}
+
+@keyframes wc-btn-spin {
+    to { transform: rotate(360deg); }
+}

@@ -44,11 +44,18 @@
             </div>
         </aside>
 
+        <div class="app-sidebar-overlay" id="sidebar-overlay"></div>
+
         <section class="app-main">
             <header class="app-topbar">
-                <div>
-                    <p class="wc-kicker" id="screen-kicker">Overview</p>
-                    <h1 class="app-screen-title" id="screen-title">Dashboard</h1>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Open menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div>
+                        <p class="wc-kicker" id="screen-kicker">Overview</p>
+                        <h1 class="app-screen-title" id="screen-title">Dashboard</h1>
+                    </div>
                 </div>
                 <div class="app-topbar-actions">
                     <div class="wc-connection-status" id="mikrotik-connection-status" title="MikroTik connection status">
@@ -454,6 +461,7 @@
         </section>
     </main>
 
+    <div id="toast-container" class="wc-toast-container"></div>
     <script src="/static/app.js"></script>
 </body>
 </html>
