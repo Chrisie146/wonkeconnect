@@ -240,6 +240,13 @@ def get_onsite_payment_identifier(
 
     post_body = urllib.parse.urlencode(data).encode()
 
+    LOGGER.info(
+        "PayFast onsite request for %s: data=%s, signature=%s",
+        m_payment_id,
+        {k: v for k, v in data.items() if k != "signature"},
+        sig,
+    )
+
     try:
         req = urllib.request.Request(
             f"https://{host}/onsite/process",
@@ -249,6 +256,9 @@ def get_onsite_payment_identifier(
         )
         with urllib.request.urlopen(req, timeout=10) as response:
             body = response.read().decode().strip()
+
+        # Log the raw response
+        LOGGER.info("PayFast onsite response: %s", body)
 
         # PayFast returns either JSON with uuid field or UUID string directly
         try:
@@ -260,14 +270,20 @@ def get_onsite_payment_identifier(
                 return uuid, "ok"
             else:
                 reason = result.get("error") or result.get("message") or str(result)
-                LOGGER.warning("PayFast onsite identifier generation failed: %s", reason)
+                LOGGER.error(
+                    "PayFast onsite identifier generation failed: %s (full response: %s)",
+                    reason,
+                    body,
+                )
                 return None, f"PayFast error: {reason}"
         except json.JSONDecodeError:
             # If not JSON, assume it's the UUID directly (UUID format is 36 chars)
             if body and len(body) == 36:
                 LOGGER.info("Generated onsite payment identifier for %s", m_payment_id)
                 return body, "ok"
-            LOGGER.warning("PayFast returned unexpected response: %s", body)
+            LOGGER.error(
+                "PayFast returned unexpected response: %s (expected UUID or JSON)", body
+            )
             return None, f"Unexpected response: {body}"
 
     except urllib.error.URLError as exc:
