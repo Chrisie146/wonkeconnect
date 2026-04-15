@@ -169,13 +169,6 @@ async function initiatePayment(method, payButton) {
             sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
         }
 
-        // For PayFast, redirect to auto-submit form page.
-        // This page submits the form to PayFast in a way that works on iOS CNA.
-        if (method === 'payfast' && data.m_payment_id) {
-            window.location.href = '/payment/redirect/' + encodeURIComponent(data.m_payment_id);
-            return;
-        }
-
         const actionUrl = method === 'netcash' ? data.netcash_url : data.payfast_url;
         const params    = data.params;
 
