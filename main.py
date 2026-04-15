@@ -69,7 +69,12 @@ def get_payfast_config() -> dict:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    init_db()
+    try:
+        init_db()
+        LOGGER.info("Database initialized successfully")
+    except Exception as exc:
+        LOGGER.error("Failed to initialize database during startup: %s", exc, exc_info=True)
+        raise
     yield
 
 
@@ -1018,7 +1023,14 @@ if __name__ == "__main__":
 
 @app.get("/health")
 def healthcheck() -> dict[str, str]:
-    return {"status": "ok", "timestamp": utc_now()}
+    try:
+        # Quick DB connectivity check
+        with get_connection() as conn:
+            conn.execute("SELECT 1")
+        return {"status": "ok", "timestamp": utc_now()}
+    except Exception as exc:
+        LOGGER.error("Health check failed: %s", exc)
+        raise HTTPException(status_code=503, detail=str(exc))
 
 
 @app.get("/settings/mikrotik", response_model=MikroTikSettingsResponse)
