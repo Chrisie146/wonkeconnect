@@ -627,9 +627,11 @@ async def netcash_notify(request: Request) -> dict:
 
     LOGGER.info("Netcash postback received: %s", data)
 
-    transaction_accepted = data.get("TransactionAccepted", "").lower()
+    # Netcash sends TransactionAccepted as "true"/"false" — check both casing variants
+    transaction_accepted = data.get("TransactionAccepted", data.get("transactionaccepted", "")).lower()
     reference = data.get("p2", data.get("Reference", ""))
-    netcash_order_id = data.get("NetcashOrderId", "")
+    netcash_order_id = data.get("NetcashOrderId", data.get("OrderId", ""))
+    LOGGER.info("Netcash postback: ref=%s accepted=%s order_id=%s", reference, transaction_accepted, netcash_order_id)
 
     if transaction_accepted != "true":
         LOGGER.info("Netcash payment not accepted for ref=%s status=%s", reference, transaction_accepted)
@@ -661,6 +663,7 @@ async def netcash_notify(request: Request) -> dict:
         (order["plan_id"],),
     )
     voucher_id: Optional[int] = None
+    voucher_code: str = ""
     if plan and plan["active"]:
         try:
             voucher = persist_voucher(
@@ -668,7 +671,8 @@ async def netcash_notify(request: Request) -> dict:
                 code_length=8,
             )
             voucher_id = int(voucher["id"])
-            LOGGER.info("Voucher %s created for Netcash order %s", voucher["code"], reference)
+            voucher_code = str(voucher["code"])
+            LOGGER.info("Voucher %s created for Netcash order %s", voucher_code, reference)
             try:
                 sync_voucher_to_mikrotik(voucher)
             except Exception as sync_exc:
@@ -686,9 +690,10 @@ async def netcash_notify(request: Request) -> dict:
     )
 
     # Send voucher via SMS
-    if voucher_id and plan:
+    if voucher_code and plan:
         try:
-            _try_send_voucher_sms(reference, voucher["code"], plan["name"])
+            LOGGER.info("Attempting SMS for Netcash order %s voucher %s", reference, voucher_code)
+            _try_send_voucher_sms(reference, voucher_code, plan["name"])
         except Exception as sms_exc:
             LOGGER.warning("SMS send failed for Netcash order %s: %s", reference, sms_exc)
 
