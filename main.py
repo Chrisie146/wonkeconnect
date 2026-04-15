@@ -861,19 +861,38 @@ def debug_reset_sync() -> dict:
 @app.get("/api/debug/sms-test")
 def sms_test(to: str = Query(..., description="Phone number to send test SMS to")) -> dict:
     """Fire a test SMS to verify BulkSMS credentials and phone normalisation."""
+    import re, httpx as _httpx
     cfg = get_bulksms_config()
     token_id = cfg.get("bulksms_token_id", "")
     token_secret = cfg.get("bulksms_token_secret", "")
     if not token_id:
         return {"ok": False, "error": "BULKSMS_TOKEN (or BULKSMS_TOKEN_ID) not set in env vars"}
-    ok = send_voucher_sms(
-        token_id=token_id,
-        token_secret=token_secret,
-        to=to,
-        voucher_code="TEST1234",
-        plan_name="Test",
-    )
-    return {"ok": ok, "to": to, "token_id_prefix": token_id[:8] + "..."}
+
+    # Normalise phone number same way as bulksms.py
+    digits = re.sub(r"\D", "", to)
+    if digits.startswith("0") and len(digits) == 10:
+        digits = "27" + digits[1:]
+    phone = ("+" if not digits.startswith("+") else "") + digits
+
+    payload = {"to": phone, "body": "Wonke Connect test SMS. If you received this, BulkSMS is working!"}
+    if token_secret:
+        auth = (token_id, token_secret)
+        headers = {}
+    else:
+        headers = {"Authorization": f"Basic {token_id}"}
+        auth = None
+
+    try:
+        resp = _httpx.post("https://api.bulksms.com/v1/messages", json=payload, auth=auth, headers=headers, timeout=15)
+        return {
+            "ok": resp.status_code in (200, 201),
+            "status_code": resp.status_code,
+            "response_body": resp.text[:1000],
+            "phone_normalised": phone,
+            "token_id_prefix": token_id[:8] + "...",
+        }
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
 
 
 @app.get("/api/debug/orders")

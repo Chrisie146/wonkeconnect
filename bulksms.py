@@ -64,6 +64,7 @@ def send_voucher_sms(
             headers=headers,
             timeout=15,
         )
+        LOGGER.info("BulkSMS response: status=%s body=%s", resp.status_code, resp.text[:500])
         if resp.status_code in (200, 201):
             LOGGER.info("SMS sent to %s (voucher %s)", phone, voucher_code)
             return True
