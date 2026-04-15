@@ -39,4 +39,3 @@ payfast.md
 
 # Setup scripts (not needed at runtime)
 setup_db.py
-schema.sql
