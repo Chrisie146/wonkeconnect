@@ -515,8 +515,8 @@ def initiate_netcash_payment(payload: PaymentInitiateRequest) -> dict:
         "p4": f"{price:.2f}",                            # Amount in ZAR
         "Budget": "Y",                                   # Required by Netcash
         "m5": f"{server_url}/payment/netcash/notify",   # Server-to-server postback
-        "m6": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",  # Success redirect
-        "m7": f"{server_url}/portal?status=cancel",     # Cancel redirect
+        "m6": f"{server_url}/payment/netcash/return",   # Success redirect (GET or POST)
+        "m7": f"{server_url}/payment/netcash/cancel",   # Cancel redirect (GET or POST)
     }
     LOGGER.info(
         "Netcash initiate: ref=%s m1_prefix=%s p4=%s",
@@ -541,6 +541,27 @@ async def netcash_notify_get(request: Request) -> RedirectResponse:
     if ref and server_url:
         return RedirectResponse(url=f"{server_url}/portal?status=success&m_payment_id={ref}")
     return RedirectResponse(url="/portal?status=success")
+
+
+@app.get("/payment/netcash/return")
+@app.post("/payment/netcash/return")
+async def netcash_return(request: Request) -> RedirectResponse:
+    """Handles Netcash browser redirect after payment (GET or POST to m6)."""
+    if request.method == "POST":
+        form_data = dict(await request.form())
+        ref = form_data.get("p2", form_data.get("Reference", ""))
+    else:
+        ref = request.query_params.get("p2", request.query_params.get("Reference", ""))
+    if ref:
+        return RedirectResponse(url=f"/portal?status=success&m_payment_id={ref}")
+    return RedirectResponse(url="/portal?status=success")
+
+
+@app.get("/payment/netcash/cancel")
+@app.post("/payment/netcash/cancel")
+async def netcash_cancel(request: Request) -> RedirectResponse:
+    """Handles Netcash browser redirect on cancel (GET or POST to m7)."""
+    return RedirectResponse(url="/portal?status=cancel")
 
 
 @app.post("/payment/netcash/notify", status_code=200)
