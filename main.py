@@ -49,6 +49,11 @@ def _generate_payment_id() -> str:
     return secrets.token_hex(16)
 
 
+def _is_sandbox(value: str) -> bool:
+    """Return True if the sandbox setting string means 'enabled'."""
+    return value.strip().lower() not in ("false", "0", "no", "off", "")
+
+
 def get_payfast_config() -> dict:
     """Read PayFast settings: env vars take priority over DB (for Railway deployments)."""
     import os
@@ -62,7 +67,7 @@ def get_payfast_config() -> dict:
         "payfast_merchant_key": os.getenv("PAYFAST_MERCHANT_KEY", db.get("payfast_merchant_key", "")),
         "payfast_passphrase":   os.getenv("PAYFAST_PASSPHRASE",   db.get("payfast_passphrase", "")),
         "payfast_server_url":   os.getenv("PAYFAST_SERVER_URL",   db.get("payfast_server_url", "")),
-        "payfast_sandbox":      os.getenv("PAYFAST_SANDBOX",      db.get("payfast_sandbox", "true")),
+        "payfast_sandbox":      os.getenv("PAYFAST_SANDBOX") or db.get("payfast_sandbox", "true"),
         "mikrotik_sync_api_key": os.getenv("MIKROTIK_SYNC_API_KEY", db.get("mikrotik_sync_api_key", "")),
     }
 
@@ -403,7 +408,7 @@ def get_payfast_settings() -> PayFastSettingsResponse:
         merchant_key=s.get("payfast_merchant_key", ""),
         passphrase=s.get("payfast_passphrase", ""),
         server_url=s.get("payfast_server_url", ""),
-        sandbox=s.get("payfast_sandbox", "true").lower() != "false",
+        sandbox=_is_sandbox(s.get("payfast_sandbox", "true")),
         configured=bool(merchant_id),
         mikrotik_sync_api_key=s.get("mikrotik_sync_api_key", ""),
     )
@@ -729,7 +734,8 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
     merchant_key = pf.get("payfast_merchant_key", "")
     server_url = pf.get("payfast_server_url", "").rstrip("/")
     passphrase = pf.get("payfast_passphrase", "")
-    sandbox = pf.get("payfast_sandbox", "true").lower() != "false"
+    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
+    LOGGER.info("PayFast payment initiation: sandbox=%s (raw=%r)", sandbox, pf.get("payfast_sandbox"))
 
     if not merchant_id or not merchant_key:
         raise HTTPException(
@@ -796,7 +802,7 @@ async def payment_notify(request: Request) -> dict:
 
     pf = get_payfast_config()
     passphrase = pf.get("payfast_passphrase", "")
-    sandbox = pf.get("payfast_sandbox", "true").lower() != "false"
+    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
 
     LOGGER.info("PayFast ITN received for m_payment_id=%s status=%s data=%s",
                 data.get("m_payment_id"), data.get("payment_status"), data)
