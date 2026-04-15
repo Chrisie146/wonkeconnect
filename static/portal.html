@@ -65,6 +65,8 @@
                 <span class="accepted-payment__label">Accepted payment</span>
                 <img src="/marketing/icons/icon%20Orange.png" alt="1Voucher" class="accepted-payment__icon">
                 <span class="accepted-payment__name">1Voucher</span>
+                <span class="accepted-payment__sep">&amp;</span>
+                <span class="accepted-payment__name">Bank (PayFast)</span>
             </div>
         </section>
 
@@ -93,22 +95,29 @@
 
                 <div id="form-error" class="portal-error" style="display:none;"></div>
 
-                <!-- Payment method: 1Voucher only (PayFast route preserved in backend if re-enabled) -->
-                <input type="radio" name="payment_method" value="netcash" id="pm-netcash" checked hidden>
+                <div class="payment-buttons">
+                    <button class="portal-pay-button portal-pay-button--bank" id="pay-bank" type="button">
+                        <span class="pay-btn-label">Pay <span class="pay-amount"></span> by Bank</span>
+                        <span class="pay-btn-loading" style="display:none;">
+                            <span class="btn-spinner"></span> Redirecting to PayFast…
+                        </span>
+                    </button>
+                    <p class="portal-secure-note">
+                        🔒 Processed securely by <strong>PayFast</strong>. We never see your card details.
+                    </p>
 
-                <button class="portal-pay-button" id="pay-button" type="submit">
-                    <span class="pay-btn-label"><img src="/marketing/icons/icon%20Orange.png" alt="" class="v1-icon" aria-hidden="true">Pay <span id="pay-amount"></span> with 1Voucher</span>
-                    <span class="pay-btn-loading" style="display:none;">
-                        <span class="btn-spinner"></span> Redirecting to payment…
-                    </span>
-                </button>
+                    <div class="pay-divider"><span>or</span></div>
 
-                <p class="portal-secure-note" id="secure-note-payfast" style="display:none;">
-                    🔒 Processed securely by <strong>PayFast</strong>. We never see your card details.
-                </p>
-                <p class="portal-secure-note" id="secure-note-netcash">
-                    🔒 Processed securely by <strong>Netcash</strong>. Enter your 1Voucher PIN on the next page.
-                </p>
+                    <button class="portal-pay-button" id="pay-1voucher" type="button">
+                        <span class="pay-btn-label"><img src="/marketing/icons/icon%20Orange.png" alt="" class="v1-icon" aria-hidden="true">Pay <span class="pay-amount"></span> with 1Voucher</span>
+                        <span class="pay-btn-loading" style="display:none;">
+                            <span class="btn-spinner"></span> Redirecting to payment…
+                        </span>
+                    </button>
+                    <p class="portal-secure-note">
+                        🔒 Processed securely by <strong>Netcash</strong>. Enter your 1Voucher PIN on the next page.
+                    </p>
+                </div>
             </form>
 
             <!-- 1Voucher Step Guide -->

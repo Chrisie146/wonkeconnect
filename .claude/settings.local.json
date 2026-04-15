@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python \"D:\\\\Balmoral 2025\\\\build_summary.py\")",
+      "Bash(python -c ':*)"
+    ]
+  }
+}

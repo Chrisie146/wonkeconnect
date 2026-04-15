@@ -314,6 +314,34 @@ body {
 .portal-pay-button:hover { opacity: 0.88; }
 .portal-pay-button:disabled { opacity: 0.55; cursor: not-allowed; }
 
+.portal-pay-button--bank {
+    background: var(--p-teal, #10a6a0);
+}
+
+/* ── Two-button payment block ────────────────────── */
+.payment-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pay-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--p-muted);
+    font-size: 0.8rem;
+    margin: 4px 0;
+}
+
+.pay-divider::before,
+.pay-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--p-border, #e2e8f0);
+}
+
 .portal-secure-note {
     text-align: center;
     font-size: 0.78rem;

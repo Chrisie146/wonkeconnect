@@ -1,0 +1,1443 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - banner [ref=e4]:
+        - generic [ref=e7]:
+          - generic [ref=e8]:
+            - link "api-2" [ref=e10] [cursor=pointer]:
+              - /url: https://api.netcash.co.za
+              - img "api-2" [ref=e11]
+            - link "mobile menu" [ref=e12] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e13]: 
+          - generic [ref=e15]:
+            - link "search icon" [ref=e16] [cursor=pointer]:
+              - /url: "#"
+              - img "search icon" [ref=e17]
+            - link "Support" [ref=e20] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/contact-support/
+        - generic [ref=e25]:
+          - generic: eCommerce
+      - generic [ref=e29]:
+        - heading "Pay Now – eCommerce" [level=1] [ref=e30]
+        - text:   
+    - main [ref=e31]:
+      - generic [ref=e32]:
+        - main [ref=e33]:
+          - generic [ref=e38]:
+            - generic [ref=e44]:
+              - heading "Before you start" [level=4] [ref=e45]: Before you start
+              - paragraph [ref=e46]:
+                - text: Please download the
+                - link "suggested API integration process flow" [ref=e47] [cursor=pointer]:
+                  - /url: https://api.netcash.co.za/wp-content/uploads/2020/09/Suggested-Process.pdf
+                  - strong [ref=e48]: suggested API integration process flow
+                - text: document and use it as a reference when developing.
+                - text: Kindly adhere to the Netcash
+                - link "brand guidelines" [ref=e49] [cursor=pointer]:
+                  - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#labels
+                - text: when developing.
+              - heading "Programmers Guide" [level=4] [ref=e50]
+              - paragraph [ref=e51]:
+                - text: Refer to our
+                - link "Programmers guide" [ref=e52] [cursor=pointer]:
+                  - /url: http://api.netcash.co.za/netcash-programmers-guide/
+                - text: for more detail on how to apply the required methodology in this document.
+                - text: Ensure that the
+                - link "settings for developers" [ref=e53] [cursor=pointer]:
+                  - /url: http://api.netcash.co.za/netcash-programmers-guide#nb
+                - text: are adhered to before you proceed with your implementation.
+              - heading "Web Service Methods" [level=4] [ref=e54]
+              - paragraph [ref=e55]:
+                - text: The list of Netcash
+                - link "web service methods" [ref=e56] [cursor=pointer]:
+                  - /url: https://api.netcash.co.za/glossary#w
+                - text: can be
+                - link "found here" [ref=e57] [cursor=pointer]:
+                  - /url: https://api.netcash.co.za/ws-methods/
+                - text: .
+              - heading "Quick Start Guides" [level=4] [ref=e58]
+              - paragraph [ref=e59]:
+                - link "Quick Start Guides" [ref=e60] [cursor=pointer]:
+                  - /url: https://netcash.co.za/quick-start-guides/
+                - text: will help you understand this service and get you started.
+            - generic [ref=e64]:
+              - generic [ref=e66]:
+                - heading "Overview" [level=4] [ref=e67]: Overview
+                - paragraph [ref=e68]: Pay Now eCommerce is a secure online payment service that can be integrated to receive payments. We offer 3D secure Credit Card payments via Mastercard, Visa, American Express, and Diners Club, Instant EFT, Bank EFT and Retail payments. Our Scan to Pay feature allows multiple wallets and banking applications to scan a single QR code for payment.
+                - paragraph [ref=e69]:
+                  - strong [ref=e70]: "Also see:"
+                - list [ref=e71]:
+                  - listitem [ref=e72]:
+                    - link "Payment Request" [ref=e73] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/billing#request
+                  - listitem [ref=e74]:
+                    - link "Pay Now Billing" [ref=e75] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/billing/
+                  - listitem [ref=e76]:
+                    - link "Pay Now QR/POS" [ref=e77] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/scan-to-pay/
+              - generic [ref=e79]:
+                - heading "Service set up process" [level=4] [ref=e80]: Service set up process
+                - list [ref=e81]:
+                  - listitem [ref=e82]:
+                    - text: Specify the
+                    - link "payment options" [ref=e83] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/pay-now-ecommerce#pmtmethods
+                    - text: you require on application for the service.
+                    - list [ref=e84]:
+                      - listitem [ref=e85]:
+                        - text: Issue a
+                        - link "Pay Now service key" [ref=e86] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary#s
+                        - text: on the Netcash account;
+                        - list [ref=e87]:
+                          - listitem [ref=e88]: Choose the payment options and
+                          - listitem [ref=e89]:
+                            - text: Insert or select the
+                            - link "postback URL’s" [ref=e90] [cursor=pointer]:
+                              - /url: "#tHeURLs"
+                            - text: .
+                      - listitem [ref=e91]:
+                        - strong [ref=e92]: "NOTE:"
+                        - text: If you developing on behalf of a Netcash client,
+                        - strong [ref=e93]: supply the
+                        - text: client with the
+                        - link "postback URL’s" [ref=e94] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary#p
+                        - text: they need to insert in your
+                        - link "NetConnector profile" [ref=e95] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/
+                        - text: for you to consume before the transaction is processed.
+                - paragraph [ref=e96]:
+                  - strong [ref=e97]: Recommended Implementation Methodology
+                  - text: ":"
+                - list [ref=e98]:
+                  - listitem [ref=e99]:
+                    - text: Develop the
+                    - link "form POST method" [ref=e100] [cursor=pointer]:
+                      - /url: https://www.w3schools.com/tags/att_base_target.asp
+                      - strong [ref=e101]: form POST method
+                    - text: from your system with attribute
+                    - link "target=”_top”" [ref=e102] [cursor=pointer]:
+                      - /url: https://www.w3schools.com/tags/att_base_target.asp
+                      - strong [ref=e103]: target=”_top”
+                    - text: to send the payment instruction to
+                    - link "https://paynow.netcash.co.za/site/paynow.aspx" [ref=e104] [cursor=pointer]:
+                      - /url: https://paynow.netcash.co.za/site/paynow.aspx
+                    - text: to open the link in the
+                    - strong [ref=e105]: full body
+                    - text: of the
+                    - strong [ref=e106]: current window
+                    - text: .
+                  - listitem [ref=e107]:
+                    - text: Alternatively, develop the
+                    - link "form POST method" [ref=e108] [cursor=pointer]:
+                      - /url: https://html.com/attributes/form-method/#ltform_method8221POST8221gt
+                      - strong [ref=e109]: form POST method
+                    - text: from your system with no target attribute to send the payment instruction to open
+                    - link "https://paynow.netcash.co.za/site/paynow.aspx" [ref=e110] [cursor=pointer]:
+                      - /url: https://paynow.netcash.co.za/site/paynow.aspx
+                    - text: in itself.
+                    - emphasis [ref=e111]:
+                      - superscript [ref=e112]:
+                        - text: (
+                        - strong [ref=e113]: NB
+                        - text: "! This method is not advisable due to cross-browser compatibility, especially for Microsoft Edge and Apple Safari browsers –"
+                    - link "read more)" [ref=e114] [cursor=pointer]:
+                      - /url: "#nbx"
+                      - emphasis [ref=e115]:
+                        - superscript [ref=e116]: read more)
+              - generic [ref=e117]:
+                - generic [ref=e119]: 
+                - paragraph [ref=e120]:
+                  - strong [ref=e121]: "IMPORTANT:"
+                  - text: Do
+                  - strong [ref=e122]: not
+                  - text: process the form post in an
+                  - emphasis [ref=e123]: iFrame
+                  - text: "-or embedded into any other page/system source; as certain services will"
+                  - strong [ref=e124]: not
+                  - text: process unless opened in a
+                  - link "parent window" [ref=e125] [cursor=pointer]:
+                    - /url: https://html.com/attributes/a-target/
+                    - strong [ref=e126]: parent window
+                  - text: due to banking regulations -and/or security protocols.
+              - generic [ref=e128]:
+                - heading "Credit Card transaction processing notice" [level=4] [ref=e129]: Credit Card transaction processing notice
+                - paragraph [ref=e130]:
+                  - text: Please take note that any new Pay Now eCommerce service has a default transaction limit of R100.00. If the transaction limit (ZAR value) is exceeded – Credit Card payment options will not display.
+                  - link "Contact" [ref=e131] [cursor=pointer]:
+                    - /url: https://netcash.co.za/contact-netcash/
+                  - text: your Netcash Payments Advisor for assistance.
+              - generic [ref=e133]:
+                - heading "Pay Now payment methods" [level=4] [ref=e134]: Pay Now payment methods
+                - paragraph [ref=e135]:
+                  - text: The payment methods available and descriptions on the Pay Now service are or see the
+                  - link "visual representation here" [ref=e136] [cursor=pointer]:
+                    - /url: "#pmtmethods"
+                  - text: .
+                - paragraph [ref=e137]:
+                  - link "Read more" [ref=e138] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/other-documents/glossary#p
+                  - text: about the different payment methods we offer.
+              - generic [ref=e140]:
+                - heading "Pay Now service key" [level=4] [ref=e141]: Pay Now service key
+                - paragraph [ref=e142]:
+                  - text: The
+                  - link "service key" [ref=e143] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#s
+                  - text: is used to authenticate access to the Pay Now service. It identifies the origin of the payment instruction. The service key determines the Netcash account to which the proceeds of the payment will be credited and what
+                  - link "payment options" [ref=e144] [cursor=pointer]:
+                    - /url: "#PnCfig"
+                  - text: are available to the customer.
+              - generic [ref=e146]:
+                - heading "NetConnector" [level=4] [ref=e147]: NetConnector
+                - paragraph [ref=e148]:
+                  - text: The
+                  - link "NetConnector" [ref=e149] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/
+                  - text: "profile settings allow customisation according to specific requirements:"
+                - list [ref=e150]:
+                  - listitem [ref=e151]:
+                    - strong [ref=e152]: Active
+                    - text: ": Indicates the service setting."
+                  - listitem [ref=e153]:
+                    - strong [ref=e154]: Email
+                    - text: ": This is the email address to which any errors in processing will be directed and also to which the service key will be sent. Notifications of transactions will also be received here."
+                  - listitem [ref=e155]:
+                    - strong [ref=e156]: Service Key
+                    - text: ": This is the unique service key (field"
+                    - strong [ref=e157]: m1
+                    - text: ) which must be included in the POST to the Netcash URL.
+                  - listitem [ref=e158]:
+                    - strong [ref=e159]: Allow Master and Visa payments
+                    - text: ": This option is used to control whether your client may pay by credit card."
+                  - listitem [ref=e160]:
+                    - strong [ref=e161]: Accept url
+                    - text: ": Enter your accept URL here. If the URL changes for any reason, it can be updated on this page. This is the URL that the browser is sent to if the transaction is successful."
+                  - listitem [ref=e162]:
+                    - strong [ref=e163]: Decline url
+                    - text: ": Enter your decline URL here. If the URL changes for any reason, it can be updated on this page. This is the URL that the browser is sent to if the transaction is declined."
+                  - listitem [ref=e164]:
+                    - strong [ref=e165]: "Notify url:"
+                    - text: This is the URL that Netcash will call for all transactions to indicate payment status. It is also used for offline transactions such as Bank EFT and Retail payments where the payment is not processed in real time. These payments will be posted when they are made and Netcash will notify your system through this URL.
+                  - listitem [ref=e166]:
+                    - strong [ref=e167]: "Redirect url:"
+                    - text: This is the URL that the browser is sent to once the complete button is clicked on the Bank EFT and Retail payment screens on Netcash. This could/would return the customer to your site while you are waiting for a payment to be made.
+                  - listitem [ref=e168]:
+                    - strong [ref=e169]: Make test mode active
+                    - text: ": use this setting while you are testing the system to simulate transactions. Once your development is complete, this box should be un-ticked"
+              - generic [ref=e171]:
+                - heading "Test Card Details" [level=4] [ref=e172]: Test Card Details
+                - paragraph [ref=e173]:
+                  - text: Use the following card details to test transactions.
+                  - strong [ref=e174]: Please note
+                  - text: ": it is highly advisable to test transactions only if the service is in “"
+                  - link "TEST MODE" [ref=e175] [cursor=pointer]:
+                    - /url: "#Configure"
+                  - text: ” to avoid charges
+                - table [ref=e176]:
+                  - rowgroup [ref=e177]:
+                    - row "Visa Successful" [ref=e178]:
+                      - cell "Visa Successful" [ref=e179]:
+                        - strong [ref=e180]: Visa Successful
+                      - cell [ref=e181]
+                    - row "Visa Card Number 4000000000000002" [ref=e182]:
+                      - cell "Visa Card Number" [ref=e183]
+                      - cell "4000000000000002" [ref=e184]
+                    - row "Expiry Date Any future date (MMYY)" [ref=e185]:
+                      - cell "Expiry Date" [ref=e186]
+                      - cell "Any future date (MMYY)" [ref=e187]
+                    - row "CVC/CVV/CVD 123" [ref=e188]:
+                      - cell "CVC/CVV/CVD" [ref=e189]:
+                        - link "CVC/CVV/CVD" [ref=e190] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/Card_security_code
+                      - cell "123" [ref=e191]
+                    - row "MasterCard Successful" [ref=e192]:
+                      - cell "MasterCard Successful" [ref=e193]:
+                        - strong [ref=e194]: MasterCard Successful
+                      - cell [ref=e195]
+                    - row "Master Card Number 5200000000000015" [ref=e196]:
+                      - cell "Master Card Number" [ref=e197]
+                      - cell "5200000000000015" [ref=e198]
+                    - row "Expiry Date Any future date (MMYY)" [ref=e199]:
+                      - cell "Expiry Date" [ref=e200]
+                      - cell "Any future date (MMYY)" [ref=e201]
+                    - row "CVC/CVV/CVD 123" [ref=e202]:
+                      - cell "CVC/CVV/CVD" [ref=e203]:
+                        - link "CVC/CVV/CVD" [ref=e204] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/Card_security_code
+                      - cell "123" [ref=e205]
+                    - row "Visa Failed" [ref=e206]:
+                      - cell "Visa Failed" [ref=e207]:
+                        - strong [ref=e208]: Visa Failed
+                      - cell [ref=e209]
+                    - row "Visa Card Number 4000000000000036" [ref=e210]:
+                      - cell "Visa Card Number" [ref=e211]
+                      - cell "4000000000000036" [ref=e212]
+                    - row "Expiry Date Any future date (MMYY)" [ref=e213]:
+                      - cell "Expiry Date" [ref=e214]
+                      - cell "Any future date (MMYY)" [ref=e215]
+                    - row "CVC/CVV/CVD 123" [ref=e216]:
+                      - cell "CVC/CVV/CVD" [ref=e217]:
+                        - link "CVC/CVV/CVD" [ref=e218] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/Card_security_code
+                      - cell "123" [ref=e219]
+                    - row "MasterCard Failed" [ref=e220]:
+                      - cell "MasterCard Failed" [ref=e221]:
+                        - strong [ref=e222]: MasterCard Failed
+                      - cell [ref=e223]
+                    - row "Master Card Number 5200000000000049" [ref=e224]:
+                      - cell "Master Card Number" [ref=e225]
+                      - cell "5200000000000049" [ref=e226]
+                    - row "Expiry Date Any future date (MMYY)" [ref=e227]:
+                      - cell "Expiry Date" [ref=e228]
+                      - cell "Any future date (MMYY)" [ref=e229]
+                    - row "CVC/CVV/CVD 123" [ref=e230]:
+                      - cell "CVC/CVV/CVD" [ref=e231]:
+                        - link "CVC/CVV/CVD" [ref=e232] [cursor=pointer]:
+                          - /url: https://en.wikipedia.org/wiki/Card_security_code
+                      - cell "123" [ref=e233]
+              - generic [ref=e235]:
+                - heading "Configure" [level=4] [ref=e236]:
+                  - text: Configure
+                  - strong
+                - paragraph [ref=e237]:
+                  - strong [ref=e238]: "Pay Now service key variables:"
+                - paragraph [ref=e239]:
+                  - text: Select
+                  - strong [ref=e240]: ACCOUNT PROFILE
+                  - text: "->"
+                  - strong [ref=e241]: NetConnector
+                  - text: "->"
+                  - strong [ref=e242]: PAY NOW
+                  - text: in your
+                  - link "Netcash account" [ref=e243] [cursor=pointer]:
+                    - /url: https://merchant.netcash.co.za/
+                  - text: to configure Pay Now variables.
+              - paragraph [ref=e246]
+              - generic [ref=e248]:
+                - heading "Pre-defined postback URLs" [level=4] [ref=e249]: Pre-defined postback URLs
+                - paragraph [ref=e250]:
+                  - text: The Pay Now configuration allows the configuration of
+                  - link "pre-defined postback URL groups" [ref=e251] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#p
+                  - text: .
+                - paragraph [ref=e252]:
+                  - text: These
+                  - link "postback URLs" [ref=e253] [cursor=pointer]:
+                    - /url: "#urlpb"
+                  - text: "perform two (2) functions namely:"
+                - list [ref=e254]:
+                  - listitem [ref=e255]:
+                    - text: They
+                    - strong [ref=e256]: send data
+                    - text: back to the host system about the transaction, especially useful for real-time notifications/allocation of credits.
+                    - list [ref=e257]:
+                      - listitem [ref=e258]:
+                        - text: "Once the transaction is processed, the status and the transactional data of the payment gets redirected to two pages:"
+                        - list [ref=e259]:
+                          - listitem [ref=e260]: The Notify URL always receives all the transaction data but it is not client-facing -and
+                          - listitem [ref=e261]: The Accept -or Decline URL depending on the transaction result
+                  - listitem [ref=e262]:
+                    - text: The Accept -or Decline URL
+                    - strong [ref=e263]: redirects
+                    - text: the person making the payment, to a
+                    - strong [ref=e264]: visual display
+                    - text: of the transaction status once the transaction is completed.
+                - paragraph [ref=e265]: You will note a Redirect URL in the list as well. This URL is used for when the user click’s the CANCEL PAYMENT button on the payment page, or when the user selects a non-real-time payment; to remind the user of i.e. the payment reference to use.
+                - paragraph [ref=e266]:
+                  - text: Read more about
+                  - link "pre-defined postback URL groups" [ref=e267] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#p
+                  - text: here.
+              - paragraph [ref=e270]
+              - paragraph [ref=e273]: Netcash allows ISV’s to use default postbacks for their clients by adding them to a dropdown list. This will minimize the risk of incorrect postbacks. It should only be used where all clients have the same postback URLs .
+              - generic [ref=e275]:
+                - paragraph [ref=e276]
+                - paragraph [ref=e277]
+              - paragraph [ref=e280]: In the above example, Netcash will send the responses to the centralized server and the client simply selects the software from the drop-down list and Netcash directs the postback data .
+              - generic [ref=e282]:
+                - heading "POST to the Pay Now page:" [level=4] [ref=e283]: "POST to the Pay Now page:"
+                - paragraph [ref=e284]: The following data is required for the e-commerce payment gateway
+                - generic [ref=e286]:
+                  - generic [ref=e287]:
+                    - generic [ref=e288] [cursor=pointer]:
+                      - text: 
+                      - generic [ref=e289]: 
+                      - text: Mandatory Data
+                    - generic [ref=e290]:
+                      - strong [ref=e291]: Mandatory data
+                      - paragraph
+                      - table [ref=e292]:
+                        - rowgroup [ref=e293]:
+                          - 'row "Field No: Field Name: Length: Alpha / Numeric Data Mandatory Description:" [ref=e294]':
+                            - cell "Field No:" [ref=e295]:
+                              - strong [ref=e296]: "Field No:"
+                            - cell "Field Name:" [ref=e297]:
+                              - strong [ref=e298]: "Field Name:"
+                            - cell "Length:" [ref=e299]:
+                              - strong [ref=e300]: "Length:"
+                            - cell "Alpha / Numeric" [ref=e301]:
+                              - strong [ref=e302]: Alpha / Numeric
+                            - cell "Data Mandatory" [ref=e303]:
+                              - strong [ref=e304]: Data Mandatory
+                            - cell "Description:" [ref=e305]:
+                              - strong [ref=e306]: "Description:"
+                          - row "1 m1 36 AN Yes Pay Now service key." [ref=e307]:
+                            - cell "1" [ref=e308]
+                            - cell "m1" [ref=e309]
+                            - cell "36" [ref=e310]
+                            - cell "AN" [ref=e311]
+                            - cell "Yes" [ref=e312]
+                            - cell "Pay Now service key." [ref=e313]
+                          - 'row "2 m2 36 AN Yes The key issued by Netcash to identify the software origin of transactions. (only used by Netcash ISV‘s use the default value: 24ade73c-98cf-47b3-99be-cc7b867b3080)" [ref=e314]':
+                            - cell "2" [ref=e315]
+                            - cell "m2" [ref=e316]
+                            - cell "36" [ref=e317]
+                            - cell "AN" [ref=e318]
+                            - cell "Yes" [ref=e319]
+                            - 'cell "The key issued by Netcash to identify the software origin of transactions. (only used by Netcash ISV‘s use the default value: 24ade73c-98cf-47b3-99be-cc7b867b3080)" [ref=e320]':
+                              - text: The key issued by Netcash to identify the software origin of transactions. (only used by Netcash
+                              - link "ISV" [ref=e321] [cursor=pointer]:
+                                - /url: http://api.netcash.co.za/glossary#i
+                              - text: "‘s use the default value:"
+                              - strong [ref=e322]: 24ade73c-98cf-47b3-99be-cc7b867b3080
+                              - text: )
+                          - row "3 p2 25 AN Yes This is a unique reference that you will assign to each transaction. This reference should only ever be USED ONCE." [ref=e323]:
+                            - cell "3" [ref=e324]
+                            - cell "p2" [ref=e325]
+                            - cell "25" [ref=e326]
+                            - cell "AN" [ref=e327]
+                            - cell "Yes" [ref=e328]
+                            - cell "This is a unique reference that you will assign to each transaction. This reference should only ever be USED ONCE." [ref=e329]
+                          - row "4 p3* 50 AN Yes The description of the goods sent for payment for your internal reference. (** see tip below)" [ref=e330]:
+                            - cell "4" [ref=e331]
+                            - cell "p3*" [ref=e332]
+                            - cell "50" [ref=e333]
+                            - cell "AN" [ref=e334]
+                            - cell "Yes" [ref=e335]
+                            - cell "The description of the goods sent for payment for your internal reference. (** see tip below)" [ref=e336]:
+                              - text: The description of the goods sent for payment for your internal reference.
+                              - superscript [ref=e337]: (
+                              - link "**" [ref=e338] [cursor=pointer]:
+                                - /url: https://api.netcash.co.za/inbound-payments/pay-now/pay-now-ecommerce/#tip
+                              - superscript [ref=e339]: see tip below)
+                          - row "5 p4 6.2 N Yes Transaction amount that is to be settled to the card – must be in South African Rand (ZAR)" [ref=e340]:
+                            - cell "5" [ref=e341]
+                            - cell "p4" [ref=e342]
+                            - cell "6.2" [ref=e343]
+                            - cell "N" [ref=e344]
+                            - cell "Yes" [ref=e345]
+                            - cell "Transaction amount that is to be settled to the card – must be in South African Rand (ZAR)" [ref=e346]
+                          - row "6 Budget 1 AN Yes Y/N" [ref=e347]:
+                            - cell "6" [ref=e348]
+                            - cell "Budget" [ref=e349]
+                            - cell "1" [ref=e350]
+                            - cell "AN" [ref=e351]
+                            - cell "Yes" [ref=e352]
+                            - cell "Y/N" [ref=e353]
+                          - row "7 submit Yes Submit Button" [ref=e354]:
+                            - cell "7" [ref=e355]
+                            - cell "submit" [ref=e356]
+                            - cell [ref=e357]
+                            - cell [ref=e358]
+                            - cell "Yes" [ref=e359]
+                            - cell "Submit Button" [ref=e360]
+                      - paragraph [ref=e361]:
+                        - strong [ref=e362]: Example
+                      - generic [ref=e363]:
+                        - generic [ref=e364]:
+                          - generic [ref=e365] [cursor=pointer]: Raw
+                          - generic [ref=e366] [cursor=pointer]: Copy
+                          - generic [ref=e367] [cursor=pointer]: Extern
+                          - text: EnlighterJS
+                        - generic [ref=e369]:
+                          - generic [ref=e371]: <form name="form" id="x1" method="POST" action="https://paynow.netcash.co.za/site/paynow.aspx" target="_top"> <!---Form POST **--->
+                          - generic [ref=e373]: <input type="text" name="M1" value="7XXX34c4-XXX-40X8-9f1d-7fbXXXX830d3"> <!--- YOUR PAY NOW SERVICE KEY GOES IN HERE --->
+                          - generic [ref=e375]: <input type="text" name="M2" value="24ade73c-98cf-47b3-99be-cc7b867b3080"> <!--- SOFTWARE VENDOR KEY GOES IN HERE --->
+                          - generic [ref=e377]: <input type="text" name="p2" value="ID:123"> <!---Unique ID for this / each transaction--->
+                          - generic [ref=e379]: <input type="text" name="p3" value="Test / Demo goods"> <!---Description of goods being purchased--->
+                          - generic [ref=e381]: <input type="text" name="p4" value="5.00"> <!---Amount to be settled / paid--->
+                          - generic [ref=e383]: <input type="text" name="Budget" value="Y"> <!---Compulsory should be Y--->
+                          - generic [ref=e385]: <input name="submit" type="submit" value="PAY"> <!---Submit button--->
+                          - generic [ref=e387]: </form>
+                      - paragraph
+                  - generic [ref=e388]:
+                    - generic [ref=e389] [cursor=pointer]:
+                      - generic [ref=e390]: 
+                      - text:  Optional Fields
+                    - text: Raw Copy Extern EnlighterJS
+                  - generic [ref=e391]:
+                    - generic [ref=e392] [cursor=pointer]:
+                      - generic [ref=e393]: 
+                      - text:  Subscription Billing
+                    - text: Raw Copy Extern EnlighterJS
+                  - generic [ref=e394]:
+                    - generic [ref=e395] [cursor=pointer]:
+                      - generic [ref=e396]: 
+                      - text:  Split payments
+                    - text: Raw Copy Extern EnlighterJS
+                - strong [ref=e397]:
+                  - emphasis [ref=e398]: "**Note"
+                - superscript [ref=e399]:
+                  - text: This indicator will create the split payment transactions
+                  - strong [ref=e400]: but
+                  - text: each transaction still needs to be manually authorized by a user on the Netcash account.
+                - paragraph
+                - list [ref=e401]:
+                  - listitem [ref=e402]:
+                    - superscript [ref=e403]: "If M21 = 1 then M22 and:"
+                  - listitem [ref=e404]:
+                    - superscript [ref=e405]:
+                      - text: M23 or M24 and M25 or M26 are
+                      - strong [ref=e406]: compulsory
+                - paragraph [ref=e407]: These parameters are required by Pay Now when submitting a transaction. Although data is not mandatory for all the fields; all the fields must be passed in the form post.
+                - paragraph [ref=e408]:
+                  - text: Netcash will authenticate the Pay Now service key in field
+                  - strong [ref=e409]: m1
+                  - text: .
+                  - text: Only if the key is successfully authenticated, will the payer be directed to the payment method selection page.
+                - paragraph [ref=e410]:
+                  - strong [ref=e411]:
+                    - superscript [ref=e412]: "!"
+                  - text: Tokenization will
+                  - strong [ref=e413]: not
+                  - text: occur if the Pay Now profile is set to
+                  - strong [ref=e414]: TEST MODE
+                  - text: active.
+                - paragraph [ref=e415]: Subscription billing is available for Visa -and MasterCard only.
+              - generic [ref=e417]:
+                - heading "TIPS" [level=4] [ref=e418]: TIPS
+                - list [ref=e419]:
+                  - listitem [ref=e420]: "* Add the purchaser’s name -and the order/invoice number in brackets after the description to easily identify the transaction on your Netcash statement without referencing Pay Now transaction reports."
+                  - listitem [ref=e421]:
+                    - text: "** Add the debtor’s reference in this field, not displayed on the Netcash on screen statement, but is downloadable using the"
+                    - link "Netcash statement download" [ref=e422] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/standard-integration/netcash-statement/
+                    - text: .
+              - generic [ref=e424]:
+                - heading "Subscription Scheduling" [level=4] [ref=e425]: Subscription Scheduling
+                - strong [ref=e427]: Start Date
+                - generic [ref=e428]: The subscription start date is explicitly provided by the integrator in the creation request (Form Post field M19).
+                - list [ref=e429]:
+                  - listitem [ref=e430]:
+                    - strong [ref=e432]: M19 defines the billing schedule
+                  - listitem [ref=e433]:
+                    - generic [ref=e434]:
+                      - text: The initial
+                      - strong [ref=e435]: 3DS authentication or payment does not set the start date
+                - generic [ref=e436]:
+                  - text: Recurring charges are generated according to the configured frequency (daily, weekly, monthly, etc.),
+                  - strong [ref=e437]: using M19 as the schedule anchor.
+                - strong [ref=e439]: Monthly Subscriptions
+                - list [ref=e440]:
+                  - listitem [ref=e441]:
+                    - generic [ref=e442]: If the start date falls on a specific day of the month, payments run on that same day each month.
+                  - listitem [ref=e443]:
+                    - generic [ref=e444]:
+                      - text: If the start date is the
+                      - strong [ref=e445]: last day of a month,
+                      - text: all future payments run on the
+                      - strong [ref=e446]: last day of each subsequent month.
+                - generic [ref=e447]: Example
+                - generic [ref=e448]:
+                  - text: "Start date:"
+                  - strong [ref=e449]: 31 January
+                - generic [ref=e450]:
+                  - text: "February:"
+                  - strong [ref=e451]: 28/29 February
+                - generic [ref=e452]:
+                  - text: "March:"
+                  - strong [ref=e453]: 31 March
+                - generic [ref=e454]:
+                  - text: "April:"
+                  - strong [ref=e455]: 30 April
+              - generic [ref=e457]:
+                - heading "Additional data" [level=4] [ref=e458]: Additional data
+                - list [ref=e459]:
+                  - listitem [ref=e460]:
+                    - text: See the recommended
+                    - link "implementation methodology here" [ref=e461] [cursor=pointer]:
+                      - /url: "#howto"
+                    - text: .
+                  - listitem [ref=e462]: Ensure that the amount includes both decimals and no more than 2 N characters.
+                  - listitem [ref=e463]: Any data which you need to be returned in the Notify, Accept or Decline post should be included in m4, m5 or m6.
+                  - listitem [ref=e464]:
+                    - text: Data in these fields will be returned in the Extra1, Extra2 and Extra3 fields of the post and in the export of your
+                    - link "Netcash statement" [ref=e465] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/standard-integration/netcash-statement#recon
+                    - text: for reconciliation purposes.
+              - generic [ref=e467]:
+                - heading "IMPORTANT NOTE" [level=4] [ref=e468]: IMPORTANT NOTE
+                - generic [ref=e469]:
+                  - img "warning alert icon" [ref=e471]
+                  - generic [ref=e475]:
+                    - paragraph
+                    - list [ref=e476]:
+                      - listitem [ref=e477]:
+                        - text: "** POST must be to a"
+                        - strong [ref=e478]: PARENT WINDOW
+                        - text: – target=”_top” –
+                        - link "not in an iFrame" [ref=e479] [cursor=pointer]:
+                          - /url: https://stackoverflow.com/questions/23178505/good-reasons-why-not-to-use-iframes-in-page-content
+                        - text: . Netcash inserts some Pay Now services in an iFrame from our suppliers for security reasons. Generally browsers do not allow for iFrame within an iFrame on the same page. See
+                        - link "Cross Frame Scripting article" [ref=e480] [cursor=pointer]:
+                          - /url: https://owasp.org/www-community/attacks/Cross_Frame_Scripting
+                      - listitem [ref=e481]: "*** extra field – you can place any data in the extra field which will be returned"
+                    - paragraph
+                  - link "✕" [ref=e482] [cursor=pointer]:
+                    - /url: "#"
+                    - generic [ref=e483]: ✕
+              - generic [ref=e485]:
+                - heading "Shopping Cart Plugins" [level=4] [ref=e486]: Shopping Cart Plugins
+                - paragraph [ref=e487]:
+                  - text: Your Netcash account is already integrated into various
+                  - link "free online shopping cart plugins" [ref=e488] [cursor=pointer]:
+                    - /url: https://netcash.co.za/ecommerce-plugins/
+                  - text: and we also support customised integration.
+              - generic [ref=e490]:
+                - heading "Pay Now payment selections" [level=4] [ref=e491]: Pay Now payment selections
+                - paragraph [ref=e492]
+                - paragraph [ref=e493]: The payer can choose from a multiple of payment options, as confirgured in the NetConnector profile on the Netcash account.
+                - paragraph [ref=e494]:
+                  - link "click image for a demonstration" [ref=e495] [cursor=pointer]:
+                    - /url: https://netcash.co.za/demos/landing-page.html
+                    - superscript [ref=e496]: click image for a demonstration
+                - paragraph [ref=e497]
+                - paragraph [ref=e498]: The payer selects the method of payment (credit card in this example) and is directed to the payment input page.
+                - paragraph [ref=e499]
+                - paragraph [ref=e500]
+                - paragraph [ref=e501]
+                - paragraph [ref=e502]:
+                  - text: The payer is then redirected to the bank
+                  - link "3D Secure" [ref=e503] [cursor=pointer]:
+                    - /url: https://en.wikipedia.org/wiki/3-D_Secure
+                  - text: input screen where they enter the
+                  - link "OTP" [ref=e504] [cursor=pointer]:
+                    - /url: https://en.wikipedia.org/wiki/One-time_password
+                  - text: sent to their email or mobile device to authorize the transaction.
+                - paragraph [ref=e505]
+                - paragraph [ref=e506]:
+                  - text: If the payer selects
+                  - strong [ref=e507]: Retail
+                  - text: ", the following is displayed which they can print, email or SMS to make a retail payment"
+                - paragraph [ref=e508]
+                - paragraph [ref=e510]
+                - paragraph [ref=e511]:
+                  - text: When paying via
+                  - strong [ref=e512]: BANK EFT
+                  - text: the following is displayed to enable the payer to make a bank-on-bank EFT (selecting Netcash (PTY) Ltd as
+                  - link "predefined bank beneficiary" [ref=e513] [cursor=pointer]:
+                    - /url: https://www.google.com/search?q=predefined+bank+beneficiary
+                  - text: )
+                - paragraph [ref=e514]
+                - paragraph [ref=e515]:
+                  - text: The EFT payment details are displayed with a
+                  - strong [ref=e516]: unique deposit reference
+                  - text: which must be used to make the EFT payment.
+              - generic [ref=e518]:
+                - heading "Notify, Accept, Decline and Redirect pages" [level=4] [ref=e519]: Notify, Accept, Decline and Redirect pages
+                - paragraph [ref=e520]:
+                  - text: After the transaction is complete, the data is returned to the
+                  - link "respective pages" [ref=e521] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#p
+                  - text: which were configured in the Pay Now service key.
+                - paragraph [ref=e522]:
+                  - link "Read more" [ref=e523] [cursor=pointer]:
+                    - /url: "#tHeURLs"
+                  - text: about the Postback URL’s.
+                - paragraph [ref=e524]:
+                  - text: Should you place the gateway in “
+                  - link "test mode" [ref=e525] [cursor=pointer]:
+                    - /url: "#tHeURLs"
+                  - text: “, the data will automatically be posted to the following url’s depending on transaction status unless you have set your own postback url’s.
+                - list [ref=e526]:
+                  - listitem [ref=e527]:
+                    - link "https://api.netcash.co.za/inbound-payments/pay-now/accept-response/" [ref=e528] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/accept-response/
+                      - text: https://api.netcash.co.za/inbound-payments/pay-now/
+                      - strong [ref=e529]: accept
+                      - text: "-response/"
+                  - listitem [ref=e530]:
+                    - link "https://api.netcash.co.za/inbound-payments/pay-now/declined-response/" [ref=e531] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/declined-response/
+                      - text: https://api.netcash.co.za/inbound-payments/pay-now/
+                      - strong [ref=e532]: declined
+                      - text: "-response/"
+                  - listitem [ref=e533]:
+                    - link "https://api.netcash.co.za/inbound-payments/pay-now/redirect-response/" [ref=e534] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/redirect-response/
+                      - text: https://api.netcash.co.za/inbound-payments/pay-now/
+                      - strong [ref=e535]: redirect
+                      - text: "-response/"
+                  - listitem [ref=e536]:
+                    - link "https://api.netcash.co.za/inbound-payments/pay-now/notify-response/" [ref=e537] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/notify-response/
+                      - text: https://api.netcash.co.za/inbound-payments/pay-now/
+                      - strong [ref=e538]: notify
+                      - text: "-response/"
+                - paragraph [ref=e539]:
+                  - text: It is advisable that all developers reconcile (indicate payment status) from the data sent to the
+                  - strong [ref=e540]: NOTIFY
+                  - text: url.
+                  - generic [ref=e542]:
+                    - strong [ref=e543]: "Note:"
+                    - text: For subscription payments it is important to take note of the card expiry date as Netcash will cease running the subscriptions once the card has expired. Where a subscription card has expired, a new subscription will need to be obtained from the card holder
+                - paragraph [ref=e544]:
+                  - text: This URL is called for all transactions
+                  - link "asynchronously" [ref=e545] [cursor=pointer]:
+                    - /url: https://www.vocabulary.com/dictionary/asynchronous
+                  - text: .
+                - paragraph [ref=e546]:
+                  - text: Unlike Instant EFT and Credit Card services, delayed services like Retail -and Bank EFT do not call the Accept and Decline URL, however, all the payment type notifications are sent to the Notify URL.
+                  - text: Netcash will retry a number of times before it is noted as not received.
+                  - text: The Notify data should be used for system updates whereas Accept and Decline URL’s are to be used to synchronously update the Buyer on the status of the transaction.
+                - paragraph [ref=e547]:
+                  - strong [ref=e548]: "TIP:"
+                  - text: Remove the [
+                  - emphasis [ref=e549]: FromUri
+                  - text: "] attribute from your endpoint signature."
+              - generic [ref=e551]:
+                - heading "Acceptable URL Format" [level=4] [ref=e552]: Acceptable URL Format
+                - paragraph [ref=e553]: When the Accept, Decline or Notify URLs are called, any data provided in the M10 field will be appended to the URL. URLs that already contain query parameters are not supported and may lead to invalid URLs being formed. Do not include query parameters in the URLs using the query separator (“?” in the URL).
+                - paragraph [ref=e554]: Netcash Pay Now appends a query separator (“?”) to the URL followed by the M10 field contents.
+              - generic [ref=e556]:
+                - heading "Example:" [level=4] [ref=e557]
+                - table [ref=e558]:
+                  - rowgroup [ref=e559]:
+                    - 'row "M10 field content: Value1=1&Value2=extra" [ref=e560]':
+                      - cell "M10 field content:" [ref=e561]
+                      - cell "Value1=1&Value2=extra" [ref=e562]
+                    - row "https://cart.merchant.site/complete.aspx" [ref=e563]:
+                      - cell [ref=e564]
+                      - cell "https://cart.merchant.site/complete.aspx" [ref=e565]
+                    - 'row "Final URL: https://cart.merchant.site/complete.aspx?Value1=1&Value2=extra" [ref=e566]':
+                      - cell "Final URL:" [ref=e567]
+                      - cell "https://cart.merchant.site/complete.aspx?Value1=1&Value2=extra" [ref=e568]
+                - paragraph [ref=e569]:
+                  - text: The M10 field can be used for any additional transaction identifying information. Ensure that the contents of the M10 field are acceptable URL query parameters.
+                  - text: Also consider using the Extra1 (M4), Extra2 (M5), Extra3 (M6) fields for similar information.
+              - generic [ref=e571]:
+                - heading "Notify URL" [level=4] [ref=e572]: Notify URL
+                - paragraph [ref=e573]:
+                  - text: Data URL is
+                  - strong [ref=e574]: form POST
+                  - text: .
+                - paragraph [ref=e575]:
+                  - strong [ref=e576]: "content-type:"
+                  - generic [ref=e578]: application/x-www-form-urlencoded
+                - table [ref=e579]:
+                  - rowgroup [ref=e580]:
+                    - 'row "Field No: Field Name: Alpha / Numeric / Boolean Description:" [ref=e581]':
+                      - cell "Field No:" [ref=e582]:
+                        - strong [ref=e583]: "Field No:"
+                      - cell "Field Name:" [ref=e584]:
+                        - strong [ref=e585]: "Field Name:"
+                      - cell "Alpha / Numeric / Boolean" [ref=e586]:
+                        - strong [ref=e587]: Alpha / Numeric / Boolean
+                      - cell "Description:" [ref=e588]:
+                        - strong [ref=e589]: "Description:"
+                    - row "1 TransactionAccepted B “true” means the transaction was successful" [ref=e590]:
+                      - cell "1" [ref=e591]
+                      - cell "TransactionAccepted" [ref=e592]
+                      - cell "B" [ref=e593]
+                      - cell "“true” means the transaction was successful" [ref=e594]
+                    - row "2 CardHolderIpAddr AN This is the original IP the request was made from" [ref=e595]:
+                      - cell "2" [ref=e596]
+                      - cell "CardHolderIpAddr" [ref=e597]
+                      - cell "AN" [ref=e598]
+                      - cell "This is the original IP the request was made from" [ref=e599]
+                    - row "3 RequestTrace AN This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e600]:
+                      - cell "3" [ref=e601]
+                      - cell "RequestTrace" [ref=e602]
+                      - cell "AN" [ref=e603]
+                      - cell "This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e604]
+                    - row "4 Reference AN The unique reference sent to Netcash in the original request" [ref=e605]:
+                      - cell "4" [ref=e606]
+                      - cell "Reference" [ref=e607]
+                      - cell "AN" [ref=e608]
+                      - cell "The unique reference sent to Netcash in the original request" [ref=e609]
+                    - row "5 Extra1 AN The extra field sent in the m4 variable when you made the reques" [ref=e610]:
+                      - cell "5" [ref=e611]
+                      - cell "Extra1" [ref=e612]
+                      - cell "AN" [ref=e613]
+                      - cell "The extra field sent in the m4 variable when you made the reques" [ref=e614]
+                    - row "6 Extra2 AN The extra field sent in the m5 variable when you made the request" [ref=e615]:
+                      - cell "6" [ref=e616]
+                      - cell "Extra2" [ref=e617]
+                      - cell "AN" [ref=e618]
+                      - cell "The extra field sent in the m5 variable when you made the request" [ref=e619]
+                    - row "7 Extra3 AN The extra field sent up in the m6 variable when you made the request" [ref=e620]:
+                      - cell "7" [ref=e621]
+                      - cell "Extra3" [ref=e622]
+                      - cell "AN" [ref=e623]
+                      - cell "The extra field sent up in the m6 variable when you made the request" [ref=e624]
+                    - row "8 Amount N This is the amount sent Netcash in the original request" [ref=e625]:
+                      - cell "8" [ref=e626]
+                      - cell "Amount" [ref=e627]
+                      - cell "N" [ref=e628]
+                      - cell "This is the amount sent Netcash in the original request" [ref=e629]
+                    - row "9 Method N 1 Credit card 2 Bank EFT 3 Retail 4 Ozow 5 MasterPass 6 Visa Checkout 7 Masterpass QR 9 Payflex 10 Flash1Voucher 11 paymyway" [ref=e630]:
+                      - cell "9" [ref=e631]
+                      - cell "Method" [ref=e632]
+                      - cell "N" [ref=e633]
+                      - cell "1 Credit card 2 Bank EFT 3 Retail 4 Ozow 5 MasterPass 6 Visa Checkout 7 Masterpass QR 9 Payflex 10 Flash1Voucher 11 paymyway" [ref=e634]:
+                        - text: 1 Credit card
+                        - text: 2 Bank EFT
+                        - text: 3 Retail
+                        - text: 4 Ozow
+                        - text: 5 MasterPass
+                        - text: 6 Visa Checkout
+                        - text: 7 Masterpass QR
+                        - text: 9 Payflex
+                        - text: 10 Flash1Voucher
+                        - text: 11 paymyway
+                    - 'row "The below four (4) fields are only returned if: The transaction was a Credit Card payment M14 (tokenise card) field is set to True “Test Mode” in the NetConnector Profile in the Netcash Account is set to false" [ref=e635]':
+                      - 'cell "The below four (4) fields are only returned if: The transaction was a Credit Card payment M14 (tokenise card) field is set to True “Test Mode” in the NetConnector Profile in the Netcash Account is set to false" [ref=e636]':
+                        - superscript [ref=e637]: "The below four (4) fields are only returned if:"
+                        - paragraph
+                        - list [ref=e638]:
+                          - listitem [ref=e639]:
+                            - superscript [ref=e640]:
+                              - text: The transaction was a
+                              - strong [ref=e641]: Credit Card
+                              - text: payment
+                          - listitem [ref=e642]:
+                            - superscript [ref=e643]:
+                              - strong [ref=e644]: M14
+                              - text: (
+                              - link "tokenise card" [ref=e645] [cursor=pointer]:
+                                - /url: "#subs"
+                              - text: ) field is set to
+                              - strong [ref=e646]: "True"
+                          - listitem [ref=e647]:
+                            - superscript [ref=e648]:
+                              - text: “Test Mode” in the NetConnector Profile in the
+                              - link "Netcash Account" [ref=e649] [cursor=pointer]:
+                                - /url: https://merchant.netcash.co.za
+                              - text: is set to
+                              - strong [ref=e650]: "false"
+                    - row "10 ccToken AN Credit Card Vault GUiD" [ref=e651]:
+                      - cell "10" [ref=e652]
+                      - cell "ccToken" [ref=e653]
+                      - cell "AN" [ref=e654]
+                      - cell "Credit Card Vault GUiD" [ref=e655]:
+                        - text: Credit Card
+                        - link "Vault" [ref=e656] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary#v
+                        - link "GUiD" [ref=e657] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary#g
+                    - row "11 ccHolder AN Credit Cardholder name" [ref=e658]:
+                      - cell "11" [ref=e659]
+                      - cell "ccHolder" [ref=e660]
+                      - cell "AN" [ref=e661]
+                      - cell "Credit Cardholder name" [ref=e662]
+                    - row "12 ccMasked AN Masked Credit Card number" [ref=e663]:
+                      - cell "12" [ref=e664]
+                      - cell "ccMasked" [ref=e665]
+                      - cell "AN" [ref=e666]
+                      - cell "Masked Credit Card number" [ref=e667]
+                    - row "13 ccExpiry N Credit Card expiry date MMCCYY" [ref=e668]:
+                      - cell "13" [ref=e669]
+                      - cell "ccExpiry" [ref=e670]
+                      - cell "N" [ref=e671]
+                      - cell "Credit Card expiry date MMCCYY" [ref=e672]
+              - generic [ref=e674]:
+                - heading "Accept URL" [level=4] [ref=e675]: Accept URL
+                - paragraph [ref=e676]:
+                  - text: Data URL is
+                  - strong [ref=e677]: form POST
+                  - text: .
+                - paragraph [ref=e678]:
+                  - strong [ref=e679]: "content-type:"
+                  - generic [ref=e681]: application/x-www-form-urlencoded
+                - table [ref=e682]:
+                  - rowgroup [ref=e683]:
+                    - 'row "Field No: Field Name: Alpha / Numeric / Boolean Description:" [ref=e684]':
+                      - cell "Field No:" [ref=e685]:
+                        - strong [ref=e686]: "Field No:"
+                      - cell "Field Name:" [ref=e687]:
+                        - strong [ref=e688]: "Field Name:"
+                      - cell "Alpha / Numeric / Boolean" [ref=e689]:
+                        - strong [ref=e690]: Alpha / Numeric / Boolean
+                      - cell "Description:" [ref=e691]:
+                        - strong [ref=e692]: "Description:"
+                    - row "1 TransactionAccepted B “true” means the transaction was successful" [ref=e693]:
+                      - cell "1" [ref=e694]
+                      - cell "TransactionAccepted" [ref=e695]
+                      - cell "B" [ref=e696]
+                      - cell "“true” means the transaction was successful" [ref=e697]
+                    - row "2 CardHolderIpAddr AN This is the original IP the request was made from" [ref=e698]:
+                      - cell "2" [ref=e699]
+                      - cell "CardHolderIpAddr" [ref=e700]
+                      - cell "AN" [ref=e701]
+                      - cell "This is the original IP the request was made from" [ref=e702]
+                    - row "3 RequestTrace AN This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e703]:
+                      - cell "3" [ref=e704]
+                      - cell "RequestTrace" [ref=e705]
+                      - cell "AN" [ref=e706]
+                      - cell "This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e707]
+                    - row "4 Reference AN The unique reference sent to Netcash in the original request" [ref=e708]:
+                      - cell "4" [ref=e709]
+                      - cell "Reference" [ref=e710]
+                      - cell "AN" [ref=e711]
+                      - cell "The unique reference sent to Netcash in the original request" [ref=e712]
+                    - row "5 Extra1 AN The extra field sent in the m4 variable when you made the reques" [ref=e713]:
+                      - cell "5" [ref=e714]
+                      - cell "Extra1" [ref=e715]
+                      - cell "AN" [ref=e716]
+                      - cell "The extra field sent in the m4 variable when you made the reques" [ref=e717]
+                    - row "6 Extra2 AN The extra field sent in the m5 variable when you made the request" [ref=e718]:
+                      - cell "6" [ref=e719]
+                      - cell "Extra2" [ref=e720]
+                      - cell "AN" [ref=e721]
+                      - cell "The extra field sent in the m5 variable when you made the request" [ref=e722]
+                    - row "7 Extra3 AN The extra field sent up in the m6 variable when you made the request" [ref=e723]:
+                      - cell "7" [ref=e724]
+                      - cell "Extra3" [ref=e725]
+                      - cell "AN" [ref=e726]
+                      - cell "The extra field sent up in the m6 variable when you made the request" [ref=e727]
+                    - row "8 Amount N This is the amount sent Netcash in the original request" [ref=e728]:
+                      - cell "8" [ref=e729]
+                      - cell "Amount" [ref=e730]
+                      - cell "N" [ref=e731]
+                      - cell "This is the amount sent Netcash in the original request" [ref=e732]
+                    - row "9 Method N 1 Credit card 2 Bank EFT 3 Retail 4 Instant EFT 5 MasterPass 6 Visa Click to Pay 7 Masterpass QR 9 Payflex 10 Flash1Voucher 11 paymyway" [ref=e733]:
+                      - cell "9" [ref=e734]
+                      - cell "Method" [ref=e735]
+                      - cell "N" [ref=e736]
+                      - cell "1 Credit card 2 Bank EFT 3 Retail 4 Instant EFT 5 MasterPass 6 Visa Click to Pay 7 Masterpass QR 9 Payflex 10 Flash1Voucher 11 paymyway" [ref=e737]:
+                        - text: 1 Credit card
+                        - text: 2 Bank EFT
+                        - text: 3 Retail
+                        - text: 4 Instant EFT
+                        - text: 5 MasterPass
+                        - text: 6 Visa Click to Pay
+                        - text: 7 Masterpass QR
+                        - text: 9 Payflex
+                        - text: 10 Flash1Voucher
+                        - text: 11 paymyway
+                    - 'row "The below four (4) fields are only returned if: The transaction was a Credit Card payment M14 (tokenise card) field is set to True “Test Mode” in the NetConnector Profile in the Netcash Account is set to false" [ref=e738]':
+                      - 'cell "The below four (4) fields are only returned if: The transaction was a Credit Card payment M14 (tokenise card) field is set to True “Test Mode” in the NetConnector Profile in the Netcash Account is set to false" [ref=e739]':
+                        - superscript [ref=e740]: "The below four (4) fields are only returned if:"
+                        - paragraph
+                        - list [ref=e741]:
+                          - listitem [ref=e742]:
+                            - superscript [ref=e743]:
+                              - text: The transaction was a
+                              - strong [ref=e744]: Credit Card
+                              - text: payment
+                          - listitem [ref=e745]:
+                            - superscript [ref=e746]:
+                              - strong [ref=e747]: M14
+                              - text: (
+                              - link "tokenise card" [ref=e748] [cursor=pointer]:
+                                - /url: "#subs"
+                              - text: ) field is set to
+                              - strong [ref=e749]: "True"
+                          - listitem [ref=e750]:
+                            - superscript [ref=e751]:
+                              - text: “Test Mode” in the NetConnector Profile in the
+                              - link "Netcash Account" [ref=e752] [cursor=pointer]:
+                                - /url: https://merchant.netcash.co.za
+                              - text: is set to
+                              - strong [ref=e753]: "false"
+                    - row "10 ccToken AN Credit Card Vault GUiD" [ref=e754]:
+                      - cell "10" [ref=e755]
+                      - cell "ccToken" [ref=e756]
+                      - cell "AN" [ref=e757]
+                      - cell "Credit Card Vault GUiD" [ref=e758]:
+                        - text: Credit Card
+                        - link "Vault" [ref=e759] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary#v
+                        - link "GUiD" [ref=e760] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary#g
+                    - row "11 ccHolder AN Credit Cardholder name" [ref=e761]:
+                      - cell "11" [ref=e762]
+                      - cell "ccHolder" [ref=e763]
+                      - cell "AN" [ref=e764]
+                      - cell "Credit Cardholder name" [ref=e765]
+                    - row "12 ccMasked AN Masked Credit Card number" [ref=e766]:
+                      - cell "12" [ref=e767]
+                      - cell "ccMasked" [ref=e768]
+                      - cell "AN" [ref=e769]
+                      - cell "Masked Credit Card number" [ref=e770]
+                    - row "13 ccExpiry N Credit Card expiry date MMCCYY" [ref=e771]:
+                      - cell "13" [ref=e772]
+                      - cell "ccExpiry" [ref=e773]
+                      - cell "N" [ref=e774]
+                      - cell "Credit Card expiry date MMCCYY" [ref=e775]
+              - generic [ref=e777]:
+                - heading "Decline URL" [level=4] [ref=e778]: Decline URL
+                - paragraph [ref=e779]:
+                  - text: Data URL is
+                  - strong [ref=e780]: form POST
+                  - text: .
+                - paragraph [ref=e781]:
+                  - strong [ref=e782]: "content-type:"
+                  - generic [ref=e784]: application/x-www-form-urlencoded
+                - table [ref=e785]:
+                  - rowgroup [ref=e786]:
+                    - 'row "Field No: Field Name: Alpha / Numeric / Boolean Description:" [ref=e787]':
+                      - cell "Field No:" [ref=e788]:
+                        - strong [ref=e789]: "Field No:"
+                      - cell "Field Name:" [ref=e790]:
+                        - strong [ref=e791]: "Field Name:"
+                      - cell "Alpha / Numeric / Boolean" [ref=e792]:
+                        - strong [ref=e793]: Alpha / Numeric / Boolean
+                      - cell "Description:" [ref=e794]:
+                        - strong [ref=e795]: "Description:"
+                    - row "1 TransactionAccepted B “true” means the transaction was successful" [ref=e796]:
+                      - cell "1" [ref=e797]
+                      - cell "TransactionAccepted" [ref=e798]
+                      - cell "B" [ref=e799]
+                      - cell "“true” means the transaction was successful" [ref=e800]
+                    - row "2 CardHolderIpAddr AN This is the original IP the request was made from" [ref=e801]:
+                      - cell "2" [ref=e802]
+                      - cell "CardHolderIpAddr" [ref=e803]
+                      - cell "AN" [ref=e804]
+                      - cell "This is the original IP the request was made from" [ref=e805]
+                    - row "3 RequestTrace AN This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e806]:
+                      - cell "3" [ref=e807]
+                      - cell "RequestTrace" [ref=e808]
+                      - cell "AN" [ref=e809]
+                      - cell "This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e810]
+                    - row "4 Reference AN The unique reference sent to Netcash in the original request" [ref=e811]:
+                      - cell "4" [ref=e812]
+                      - cell "Reference" [ref=e813]
+                      - cell "AN" [ref=e814]
+                      - cell "The unique reference sent to Netcash in the original request" [ref=e815]
+                    - row "5 Extra1 AN The extra field sent in the m4 variable when you made the reques" [ref=e816]:
+                      - cell "5" [ref=e817]
+                      - cell "Extra1" [ref=e818]
+                      - cell "AN" [ref=e819]
+                      - cell "The extra field sent in the m4 variable when you made the reques" [ref=e820]
+                    - row "6 Extra2 AN The extra field sent in the m5 variable when you made the request" [ref=e821]:
+                      - cell "6" [ref=e822]
+                      - cell "Extra2" [ref=e823]
+                      - cell "AN" [ref=e824]
+                      - cell "The extra field sent in the m5 variable when you made the request" [ref=e825]
+                    - row "7 Extra3 AN The extra field sent up in the m6 variable when you made the request" [ref=e826]:
+                      - cell "7" [ref=e827]
+                      - cell "Extra3" [ref=e828]
+                      - cell "AN" [ref=e829]
+                      - cell "The extra field sent up in the m6 variable when you made the request" [ref=e830]
+                    - row "8 Amount N This is the amount sent Netcash in the original request" [ref=e831]:
+                      - cell "8" [ref=e832]
+                      - cell "Amount" [ref=e833]
+                      - cell "N" [ref=e834]
+                      - cell "This is the amount sent Netcash in the original request" [ref=e835]
+                    - row "9 Reason AN Reason for the transaction decline" [ref=e836]:
+                      - cell "9" [ref=e837]
+                      - cell "Reason" [ref=e838]
+                      - cell "AN" [ref=e839]
+                      - cell "Reason for the transaction decline" [ref=e840]
+              - generic [ref=e842]:
+                - heading "Redirect URL" [level=4] [ref=e843]: Redirect URL
+                - paragraph [ref=e844]:
+                  - text: Data URL is
+                  - strong [ref=e845]: form POST
+                  - text: .
+                - paragraph [ref=e846]:
+                  - strong [ref=e847]: "content-type:"
+                  - generic [ref=e849]: application/x-www-form-urlencoded
+                - table [ref=e850]:
+                  - rowgroup [ref=e851]:
+                    - 'row "Field No: Field Name: Alpha / Numeric / Boolean Description:" [ref=e852]':
+                      - cell "Field No:" [ref=e853]:
+                        - strong [ref=e854]: "Field No:"
+                      - cell "Field Name:" [ref=e855]:
+                        - strong [ref=e856]: "Field Name:"
+                      - cell "Alpha / Numeric / Boolean" [ref=e857]:
+                        - strong [ref=e858]: Alpha / Numeric / Boolean
+                      - cell "Description:" [ref=e859]:
+                        - strong [ref=e860]: "Description:"
+                    - row "1 TransactionAccepted B “true” means the transaction was successful" [ref=e861]:
+                      - cell "1" [ref=e862]
+                      - cell "TransactionAccepted" [ref=e863]
+                      - cell "B" [ref=e864]
+                      - cell "“true” means the transaction was successful" [ref=e865]
+                    - row "2 CardHolderIpAddr AN This is the original IP the request was made from" [ref=e866]:
+                      - cell "2" [ref=e867]
+                      - cell "CardHolderIpAddr" [ref=e868]
+                      - cell "AN" [ref=e869]
+                      - cell "This is the original IP the request was made from" [ref=e870]
+                    - row "3 RequestTrace AN This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e871]:
+                      - cell "3" [ref=e872]
+                      - cell "RequestTrace" [ref=e873]
+                      - cell "AN" [ref=e874]
+                      - cell "This is a unique trace id for the transaction. This id can be used to retrieve additional information from the 3rd Party transaction logs" [ref=e875]
+                    - row "4 Reference AN The unique reference sent to Netcash in the original request" [ref=e876]:
+                      - cell "4" [ref=e877]
+                      - cell "Reference" [ref=e878]
+                      - cell "AN" [ref=e879]
+                      - cell "The unique reference sent to Netcash in the original request" [ref=e880]
+                    - row "5 Extra1 AN The extra field sent in the m4 variable when you made the reques" [ref=e881]:
+                      - cell "5" [ref=e882]
+                      - cell "Extra1" [ref=e883]
+                      - cell "AN" [ref=e884]
+                      - cell "The extra field sent in the m4 variable when you made the reques" [ref=e885]
+                    - row "6 Extra2 AN The extra field sent in the m5 variable when you made the request" [ref=e886]:
+                      - cell "6" [ref=e887]
+                      - cell "Extra2" [ref=e888]
+                      - cell "AN" [ref=e889]
+                      - cell "The extra field sent in the m5 variable when you made the request" [ref=e890]
+                    - row "7 Extra3 AN The extra field sent up in the m6 variable when you made the request" [ref=e891]:
+                      - cell "7" [ref=e892]
+                      - cell "Extra3" [ref=e893]
+                      - cell "AN" [ref=e894]
+                      - cell "The extra field sent up in the m6 variable when you made the request" [ref=e895]
+                    - row "8 Amount N This is the amount sent Netcash in the original request" [ref=e896]:
+                      - cell "8" [ref=e897]
+                      - cell "Amount" [ref=e898]
+                      - cell "N" [ref=e899]
+                      - cell "This is the amount sent Netcash in the original request" [ref=e900]
+                    - row "9 Reason AN “Pending payment”" [ref=e901]:
+                      - cell "9" [ref=e902]
+                      - cell "Reason" [ref=e903]
+                      - cell "AN" [ref=e904]
+                      - cell "“Pending payment”" [ref=e905]
+                    - row "10 Method N Returns 2 for EFT Returns 3 for Retail" [ref=e906]:
+                      - cell "10" [ref=e907]
+                      - cell "Method" [ref=e908]
+                      - cell "N" [ref=e909]
+                      - cell "Returns 2 for EFT Returns 3 for Retail" [ref=e910]:
+                        - text: Returns 2 for EFT
+                        - text: Returns 3 for Retail
+              - generic [ref=e912]:
+                - heading "Unpaid reason codes" [level=4] [ref=e913]: Unpaid reason codes
+                - paragraph [ref=e914]:
+                  - link "Click here" [ref=e915] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/value-added-services/unpaid-codes/
+                  - text: for a complete list of unpaid reason codes
+              - generic [ref=e917]:
+                - heading "Transaction trace" [level=4] [ref=e918]: Transaction trace
+                - paragraph [ref=e919]:
+                  - text: "After your servers have received the transaction it is advisable to compare it with the original data sent. This can be done by sending a request that contains the ‘RequestTrace’ parameter to our servers which will return the transaction data to the calling service. Call: URL:"
+                  - link "https://ws.netcash.co.za/PayNow/TransactionStatus/Check?RequestTrace=114.228862205218" [ref=e920] [cursor=pointer]:
+                    - /url: https://ws.netcash.co.za/PayNow/TransactionStatus/Check?RequestTrace=114.228862205218
+                    - strong [ref=e921]: https://ws.netcash.co.za/PayNow/TransactionStatus/Check?RequestTrace=114.228862205218
+                  - text: where
+                  - strong [ref=e922]: "114.228862205218"
+                  - text: represents the ‘
+                  - emphasis [ref=e923]: RequestTrace
+                  - text: ’ parameter and it would reply with a
+                  - link "JSON string" [ref=e924] [cursor=pointer]:
+                    - /url: https://www.w3schools.com/js/js_json_intro.asp
+                  - text: "with the data that would look like this:"
+                - generic [ref=e925]:
+                  - generic [ref=e926]:
+                    - generic [ref=e927] [cursor=pointer]: Raw
+                    - generic [ref=e928] [cursor=pointer]: Copy
+                    - generic [ref=e929] [cursor=pointer]: Extern
+                    - text: EnlighterJS
+                  - generic [ref=e933]: "{“RequestTrace”:”114.228862205218″,”Amount”:”4.00″,”TransactionAccepted”:false,”Reference”:”22″,”Reason”:”Invalid card number”}"
+              - generic [ref=e935]:
+                - heading "Netcash brand guidelines" [level=4] [ref=e936]
+                - paragraph [ref=e937]:
+                  - text: Please refer to the
+                  - link "Netcash brand guidelines here" [ref=e938] [cursor=pointer]:
+                    - /url: https://netcash.co.za/tools/#logodownloadcentre
+                    - text: Netcash brand guidelines
+                    - strong [ref=e939]: here
+                  - text: when using any logos, images, icons, labels, descriptions, and references to
+                  - strong [ref=e940]: Netcash
+                  - text: in your software.
+            - generic [ref=e944]:
+              - generic [ref=e946]:
+                - heading "Testing" [level=4] [ref=e947]
+                - paragraph [ref=e948]:
+                  - text: See
+                  - link "Testing section" [ref=e949] [cursor=pointer]:
+                    - /url: http://api.netcash.co.za/testing/
+                  - text: for more details. If you require any integration assistance contact our
+                  - link "technical support team" [ref=e950] [cursor=pointer]:
+                    - /url: http://api.netcash.co.za/contact-support/
+              - generic [ref=e951]:
+                - generic [ref=e953]: 
+                - paragraph [ref=e954]:
+                  - text: Netcash may provide example/sample/demo
+                  - link "‘code snippets’" [ref=e955] [cursor=pointer]:
+                    - /url: https://en.wikipedia.org/wiki/Snippet_(programming)
+                  - text: and/or
+                  - link "external links" [ref=e956] [cursor=pointer]:
+                    - /url: https://en.wikipedia.org/wiki/Hyperlink
+                  - text: in this Technical Document. Such are for guidance purposes only and may not function on every developer’s system/s. Netcash disclaims any and all liability for the usage of guidance resources provided -and you as the Developer; must accept full responsibility for the usage of such. While every possible effort has been taken to ensure compatibility across multiple system configurations, the contents of this document cannot be guaranteed to work on all systems, with all operating systems -and/or with all system configuration/s.
+        - complementary "Primary sidebar" [ref=e957]:
+          - complementary [ref=e960]:
+            - list [ref=e962]:
+              - listitem [ref=e963]:
+                - link "STANDARD INTEGRATION +" [ref=e964] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: STANDARD INTEGRATION
+                  - generic [ref=e965]: +
+              - listitem [ref=e966]:
+                - link "INBOUND PAYMENTS −" [ref=e967] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: INBOUND PAYMENTS
+                  - generic [ref=e968]: −
+                - list [ref=e969]:
+                  - listitem [ref=e970]:
+                    - link "eMandate" [ref=e971] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/emandate/
+                    - text: +
+                  - listitem [ref=e972]:
+                    - link "Standard Debit Orders" [ref=e973] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/debit-orders/
+                    - text: +
+                  - listitem [ref=e974]:
+                    - link "DebiCheck Debit Orders" [ref=e975] [cursor=pointer]:
+                      - /url: "#"
+                    - text: +
+                  - listitem [ref=e976]:
+                    - link "Pay Now" [ref=e977] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/inbound-payments/pay-now/
+                    - text: −
+                    - list [ref=e978]:
+                      - listitem [ref=e979]:
+                        - link "Overview" [ref=e980] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/#Overview
+                      - listitem [ref=e981]:
+                        - link "Pay Now Billing" [ref=e982] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/#Pay-Now-Billing
+                      - listitem [ref=e983]:
+                        - link "Pay Now Request" [ref=e984] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/#Pay-Now-Request
+                      - listitem [ref=e985]:
+                        - link "Pay Now Scan to Pay" [ref=e986] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/#Pay-Now-Scan-to-Pay
+                      - listitem [ref=e987]:
+                        - link "Pay Now eCommerce" [ref=e988] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/#Pay-Now-eCommerce
+                    - list [ref=e989]:
+                      - listitem [ref=e990]:
+                        - link "Request" [ref=e991] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/billing/#Request
+                        - text: +
+                      - listitem [ref=e992]:
+                        - link "Scan to Pay" [ref=e993] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/scan-to-pay/
+                        - text: +
+                      - listitem [ref=e994]:
+                        - link "Subscription Update Service" [ref=e995] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/subscription-update-service/
+                        - text: +
+                      - listitem [ref=e996]:
+                        - link "Billing" [ref=e997] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/billing/
+                        - text: +
+                      - listitem [ref=e998]:
+                        - link "eCommerce" [ref=e999] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/pay-now-ecommerce/
+                        - text: −
+                        - list [ref=e1000]:
+                          - listitem [ref=e1001]:
+                            - link "Before you start" [ref=e1002] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Before-you-start
+                          - listitem [ref=e1003]:
+                            - link "Overview" [ref=e1004] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Overview
+                          - listitem [ref=e1005]:
+                            - link "Service set up process" [ref=e1006] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Service-set-up-process
+                          - listitem [ref=e1007]:
+                            - link "Credit Card transaction processing notice" [ref=e1008] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Credit-Card-transaction-processing-notice
+                          - listitem [ref=e1009]:
+                            - link "Pay Now payment methods" [ref=e1010] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Pay-Now-payment-methods
+                          - listitem [ref=e1011]:
+                            - link "Pay Now service key" [ref=e1012] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Pay-Now-service-key
+                          - listitem [ref=e1013]:
+                            - link "NetConnector" [ref=e1014] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#NetConnector
+                          - listitem [ref=e1015]:
+                            - link "Test Card Details" [ref=e1016] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Test-Card-Details
+                          - listitem [ref=e1017]:
+                            - link "Configure" [ref=e1018] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Configure
+                          - listitem [ref=e1019]:
+                            - link "Pre-defined postback URLs" [ref=e1020] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Pre-defined-postback-URLs
+                          - listitem [ref=e1021]:
+                            - link "POST to the Pay Now page" [ref=e1022] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#POST-to-the-Pay-Now-page
+                          - listitem [ref=e1023]:
+                            - link "TIPS" [ref=e1024] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#TIPS
+                          - listitem [ref=e1025]:
+                            - link "Subscription Scheduling" [ref=e1026] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Subscription-Scheduling
+                          - listitem [ref=e1027]:
+                            - link "Additional data" [ref=e1028] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Additional-data
+                          - listitem [ref=e1029]:
+                            - link "IMPORTANT NOTE" [ref=e1030] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#IMPORTANT-NOTE
+                          - listitem [ref=e1031]:
+                            - link "Shopping Cart Plugins" [ref=e1032] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Shopping-Cart-Plugins
+                          - listitem [ref=e1033]:
+                            - link "Pay Now payment selections" [ref=e1034] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Pay-Now-payment-selections
+                          - listitem [ref=e1035]:
+                            - link "Notify, Accept, Decline and Redirect pages" [ref=e1036] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Notify-Accept-Decline-and-Redirect-pages
+                          - listitem [ref=e1037]:
+                            - link "Acceptable URL Format" [ref=e1038] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Acceptable-URL-Format
+                          - listitem [ref=e1039]:
+                            - link "Notify URL" [ref=e1040] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Notify-URL
+                          - listitem [ref=e1041]:
+                            - link "Accept URL" [ref=e1042] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Accept-URL
+                          - listitem [ref=e1043]:
+                            - link "Decline URL" [ref=e1044] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Decline-URL
+                          - listitem [ref=e1045]:
+                            - link "Redirect URL" [ref=e1046] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Redirect-URL
+                          - listitem [ref=e1047]:
+                            - link "Unpaid reason codes" [ref=e1048] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Unpaid-reason-codes
+                          - listitem [ref=e1049]:
+                            - link "Transaction trace" [ref=e1050] [cursor=pointer]:
+                              - /url: /inbound-payments/pay-now/pay-now-ecommerce/#Transaction-trace
+                      - listitem [ref=e1051]:
+                        - link "Batch Payment Refund" [ref=e1052] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/payment-refunds/
+                        - text: +
+              - listitem [ref=e1053]:
+                - link "OUTBOUND PAYMENTS +" [ref=e1054] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: OUTBOUND PAYMENTS
+                  - generic [ref=e1055]: +
+              - listitem [ref=e1056]:
+                - link "VALUE ADDED SERVICES +" [ref=e1057] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: VALUE ADDED SERVICES
+                  - generic [ref=e1058]: +
+    - contentinfo [ref=e1059]:
+      - generic [ref=e1061]:
+        - complementary [ref=e1064]:
+          - heading "Standard Integration" [level=4] [ref=e1065]
+          - paragraph [ref=e1067]:
+            - link "Suggested Integration Process Flow" [ref=e1068] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/wp-content/uploads/2020/09/Suggested-Process.pdf
+            - link "NetConnector Setup" [ref=e1069] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/
+            - link "Bank Acc Validation" [ref=e1070] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/standard-integration/bank-account-validation/
+            - link "Statement" [ref=e1071] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/standard-integration/netcash-statement/
+        - complementary [ref=e1074]:
+          - heading "Inbound Payments" [level=4] [ref=e1075]
+          - paragraph [ref=e1077]:
+            - link "Standard Debit Orders" [ref=e1078] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/inbound-payments/debit-orders/
+            - link "Debicheck debit Orders" [ref=e1079] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/inbound-payments/debi-check/
+            - link "Pay Now" [ref=e1080] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/inbound-payments/pay-now/
+        - complementary [ref=e1083]:
+          - heading "Outbound Payments" [level=4] [ref=e1084]
+          - paragraph [ref=e1086]:
+            - link "Salary & Creditor Payments" [ref=e1087] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/outbound-payments/salary-creditor-payments/
+        - complementary [ref=e1090]:
+          - heading "Value Added Services" [level=4] [ref=e1091]
+          - paragraph [ref=e1093]:
+            - link "Bulk Statement" [ref=e1094] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/netcash-bulk-statement/
+            - link "Card Tokenisation GUI" [ref=e1095] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/other-documents/card-tokenization-gui/
+            - link "eMandate" [ref=e1096] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/emandate/
+            - link "ID Bank Account Verification" [ref=e1097] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/avs/
+            - link "ID Validation" [ref=e1098] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/id-validation/
+            - link "NetAccess" [ref=e1099] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/netaccess/
+            - link "Subscription Update Service" [ref=e1100] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/subscription-update-service/
+            - link "Other Documents" [ref=e1101] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/other-documents/
+        - complementary [ref=e1104]:
+          - heading "Quick Links" [level=4] [ref=e1105]
+          - generic [ref=e1106]:
+            - paragraph [ref=e1107]:
+              - link "Programmers Guide" [ref=e1108] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/netcash-programmers-guide/
+              - link "Support" [ref=e1109] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/contact-support
+              - link "Change Log" [ref=e1110] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/changelog
+              - link "Help Center" [ref=e1111] [cursor=pointer]:
+                - /url: https://help.netcash.co.za
+              - link "Glossary" [ref=e1112] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/glossary/
+              - link "Testing" [ref=e1113] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/testing
+              - link "Contact Author" [ref=e1114] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/improve-api/
+            - paragraph [ref=e1115]
+      - generic [ref=e1119]:
+        - superscript [ref=e1121]: © 2026 Copyright Netcash (PTY) Ltd | Document version 2022.1
+        - navigation "social menu"
+  - banner "responsive menu" [ref=e1122]:
+    - link "menu close icon" [ref=e1124] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e1125]: 
+    - generic [ref=e1126]:
+      - link "Support" [ref=e1127] [cursor=pointer]:
+        - /url: https://api.netcash.co.za/contact-support/
+      - navigation "extras menu" [ref=e1128]:
+        - link "search icon" [ref=e1129] [cursor=pointer]:
+          - /url: "#"
+          - img "search icon" [ref=e1130]
+    - text: 
+    - navigation "main menu" [ref=e1133]:
+      - navigation "Main menu" [ref=e1134]:
+        - list [ref=e1135]:
+          - listitem [ref=e1136]:
+            - link "STANDARD INTEGRATION" [ref=e1137] [cursor=pointer]:
+              - /url: "#"
+            - text:   +
+            - link "Toggle submenu" [ref=e1138] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+          - listitem [ref=e1139]:
+            - link "INBOUND PAYMENTS" [ref=e1140] [cursor=pointer]:
+              - /url: "#"
+            - text:   +   +   +    +  +
+            - link "Toggle submenu" [ref=e1141] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+          - listitem [ref=e1142]:
+            - link "OUTBOUND PAYMENTS" [ref=e1143] [cursor=pointer]:
+              - /url: "#"
+            - link "Toggle submenu" [ref=e1144] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+          - listitem [ref=e1145]:
+            - link "VALUE ADDED SERVICES" [ref=e1146] [cursor=pointer]:
+              - /url: "#"
+            - text:    +  +     +  +   +  +    +   +  +   +   +
+            - link "Toggle submenu" [ref=e1147] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+    - navigation "social menu"
+  - link "Back to top icon" [ref=e1148] [cursor=pointer]:
+    - /url: ""
+    - generic [ref=e1149]: 
+  - iframe [ref=e1154]:
+    - generic [ref=f9e6]:
+      - text: protected by
+      - strong [ref=f9e7]: reCAPTCHA
+  - generic: BESbswy

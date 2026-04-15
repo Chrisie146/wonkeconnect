@@ -323,6 +323,7 @@ class PaymentInitiateRequest(BaseModel):
     name_first: str = Field(..., min_length=1, max_length=100)
     name_last: str = Field(..., min_length=1, max_length=100)
     cell_number: str = Field(..., min_length=7, max_length=20)
+    pay_method: Optional[str] = Field(None, pattern="^(eft)$", max_length=3)
 
     @field_validator("name_first", "name_last")
     @classmethod
@@ -771,6 +772,8 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
         "amount": f"{price:.2f}",
         "item_name": f"Wonke Connect WiFi — {plan['name']}",
     }
+    if payload.pay_method:
+        params["payment_method"] = payload.pay_method
     params["signature"] = build_signature(params, passphrase)
 
     return {
@@ -1001,14 +1004,6 @@ def confirm_mikrotik_sync(api_key: str = Query(...), ids: str = Query(...)) -> d
     return {"ok": True, "synced": len(id_list)}
 
 
-
-    """Generate a unique merchant payment ID."""
-    import time
-    rand = secrets.token_hex(4).upper()
-    ts = str(int(time.time()))
-    return f"WC-{ts}-{rand}"
-
-
 if __name__ == "__main__":
     import os
     import uvicorn
@@ -1019,11 +1014,6 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", "8000")),
         reload=False,
     )
-
-
-@app.get("/health")
-def serve_dashboard() -> FileResponse:
-    return FileResponse(STATIC_DIR / "index.html")
 
 
 @app.get("/health")

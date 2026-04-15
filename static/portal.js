@@ -104,7 +104,8 @@ function selectPlan(plan) {
             <span class="plan-summary-price">R${Number(plan.price).toFixed(2)}</span>
         </div>`;
 
-    document.getElementById('pay-amount').textContent = `R${Number(plan.price).toFixed(2)}`;
+    const formatted = `R${Number(plan.price).toFixed(2)}`;
+    document.querySelectorAll('.pay-amount').forEach((el) => { el.textContent = formatted; });
     showScreen('details');
 }
 
@@ -113,30 +114,14 @@ document.getElementById('back-button').addEventListener('click', () => showScree
 document.getElementById('try-again-button').addEventListener('click', () => showScreen('plans'));
 document.getElementById('error-back-button').addEventListener('click', () => showScreen('plans'));
 
-// ── Payment method toggle ────────────────────────────────────────────────────
-function getSelectedPaymentMethod() {
-    const el = document.querySelector('input[name="payment_method"]:checked');
-    return el ? el.value : 'netcash';
-}
-
-document.querySelectorAll('input[name="payment_method"]').forEach((radio) => {
-    radio.addEventListener('change', () => {
-        const method = getSelectedPaymentMethod();
-        document.getElementById('secure-note-payfast').style.display = method === 'payfast' ? '' : 'none';
-        document.getElementById('secure-note-netcash').style.display  = method === 'netcash'  ? '' : 'none';
-    });
-});
-
 // ── Payment form ──────────────────────────────────────────────────────────────
-document.getElementById('buyer-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
+async function initiatePayment(method, payButton) {
     const errorEl = document.getElementById('form-error');
     errorEl.style.display = 'none';
 
     const nameFirst = document.getElementById('buyer-first-name').value.trim();
-    const nameLast = document.getElementById('buyer-last-name').value.trim();
-    const phone = document.getElementById('buyer-phone').value.trim();
+    const nameLast  = document.getElementById('buyer-last-name').value.trim();
+    const phone     = document.getElementById('buyer-phone').value.trim();
 
     if (!nameFirst || !nameLast || !phone) {
         errorEl.textContent = 'Please fill in all fields.';
@@ -144,36 +129,36 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
         return;
     }
 
-    const payButton = document.getElementById('pay-button');
     payButton.disabled = true;
     payButton.querySelector('.pay-btn-label').style.display = 'none';
     payButton.querySelector('.pay-btn-loading').style.display = '';
 
     // Advance step bar to "Payment"
-    updateStepBar('success'); // step index 3 is voucher, but 2 is payment — use a temp value
     const items = document.querySelectorAll('.step-item');
     const lines = document.querySelectorAll('.step-line');
     items.forEach((item, i) => { item.classList.toggle('is-done', i < 2); item.classList.toggle('is-active', i === 2); });
     lines.forEach((line, i) => { line.classList.toggle('is-done', i < 2); });
 
-    const method = getSelectedPaymentMethod();
     const endpoint = method === 'netcash' ? '/payment/netcash/initiate' : '/payment/initiate';
 
     try {
+        const body = {
+            plan_id: state.selectedPlan.id,
+            name_first: nameFirst,
+            name_last: nameLast,
+            cell_number: phone,
+        };
+        if (method === 'payfast') body.pay_method = 'eft';
+
         const res = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                plan_id: state.selectedPlan.id,
-                name_first: nameFirst,
-                name_last: nameLast,
-                cell_number: phone,
-            }),
+            body: JSON.stringify(body),
         });
 
         if (!res.ok) {
-            const body = await res.json().catch(() => ({}));
-            throw new Error(body.detail || 'Payment setup failed. Please try again.');
+            const resBody = await res.json().catch(() => ({}));
+            throw new Error(resBody.detail || 'Payment setup failed. Please try again.');
         }
 
         const data = await res.json();
@@ -208,6 +193,14 @@ document.getElementById('buyer-form').addEventListener('submit', async (e) => {
         payButton.querySelector('.pay-btn-loading').style.display = 'none';
         updateStepBar('details');
     }
+}
+
+document.getElementById('pay-bank').addEventListener('click', () => {
+    initiatePayment('payfast', document.getElementById('pay-bank'));
+});
+
+document.getElementById('pay-1voucher').addEventListener('click', () => {
+    initiatePayment('netcash', document.getElementById('pay-1voucher'));
 });
 
 // ── Post-payment return ───────────────────────────────────────────────────────

@@ -1,0 +1,1078 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - banner [ref=e4]:
+        - generic [ref=e7]:
+          - generic [ref=e8]:
+            - link "api-2" [ref=e10] [cursor=pointer]:
+              - /url: https://api.netcash.co.za
+              - img "api-2" [ref=e11]
+            - link "mobile menu" [ref=e12] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e13]: 
+          - generic [ref=e15]:
+            - link "search icon" [ref=e16] [cursor=pointer]:
+              - /url: "#"
+              - img "search icon" [ref=e17]
+            - link "Support" [ref=e20] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/contact-support/
+        - generic [ref=e27]: NetConnector
+      - generic [ref=e30]:
+        - heading "NetConnector Setup" [level=1] [ref=e31]
+        - text:  
+    - main [ref=e32]:
+      - generic [ref=e33]:
+        - main [ref=e34]:
+          - generic [ref=e39]:
+            - generic [ref=e45]:
+              - heading "Before you start" [level=4] [ref=e46]: Before you start
+              - paragraph [ref=e47]:
+                - text: Please download the
+                - link "suggested API integration process flow" [ref=e48] [cursor=pointer]:
+                  - /url: https://api.netcash.co.za/wp-content/uploads/2020/09/Suggested-Process.pdf
+                  - strong [ref=e49]: suggested API integration process flow
+                - text: document and use it as a reference when developing.
+                - text: Kindly adhere to the Netcash
+                - link "brand guidelines" [ref=e50] [cursor=pointer]:
+                  - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#netcashbrand
+                - text: when developing.
+              - paragraph [ref=e51]
+              - heading "Programmers Guide" [level=4] [ref=e52]
+              - paragraph [ref=e53]:
+                - text: Refer to our
+                - link "Programmers guide" [ref=e54] [cursor=pointer]:
+                  - /url: http://api.netcash.co.za/netcash-programmers-guide/
+                - text: for more detail on how to apply the required methodology in this document.
+                - text: Ensure that the
+                - link "settings for developers" [ref=e55] [cursor=pointer]:
+                  - /url: http://api.netcash.co.za/netcash-programmers-guide#nb
+                - text: are adhered to before you proceed with your implementation.
+              - paragraph [ref=e56]
+              - heading "Web Service Methods" [level=4] [ref=e57]
+              - paragraph [ref=e58]:
+                - text: The list of Netcash
+                - link "web service methods" [ref=e59] [cursor=pointer]:
+                  - /url: http://api.netcash.co.za/glossary#w
+                - text: can be
+                - link "found here" [ref=e60] [cursor=pointer]:
+                  - /url: http://api.netcash.co.za/ws-methods/
+                - text: .
+              - paragraph [ref=e61]
+              - heading "Quick Start Guides" [level=4] [ref=e62]
+              - paragraph [ref=e63]:
+                - link "Quick Start Guides" [ref=e64] [cursor=pointer]:
+                  - /url: https://netcash.co.za/quick-start-guides/
+                - text: will help you understand this service and get you started.
+            - generic [ref=e68]:
+              - generic [ref=e70]:
+                - heading "Overview" [level=4] [ref=e71]: Overview
+                - paragraph [ref=e72]:
+                  - strong [ref=e73]: NetConnector
+                  - text: is the area in an application (host software); where the Netcash client can insert credentials to enable communication with Netcash.
+                  - text: These credentials refer to
+                  - link "Service Keys" [ref=e74] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#s
+                  - text: the Netcash client can issue in the NetConnector section of their
+                  - link "Netcash account" [ref=e75] [cursor=pointer]:
+                    - /url: https://merchant.netcash.co.za
+                  - text: .
+                - paragraph [ref=e76]:
+                  - text: It is
+                  - strong [ref=e77]: important
+                  - text: to familiarise yourself with Service Keys, and their purpose by
+                  - link "clicking here" [ref=e78] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#s
+                - paragraph [ref=e79]:
+                  - strong [ref=e80]: NetConnector is divided into two components
+                - list [ref=e81]:
+                  - listitem [ref=e82]:
+                    - link "NetAccess" [ref=e83] [cursor=pointer]:
+                      - /url: "#NetAccess-User-Detail-Storage"
+                    - text: user login details storage.
+                  - listitem [ref=e84]:
+                    - link "Validation of Netcash Service Keys" [ref=e85] [cursor=pointer]:
+                      - /url: "#Usage"
+                - generic [ref=e86]:
+                  - paragraph [ref=e87]:
+                    - text: It is important that all
+                    - link "Service Keys" [ref=e88] [cursor=pointer]:
+                      - /url: http://api.netcash.co.za/glossary#s
+                    - text: are stored and validated as
+                    - link "system variables" [ref=e89] [cursor=pointer]:
+                      - /url: https://en.wikipedia.org/wiki/Variable_(computer_science)
+                    - text: and retrieved from the
+                    - strong [ref=e90]: NetConnector
+                    - text: database when used with integrated service/s.
+                  - paragraph [ref=e91]:
+                    - text: This avoids search and replacement of service keys if they are regenerated by the Netcash client. Service keys should be
+                    - link "validated" [ref=e92] [cursor=pointer]:
+                      - /url: "#Usage"
+                    - text: at least once every 24 hours and with each login to ensure interaction with the Netcash account is successful. ISV Software Vendor Keys should be treated in the same manner but not exposed to the user.
+                  - list [ref=e93]:
+                    - listitem [ref=e94]:
+                      - text: We
+                      - strong [ref=e95]: recommend
+                      - text: that you download the
+                      - link "suggested API integration process flow" [ref=e96] [cursor=pointer]:
+                        - /url: https://api.netcash.co.za/wp-content/uploads/2020/09/Suggested-Process.pdf
+                        - strong [ref=e97]: suggested API integration process flow
+                      - text: document for reference while you develop.
+                    - listitem [ref=e98]:
+                      - text: Please adhere to the
+                      - link "Netcash brand guidelines" [ref=e99] [cursor=pointer]:
+                        - /url: "#Labels-to-be-used-in-host-software"
+                        - strong [ref=e100]: Netcash brand guidelines
+                      - text: when developing.
+                    - listitem [ref=e101]:
+                      - link "Click here" [ref=e102] [cursor=pointer]:
+                        - /url: "#NetAccess-User-Detail-Storage"
+                      - text: to see the recommended user experience.
+                - paragraph [ref=e103]:
+                  - text: The
+                  - strong [ref=e104]: "N"
+                  - text: etcash
+                  - strong [ref=e105]: I
+                  - text: ntegration
+                  - strong [ref=e106]: W
+                  - text: eb
+                  - strong [ref=e107]: S
+                  - text: ervice (
+                  - strong [ref=e108]: NIWS
+                  - text: ) is a single web service that exposes multiple endpoints. It is specific to the NIWS_partner
+                  - link "*" [ref=e109] [cursor=pointer]:
+                    - /url: "#pwsnote"
+                    - superscript [ref=e111]: "*"
+                  - text: "endpoint:"
+                  - link "https://ws.netcash.co.za/NIWS/niws_partner.svc" [ref=e112] [cursor=pointer]:
+                    - /url: https://ws.netcash.co.za/NIWS/niws_partner.svc
+                  - emphasis [ref=e113]
+                  - text: and describes the input to the
+                  - emphasis [ref=e114]: ValidateServiceKey
+                  - text: method.
+                - paragraph [ref=e115]:
+                  - text: To access this web service method you require an
+                  - link "Account Service" [ref=e116] [cursor=pointer]:
+                    - /url: http://api.netcash.co.za/glossary#a
+                    - strong [ref=e117]: Account Service
+                  - text: and a
+                  - strong [ref=e118]: Software Vendor Key
+                  - text: (
+                  - link "SVK" [ref=e119] [cursor=pointer]:
+                    - /url: http://api.netcash.co.za/glossary#s
+                  - text: "):"
+                  - strong [ref=e120]: 24ade73c-98cf-47b3-99be-cc7b867b3080
+                - paragraph [ref=e121]:
+                  - strong [ref=e122]: "Note:"
+                  - link "ISV" [ref=e123] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#i
+                  - text: ’s have unique
+                  - link "SVK" [ref=e124] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/glossary#s
+                  - text: ’s issued by Netcash after their integration was successfully signed off.
+                - paragraph [ref=e125]
+                - paragraph [ref=e126]:
+                  - superscript [ref=e127]:
+                    - text: (
+                    - strong [ref=e128]: "*"
+                    - link "niws_partner" [ref=e129] [cursor=pointer]:
+                      - /url: https://ws.netcash.co.za/NIWS/niws_partner.svc
+                    - text: service uses SOAP 1.2. with WS-* addressing. See
+                    - link "example" [ref=e130] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/wp-content/uploads/2023/05/image.png
+                    - text: )
+              - generic [ref=e132]:
+                - heading "Usage" [level=4] [ref=e133]: Usage
+                - paragraph [ref=e134]:
+                  - text: The
+                  - link "NIWS_Partner" [ref=e135] [cursor=pointer]:
+                    - /url: https://ws.netcash.co.za/NIWS/niws_partner.svc
+                  - text: "endpoint has the following methods available:"
+                - table [ref=e136]:
+                  - rowgroup [ref=e137]:
+                    - row "Method name Usage" [ref=e138]:
+                      - columnheader "Method name" [ref=e139]
+                      - columnheader "Usage" [ref=e140]
+                  - rowgroup [ref=e141]:
+                    - row "ValidateServiceKey Check a range of Service key/Service Id combinations for a specified Netcash account to ensure that the key is valid" [ref=e142]:
+                      - cell "ValidateServiceKey" [ref=e143]
+                      - cell "Check a range of Service key/Service Id combinations for a specified Netcash account to ensure that the key is valid" [ref=e144]
+                - paragraph [ref=e145]
+                - table [ref=e146]:
+                  - rowgroup [ref=e147]:
+                    - row "Object Name Description" [ref=e148]:
+                      - columnheader "Object" [ref=e149]
+                      - columnheader "Name" [ref=e150]
+                      - columnheader "Description" [ref=e151]
+                    - 'row "Class ServiceInfo Properties: ServiceID ServiceKey" [ref=e152]':
+                      - cell "Class" [ref=e153]
+                      - cell "ServiceInfo" [ref=e154]
+                      - 'cell "Properties: ServiceID ServiceKey" [ref=e155]':
+                        - paragraph [ref=e156]: "Properties:"
+                        - list [ref=e157]:
+                          - listitem [ref=e158]: ServiceID
+                          - listitem [ref=e159]: ServiceKey
+                    - row "List ServiceInfoList Generic list to add service info" [ref=e160]:
+                      - cell "List" [ref=e161]
+                      - cell "ServiceInfoList" [ref=e162]
+                      - cell "Generic list to add service info" [ref=e163]
+                    - 'row "Class ValidateServiceKeyRequest Properties: MerchantAccount ServiceInfoList SoftwareVendorKey" [ref=e164]':
+                      - cell "Class" [ref=e165]
+                      - cell "ValidateServiceKeyRequest" [ref=e166]
+                      - 'cell "Properties: MerchantAccount ServiceInfoList SoftwareVendorKey" [ref=e167]':
+                        - paragraph [ref=e168]: "Properties:"
+                        - list [ref=e169]:
+                          - listitem [ref=e170]: MerchantAccount
+                          - listitem [ref=e171]: ServiceInfoList
+                          - listitem [ref=e172]: SoftwareVendorKey
+                    - row "Class ValidateServiceKeyResponse" [ref=e173]:
+                      - cell "Class" [ref=e174]
+                      - cell "ValidateServiceKeyResponse" [ref=e175]
+                    - 'row "Class ServiceInfoResponse Properties: ServiceID ServiceKey ServiceStatus" [ref=e176]':
+                      - cell "Class" [ref=e177]
+                      - cell "ServiceInfoResponse" [ref=e178]
+                      - 'cell "Properties: ServiceID ServiceKey ServiceStatus" [ref=e179]':
+                        - paragraph [ref=e180]: "Properties:"
+                        - list [ref=e181]:
+                          - listitem [ref=e182]: ServiceID
+                          - listitem [ref=e183]: ServiceKey
+                          - listitem [ref=e184]: ServiceStatus
+                    - row "List ServiceInfoResponseList Generic list holding service info responses per service" [ref=e185]:
+                      - cell "List" [ref=e186]
+                      - cell "ServiceInfoResponseList" [ref=e187]
+                      - cell "Generic list holding service info responses per service" [ref=e188]
+              - generic [ref=e190]:
+                - heading "Input" [level=4] [ref=e191]: Input
+                - paragraph [ref=e192]: "The service accepts an object which contains the Software Vendor Key and account number, used for authentication, and then an array of service id/service key combinations to be validated:"
+                - paragraph [ref=e193]:
+                  - strong [ref=e194]: "Example 1:"
+                - generic [ref=e195]:
+                  - generic [ref=e196]:
+                    - generic [ref=e197] [cursor=pointer]: Raw
+                    - generic [ref=e198] [cursor=pointer]: Copy
+                    - generic [ref=e199] [cursor=pointer]: Extern
+                    - text: EnlighterJS
+                  - generic [ref=e201]:
+                    - generic [ref=e203]: protected NIWS_Partner.ServiceInfoList GetServiceInfo(string pServiceID, string pServiceKey)
+                    - generic [ref=e205]: "{"
+                    - generic [ref=e207]: ServiceInfo = new NIWS_Partner.ServiceInfo();
+                    - generic [ref=e209]: ServiceInfo.ServiceId = pServiceID;
+                    - generic [ref=e211]: ServiceInfo.ServiceKey = pServiceKey;
+                    - generic [ref=e213]: ServiceInfoList.Add(ServiceInfo);
+                    - generic [ref=e215]: return ServiceInfoList;
+                    - generic [ref=e217]: "}"
+                    - generic [ref=e219]: protected void ValidateServiceKey(string AccountNumber,
+                    - generic [ref=e221]: string AccountServiceKey,
+                    - generic [ref=e223]: string DebitOrderServiceKey,
+                    - generic [ref=e225]: string CreditorServiceKey,
+                    - generic [ref=e227]: string PayNowServiceKey,
+                    - generic [ref=e229]: string RiskReportsServiceKey,
+                    - generic [ref=e231]: string SalaryServiceKey)
+                    - generic [ref=e233]: "{"
+                    - generic [ref=e235]: //initialise all operations needed
+                    - generic [ref=e237]: //---------------------------------------
+                    - generic [ref=e239]: client = new NIWS_Partner.NIWS_PartnerClient();
+                    - generic [ref=e241]: ValidateServiceKeyRequest = new NIWS_Partner.ValidateServiceKeyRequest();
+                    - generic [ref=e243]: //---------------------------------------
+                    - generic [ref=e245]: string SoftwareVendorKey = "24ade73c-98cf-47b3-99be-cc7b867b3080";
+                    - generic [ref=e247]: //Populating request to validate
+                    - generic [ref=e249]: //---------------------------------------
+                    - generic [ref=e251]: //Add account number to MerchantAccount
+                    - generic [ref=e253]: ValidateServiceKeyRequest.MerchantAccount = AccountNumber;
+                    - generic [ref=e255]: //Add Vendor key issued by Netcash
+                    - generic [ref=e257]: ValidateServiceKeyRequest.SoftwareVendorKey = SoftwareVendorKey;
+                    - generic [ref=e259]: //checks if field was populated
+                    - generic [ref=e261]: if (pAccountServiceKey != String.Empty)
+                    - generic [ref=e263]: "{"
+                    - generic [ref=e265]: ServiceInfoList = GetServiceInfo("5", AccountServiceKey);
+                    - generic [ref=e267]: "}"
+                    - generic [ref=e269]: if (pCreditorServiceKey != String.Empty)
+                    - generic [ref=e271]: "{"
+                    - generic [ref=e273]: ServiceInfoList = GetServiceInfo("2", CreditorServiceKey);
+                    - generic [ref=e275]: "}"
+                    - generic [ref=e277]: //Add service info list to request
+                    - generic [ref=e279]: ValidateServiceKeyRequest.ServiceInfoList = ServiceInfoList;
+                    - generic [ref=e281]: //---------------------------------------
+                    - generic [ref=e283]: //Calling the ValidateServiceKey method validating account number with the service keys added
+                    - generic [ref=e285]: var Request = client.ValidateServiceKey(ValidateServiceKeyRequest);
+                    - generic [ref=e287]: //Do a check on the response for Account Status
+                    - generic [ref=e289]: //001 = valid
+                    - generic [ref=e291]: if (Request.AccountStatus == "001")
+                    - generic [ref=e293]: "{"
+                    - generic [ref=e295]: //do something, eg. output if account active
+                    - generic [ref=e297]: //then add service info to list to check on each service status
+                    - generic [ref=e299]: ServiceInfoResponseList = Request.ServiceInfo;
+                    - generic [ref=e301]: foreach (var s in ServiceInfoResponseList)
+                    - generic [ref=e303]: "{"
+                    - generic [ref=e305]: string service = s.ServiceId;
+                    - generic [ref=e307]: switch (service)
+                    - generic [ref=e309]: "{"
+                    - generic [ref=e311]: "case \"2\": //do something"
+                    - generic [ref=e313]: break;
+                    - generic [ref=e315]: "case \"3\": //do something"
+                    - generic [ref=e317]: break;
+                    - generic [ref=e319]: "case \"5\": //do something"
+                    - generic [ref=e321]: break;
+                    - generic [ref=e323]: "case \"10\": //do something"
+                    - generic [ref=e325]: break;
+                    - generic [ref=e327]: "case \"14\": //do something"
+                    - generic [ref=e329]: break;
+                    - generic [ref=e331]: "default: //do something"
+                    - generic [ref=e333]: break;
+                    - generic [ref=e335]: "}"
+                    - generic [ref=e337]: "}"
+                    - generic [ref=e339]: "}"
+                    - generic [ref=e341]: else
+                    - generic [ref=e343]: "{"
+                    - generic [ref=e345]: //output if account not active
+                    - generic [ref=e347]: "}"
+                    - generic [ref=e349]: //Close client
+                    - generic [ref=e351]: client.Close();
+                    - generic [ref=e353]: "}"
+                - paragraph [ref=e354]:
+                  - strong [ref=e355]: "Example 2:"
+                - generic [ref=e356]:
+                  - generic [ref=e357]:
+                    - generic [ref=e358] [cursor=pointer]: Raw
+                    - generic [ref=e359] [cursor=pointer]: Copy
+                    - generic [ref=e360] [cursor=pointer]: Extern
+                    - text: EnlighterJS
+                  - generic [ref=e362]:
+                    - generic [ref=e364]: </ValidateServiceKey>
+                    - generic [ref=e366]: <MethodParameters>
+                    - generic [ref=e368]: <request>
+                    - generic [ref=e370]: <SoftwareVendorKey>24ade73c-98cf-47b3-99be-cc7b867b3080</SoftwareVendorKey>
+                    - generic [ref=e372]: <MerchantAccount>599990123456</MerchantAccount>
+                    - generic [ref=e374]: <ServiceInfoArray>
+                    - generic [ref=e376]: <ServiceInfoArray0>
+                    - generic [ref=e378]: <ServiceId>1</ServiceId>
+                    - generic [ref=e380]: <ServiceKey>9c999cae-9999-99c9-a0c9-9999999999de </ServiceKey>
+                    - generic [ref=e382]: </ServiceInfoArray0>
+                    - generic [ref=e384]: <ServiceInfoArray1>
+                    - generic [ref=e386]: <ServiceId>3</ServiceId>
+                    - generic [ref=e388]: <ServiceKey>8c888cae-8888-88c8-a0c8-8888888888de </ServiceKey>
+                    - generic [ref=e390]: </ServiceInfoArray1>
+                    - generic [ref=e392]: <ServiceInfoArray2>
+                    - generic [ref=e394]: <ServiceId>5</ServiceId>
+                    - generic [ref=e396]: <ServiceKey>7c777cae-7777-77c7-a0c7-7777777777de </ServiceKey>
+                    - generic [ref=e398]: </ServiceInfoArray2>
+                    - generic [ref=e400]: </ServiceInfoArray>
+                    - generic [ref=e402]: </request>
+                    - generic [ref=e404]: </MethodParameters>
+                    - generic [ref=e406]: </ValidateServiceKey>
+                - paragraph [ref=e407]:
+                  - strong [ref=e408]: "Example 3:"
+                  - superscript [ref=e409]: (.php)
+                - generic [ref=e410]:
+                  - generic [ref=e411]:
+                    - generic [ref=e412] [cursor=pointer]: Raw
+                    - generic [ref=e413] [cursor=pointer]: Copy
+                    - generic [ref=e414] [cursor=pointer]: Extern
+                    - text: EnlighterJS
+                  - generic [ref=e416]:
+                    - generic [ref=e418]: "#!/usr/bin/php"
+                    - generic [ref=e420]: <?php
+                    - generic [ref=e424]: // Use WDSL mode on SoapClient
+                    - generic [ref=e426]: $soap = new SoapClient(
+                    - generic [ref=e428]: "\"https://ws.netcash.co.za/niws/niws_partner.svc?wsdl\","
+                    - generic [ref=e430]: array( "trace" => 1,'soap_version'=>SOAP_1_2)
+                    - generic [ref=e432]: );
+                    - generic [ref=e434]: $hdr = new SoapHeader('http://www.w3.org/2005/08/addressing', 'Action', 'http://tempuri.org/NIWS_Partner/ValidateServiceKey');
+                    - generic [ref=e436]: $hdr2= new SOAPHeader('http://www.w3.org/2005/08/addressing', 'To', 'https://ws.netcash.co.za/NIWS/NIWS_Partner.svc');
+                    - generic [ref=e438]: $soap->__setSoapHeaders(array($hdr, $hdr2));
+                    - generic [ref=e442]: // This is value for parameter named "request" as sent through to ValidateServiceKey method
+                    - generic [ref=e444]: // See ValidateServiceKeyRequest entry in WSDL.
+                    - generic [ref=e448]: $sil = Array();
+                    - generic [ref=e450]: $sil[] = [ 'ServiceId' => '5', 'ServiceKey' => '00000000-0000-0000-0000-000000000001' ];
+                    - generic [ref=e452]: $sil[] = [ 'ServiceId' => '4', 'ServiceKey' => '00000000-0000-0000-0000-000000000002' ];
+                    - generic [ref=e454]: $sil[] = [ 'ServiceId' => '3', 'ServiceKey' => '00000000-0000-0000-0000-000000000003' ];
+                    - generic [ref=e456]: $sil[] = [ 'ServiceId' => '2', 'ServiceKey' => '00000000-0000-0000-0000-000000000004' ];
+                    - generic [ref=e460]: $r = [
+                    - generic [ref=e462]: "'SoftwareVendorKey' => '24ade73c-98cf-47b3-99be-cc7b867b3080',"
+                    - generic [ref=e464]: "'MerchantAccount' => '510123456789"
+                    - generic [ref=e466]: "'ServiceInfoList' => $sil"
+                    - generic [ref=e468]: "];"
+                    - generic [ref=e472]: $result = $soap->ValidateServiceKey(['request'=>$r]);
+                    - generic [ref=e474]: var_dump($result);
+                    - generic [ref=e476]: "?>"
+              - generic [ref=e478]:
+                - heading "Response" [level=4] [ref=e479]: Response
+                - paragraph [ref=e480]: "The service responds synchronously with an object containing an authentication status and a status for each element pair in the array:"
+                - paragraph [ref=e481]:
+                  - strong [ref=e482]: "Example 1:"
+                - generic "Edit & Save To Grepper" [ref=e483]:
+                  - generic [ref=e484]:
+                    - generic [ref=e485]:
+                      - generic [ref=e486] [cursor=pointer]: Raw
+                      - generic [ref=e487] [cursor=pointer]: Copy
+                      - generic [ref=e488] [cursor=pointer]: Extern
+                      - text: EnlighterJS
+                    - generic [ref=e490]:
+                      - generic [ref=e492]: <ValidateServiceKey>
+                      - generic [ref=e494]: <MethodParameters>
+                      - generic [ref=e496]: <ValidateValidateServiceKeyResponse> <!--- Software Vendor Key / Merchant Account --->
+                      - generic [ref=e498]: <SoftwareVendorKey>24ade73c-98cf-47b3-99be-cc7b867b3080</SoftwareVendorKey>
+                      - generic [ref=e500]: <MerchantAccount>599990123456</MerchantAccount>
+                      - generic [ref=e502]: <AccountStatus>001</AccountStatus>
+                      - generic [ref=e504]: <ServiceInfo attr0="ServiceInfoResponseArray"isNull="false">
+                      - generic [ref=e506]: <ServiceInfoResponseArray0> <!--- Service Array 0 --->
+                      - generic [ref=e508]: <ServiceId>1</ServiceId>
+                      - generic [ref=e510]: <ServiceKey>9c999cae-9999-99c9-a0c9-9999999999de</ServiceKey>
+                      - generic [ref=e512]: <ServiceStatus>106</ServiceStatus>
+                      - generic [ref=e514]: </ServiceInfoResponseArray0>
+                      - generic [ref=e516]: <ServiceInfoResponseArray1> <!--- Service Array 1 --->
+                      - generic [ref=e518]: <ServiceId>3</ServiceId>
+                      - generic [ref=e520]: <ServiceKey>8c888cae-8888-88c8-a0c8-8888888888de</ServiceKey>
+                      - generic [ref=e522]: <ServiceStatus>105</ServiceStatus>
+                      - generic [ref=e524]: </ServiceInfoResponseArray1>
+                      - generic [ref=e526]: <ServiceInfoResponseArray2> <!--- Service Array 2 --->
+                      - generic [ref=e528]: <ServiceId>5</ServiceId>
+                      - generic [ref=e530]: <ServiceKey>7c777cae>-7777-77c7-a0c7-7777777777de</ServiceKey>
+                      - generic [ref=e532]: <ServiceStatus>001</ServiceStatus>
+                      - generic [ref=e534]: </ServiceInfoResponseArray2>
+                      - generic [ref=e536]: </ServiceInfo>
+                      - generic [ref=e538]: </ValidateValidateServiceKeyResponse>
+                      - generic [ref=e540]: </MethodParameters>
+                      - generic [ref=e542]: </ValidateServiceKey>
+                - generic "Edit & Save To Grepper"
+                - paragraph [ref=e543]:
+                  - strong [ref=e544]: "The original data submitted in the request is returned with a status for each section. In the example above:"
+                - list [ref=e545]:
+                  - listitem [ref=e546]: The Software Vendor Key is valid and active. – See Software Vendor Key / Merchant Account above
+                  - listitem [ref=e547]: The Merchant Account Number is valid and active. – See Software Vendor Key / Merchant Account above
+                  - listitem [ref=e548]: The Service Key submitted for service id 1 is either invalid or not activated. Service (1) is active for Merchant Account – See Service Array 0 above
+                  - listitem [ref=e549]: The service id 3 is not activated for the Merchant Account number submitted. – See Service Array 1 above
+                  - listitem [ref=e550]: The Service Key submitted for service id 5 is active and the service is active for the Merchant Account.
+                - paragraph [ref=e551]:
+                  - strong [ref=e552]: "Note:"
+                  - text: Invalid/inactive service keys should not be stored in the calling application.
+                - paragraph [ref=e553]: Only where the service key response is 001 should the key be stored in the application.
+                - table [ref=e554]:
+                  - rowgroup [ref=e555]:
+                    - row "Response Code Response status" [ref=e556]:
+                      - columnheader "Response Code" [ref=e557]
+                      - columnheader "Response status" [ref=e558]
+                  - rowgroup [ref=e559]:
+                    - row "001 Authenticated" [ref=e560]:
+                      - cell "001" [ref=e561]
+                      - cell "Authenticated" [ref=e562]
+                    - row "103 No active partner found for this Software vendor key" [ref=e563]:
+                      - cell "103" [ref=e564]
+                      - cell "No active partner found for this Software vendor key" [ref=e565]
+                    - row "104 No active client found for this Account number" [ref=e566]:
+                      - cell "104" [ref=e567]
+                      - cell "No active client found for this Account number" [ref=e568]
+                    - row "200 General service error – contact Netcash support" [ref=e569]:
+                      - cell "200" [ref=e570]
+                      - cell "General service error – contact Netcash support" [ref=e571]
+                    - row "201 Account locked out" [ref=e572]:
+                      - cell "201" [ref=e573]
+                      - cell "Account locked out" [ref=e574]
+                - paragraph [ref=e575]
+                - paragraph [ref=e576]: Service key validation
+                - paragraph [ref=e577]: Per ServiceId/Servicekey combination submitted.
+                - table [ref=e578]:
+                  - rowgroup [ref=e579]:
+                    - row "Response Code Response status" [ref=e580]:
+                      - columnheader "Response Code" [ref=e581]
+                      - columnheader "Response status" [ref=e582]
+                  - rowgroup [ref=e583]:
+                    - row "001 Validated" [ref=e584]:
+                      - cell "001" [ref=e585]
+                      - cell "Validated" [ref=e586]
+                    - row "105 No active service found for this Account number/ServiceId combination" [ref=e587]:
+                      - cell "105" [ref=e588]
+                      - cell "No active service found for this Account number/ServiceId combination" [ref=e589]
+                    - row "106 No active service key found for this Account number/ServiceId /Servicekey combination" [ref=e590]:
+                      - cell "106" [ref=e591]
+                      - cell "No active service key found for this Account number/ServiceId /Servicekey combination" [ref=e592]
+                - paragraph [ref=e593]: Service ID
+                - paragraph [ref=e594]: "The following service ID’s may be submitted:"
+                - table [ref=e595]:
+                  - rowgroup [ref=e596]:
+                    - row "Service ID Service Name" [ref=e597]:
+                      - columnheader "Service ID" [ref=e598]
+                      - columnheader "Service Name" [ref=e599]
+                  - rowgroup [ref=e600]:
+                    - row "1 Debit orders" [ref=e601]:
+                      - cell "1" [ref=e602]
+                      - cell "Debit orders" [ref=e603]
+                    - row "2 Creditor payments" [ref=e604]:
+                      - cell "2" [ref=e605]
+                      - cell "Creditor payments" [ref=e606]
+                    - row "3 Risk reports" [ref=e607]:
+                      - cell "3" [ref=e608]
+                      - cell "Risk reports" [ref=e609]
+                    - row "5 Account service" [ref=e610]:
+                      - cell "5" [ref=e611]
+                      - cell "Account service" [ref=e612]
+                    - row "10 Salary payments" [ref=e613]:
+                      - cell "10" [ref=e614]
+                      - cell "Salary payments" [ref=e615]
+                    - row "14 Pay Now" [ref=e616]:
+                      - cell "14" [ref=e617]
+                      - cell "Pay Now" [ref=e618]
+                - paragraph [ref=e619]
+                - paragraph [ref=e620]: Security lockout
+                - paragraph [ref=e621]: An automated 10-minute lockout is built into the system to minimize the risk of brute force attacks by malicious persons or software.
+                - paragraph [ref=e622]: Each request that includes a non-positive response (authentication failure or invalid service key) will be recorded. After the 3rd attempt within a 10-minute period, the account number will be locked and no further requests relating to that account number will be permitted for 10 minutes. The system will return a 201 error.
+                - paragraph [ref=e623]: After the 10-minute timer has expired, any further requests that include an invalid service key will re-initiate the 10-minute lockout.
+                - paragraph [ref=e624]:
+                  - text: Only a request that contains valid data will clear the table.
+                  - text: After the 10-minute timer has expired, any further requests that include an invalid service key will re-initiate the 10-minute lockout.
+              - generic [ref=e626]:
+                - heading "NetAccess User Detail Storage" [level=4] [ref=e627]: NetAccess User Detail Storage
+                - paragraph [ref=e628]:
+                  - text: We recommend that you store the Netcash
+                  - link "website user" [ref=e629] [cursor=pointer]:
+                    - /url: https://merchant.netcash.co.za/
+                  - text: login details in a secure,
+                  - link "encrypted manner" [ref=e630] [cursor=pointer]:
+                    - /url: https://doc.castsoftware.com/display/DASHBOARDS/Encrypt+login+and+password+for+database+and+LDAP
+                  - text: in your database. These login details are then used to
+                  - link "auto-login" [ref=e631] [cursor=pointer]:
+                    - /url: https://www.yourdictionary.com/auto-login
+                  - text: the user into the
+                  - link "NetAccess" [ref=e632] [cursor=pointer]:
+                    - /url: /value-added-services/netaccess/#Process
+                  - text: infrastructure. The user must be able to update his/her details in your NetConnector infrastructure.
+                  - strong [ref=e633]: "TIP:"
+                  - text: You may invoke the
+                  - link "NetAccess" [ref=e634] [cursor=pointer]:
+                    - /url: /value-added-services/netaccess/
+                  - text: module without passing login details. This will require the Netcash user to enter their login details manually.
+                  - img [ref=e635]
+                - paragraph [ref=e636]:
+                  - text: The “
+                  - strong [ref=e637]: OK
+                  - text: ” button should only be enabled once all the Service Keys are validated. If a new Service Key is entered; it should be validated using this specification before it can be stored in NetAccess and/or the application database.
+                  - text: Multi-Tenant
+                - paragraph [ref=e638]: NetConnector allows for a multi-tenant setup. For each entity/company/division/cost center etc. that uses the same software, a NetConnector setup screen should be linked when processing is initiated for a specific entity, all the pre-validated NetConnector keys are used for processing.
+                - paragraph [ref=e639]:
+                  - text: General Security (
+                  - link "see web UI example" [ref=e640] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#Web-UI-Example
+                  - text: )
+                - list [ref=e641]:
+                  - listitem [ref=e642]:
+                    - text: Login details for
+                    - link "NetAccess" [ref=e643] [cursor=pointer]:
+                      - /url: http://api.netcash.co.za/integration/value-added-services/netaccess/
+                    - text: is
+                    - link "encrypted" [ref=e644] [cursor=pointer]:
+                      - /url: https://en.wikipedia.org/wiki/Encryption
+                    - text: in the application database. A restore / password reminder service for these credentials should not be made available to the user. The user can reset their login details on the Netcash website and re-enter them in NetAccess and/or the application database.
+              - generic [ref=e646]:
+                - heading "Web UI Example" [level=4] [ref=e647]: Web UI Example
+                - paragraph [ref=e648]: Below is a suggested NetConnector layout screen for users using web interfaces. It is suggested that drop-down / select is used for multiple accounts.
+                - table [ref=e649]:
+                  - rowgroup [ref=e650]:
+                    - row "NetConnector Configuration" [ref=e651]:
+                      - cell "NetConnector Configuration" [ref=e652]:
+                        - heading "NetConnector Configuration" [level=4] [ref=e653]: NetConnector Configuration
+                    - row [ref=e654]:
+                      - cell [ref=e655]
+                    - row "Your Netcash service keys are valid." [ref=e656]:
+                      - cell "Your Netcash service keys are valid." [ref=e657]:
+                        - text: Your Netcash service keys are
+                        - strong [ref=e658]: valid
+                        - text: .
+                    - row [ref=e659]:
+                      - cell [ref=e660]
+                    - row "Netcash account name My Netcash Account Name edit" [ref=e661]:
+                      - cell "Netcash account name" [ref=e662]:
+                        - text: Netcash account
+                        - strong [ref=e663]: name
+                      - cell "My Netcash Account Name" [ref=e664]:
+                        - textbox "My Netcash Account Name" [disabled] [ref=e665]
+                      - cell "edit" [ref=e666]:
+                        - link "edit" [ref=e667] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Account Number 51234567890 edit" [ref=e668]:
+                      - cell "Netcash Account Number" [ref=e669]:
+                        - text: Netcash
+                        - strong [ref=e670]: Account Number
+                      - cell "51234567890" [ref=e671]:
+                        - textbox [disabled] [ref=e672]: "51234567890"
+                      - cell "edit" [ref=e673]:
+                        - link "edit" [ref=e674] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Account Service Key 7872a528-71d5-4da0-85c3-432683a96c edit" [ref=e675]:
+                      - cell "Netcash Account Service Key" [ref=e676]:
+                        - text: Netcash
+                        - strong [ref=e677]: Account Service Key
+                      - cell "7872a528-71d5-4da0-85c3-432683a96c" [ref=e678]:
+                        - textbox "Service Key" [disabled] [ref=e679]: 7872a528-71d5-4da0-85c3-432683a96c
+                      - cell "edit" [ref=e680]:
+                        - link "edit" [ref=e681] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Debit Order Service Key a1e6f94e-be3b-4ac5-b6d4-8f8e95e58b2 edit" [ref=e682]:
+                      - cell "Netcash Debit Order Service Key" [ref=e683]:
+                        - text: Netcash
+                        - strong [ref=e684]: Debit Order Service Key
+                      - cell "a1e6f94e-be3b-4ac5-b6d4-8f8e95e58b2" [ref=e685]:
+                        - textbox "Service Key" [disabled] [ref=e686]: a1e6f94e-be3b-4ac5-b6d4-8f8e95e58b2
+                      - cell "edit" [ref=e687]:
+                        - link "edit" [ref=e688] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Vault Service Key 36f6f23c-4efe-4d66-ac9a-7f93080edc04 edit" [ref=e689]:
+                      - cell "Netcash Vault Service Key" [ref=e690]:
+                        - text: Netcash
+                        - strong [ref=e691]: Vault Service Key
+                      - cell "36f6f23c-4efe-4d66-ac9a-7f93080edc04" [ref=e692]:
+                        - textbox "Service Key" [disabled] [ref=e693]: 36f6f23c-4efe-4d66-ac9a-7f93080edc04
+                      - cell "edit" [ref=e694]:
+                        - link "edit" [ref=e695] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Salary Payment Service Key 04234732-6tt0-4z60-bt4r-c24r4es97215 edit" [ref=e696]:
+                      - cell "Netcash Salary Payment Service Key" [ref=e697]:
+                        - text: Netcash
+                        - strong [ref=e698]: Salary Payment Service Key
+                      - cell "04234732-6tt0-4z60-bt4r-c24r4es97215" [ref=e699]:
+                        - textbox "Service Key" [disabled] [ref=e700]: 04234732-6tt0-4z60-bt4r-c24r4es97215
+                      - cell "edit" [ref=e701]:
+                        - link "edit" [ref=e702] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Creditor Payment Service Key 5a09c70f-cd38-4fd0-8515-ec48627bba8 edit" [ref=e703]:
+                      - cell "Netcash Creditor Payment Service Key" [ref=e704]:
+                        - text: Netcash
+                        - strong [ref=e705]: Creditor Payment Service Key
+                      - cell "5a09c70f-cd38-4fd0-8515-ec48627bba8" [ref=e706]:
+                        - textbox "Service Key" [disabled] [ref=e707]: 5a09c70f-cd38-4fd0-8515-ec48627bba8
+                      - cell "edit" [ref=e708]:
+                        - link "edit" [ref=e709] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Pay Now Service Key 55484d78-f788-4e43-898f-c5ddfdb563b edit" [ref=e710]:
+                      - cell "Netcash Pay Now Service Key" [ref=e711]:
+                        - text: Netcash
+                        - strong [ref=e712]: Pay Now Service Key
+                      - cell "55484d78-f788-4e43-898f-c5ddfdb563b" [ref=e713]:
+                        - textbox "Service Key" [disabled] [ref=e714]: 55484d78-f788-4e43-898f-c5ddfdb563b
+                      - cell "edit" [ref=e715]:
+                        - link "edit" [ref=e716] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row "Netcash Risk Services Service Key 123678-ww56-4z40-aaf3-c2712349721w edit" [ref=e717]:
+                      - cell "Netcash Risk Services Service Key" [ref=e718]:
+                        - text: Netcash
+                        - strong [ref=e719]: Risk Services Service Key
+                      - cell "123678-ww56-4z40-aaf3-c2712349721w" [ref=e720]:
+                        - textbox "Service Key" [disabled] [ref=e721]: 123678-ww56-4z40-aaf3-c2712349721w
+                      - cell "edit" [ref=e722]:
+                        - link "edit" [ref=e723] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#nui
+                    - row [ref=e724]:
+                      - cell [ref=e725]
+                - separator [ref=e726]
+                - table [ref=e727]:
+                  - rowgroup [ref=e728]:
+                    - row "Netcash QR/POS Pay Point Configuration" [ref=e729]:
+                      - cell "Netcash QR/POS Pay Point Configuration" [ref=e730]:
+                        - heading "Netcash QR/POS Pay Point Configuration" [level=4] [ref=e731]: Netcash QR/POS Pay Point Configuration
+                    - row [ref=e732]:
+                      - cell [ref=e733]
+                    - row "Paypoint/Lane/Till Name Paypoint 1 7399224b-9cc3-4cc0-becc-0558a7f49a10 edit" [ref=e734]:
+                      - cell "Paypoint/Lane/Till Name" [ref=e735]
+                      - cell "Paypoint 1" [ref=e736]:
+                        - textbox [disabled] [ref=e737]: Paypoint 1
+                      - cell "7399224b-9cc3-4cc0-becc-0558a7f49a10" [ref=e738]:
+                        - textbox "Service Key" [disabled] [ref=e739]: 7399224b-9cc3-4cc0-becc-0558a7f49a10
+                      - cell "edit" [ref=e740]:
+                        - link "edit" [ref=e741] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#MTUI
+                    - row "Paypoint/Lane/Till Name Paypoint 2 9e934b92-0cdf-4e53-89a3-4ff121933114 edit" [ref=e742]:
+                      - cell "Paypoint/Lane/Till Name" [ref=e743]
+                      - cell "Paypoint 2" [ref=e744]:
+                        - textbox [disabled] [ref=e745]: Paypoint 2
+                      - cell "9e934b92-0cdf-4e53-89a3-4ff121933114" [ref=e746]:
+                        - textbox "Service Key" [disabled] [ref=e747]: 9e934b92-0cdf-4e53-89a3-4ff121933114
+                      - cell "edit" [ref=e748]:
+                        - link "edit" [ref=e749] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#MTUI
+                    - row "Paypoint/Lane/Till Name Paypoint 3 254df567-0c55-472d-8106-aaae21f1843c edit" [ref=e750]:
+                      - cell "Paypoint/Lane/Till Name" [ref=e751]
+                      - cell "Paypoint 3" [ref=e752]:
+                        - textbox [disabled] [ref=e753]: Paypoint 3
+                      - cell "254df567-0c55-472d-8106-aaae21f1843c" [ref=e754]:
+                        - textbox "Service Key" [disabled] [ref=e755]: 254df567-0c55-472d-8106-aaae21f1843c
+                      - cell "edit" [ref=e756]:
+                        - link "edit" [ref=e757] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#MTUI
+                    - row "Paypoint/Lane/Till Name Paypoint 4 80fd1314-6f1b-4206-8763-52f7a6253b8d edit" [ref=e758]:
+                      - cell "Paypoint/Lane/Till Name" [ref=e759]
+                      - cell "Paypoint 4" [ref=e760]:
+                        - textbox [disabled] [ref=e761]: Paypoint 4
+                      - cell "80fd1314-6f1b-4206-8763-52f7a6253b8d" [ref=e762]:
+                        - textbox "Service Key" [disabled] [ref=e763]: 80fd1314-6f1b-4206-8763-52f7a6253b8d
+                      - cell "edit" [ref=e764]:
+                        - link "edit" [ref=e765] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/#MTUI
+                    - row [ref=e766]:
+                      - cell [ref=e767]
+              - generic [ref=e769]:
+                - heading "Netcash brand guidelines" [level=4] [ref=e770]
+                - paragraph [ref=e771]:
+                  - text: Please refer to the
+                  - link "Netcash brand guidelines here" [ref=e772] [cursor=pointer]:
+                    - /url: https://netcash.co.za/tools/#logodownloadcentre
+                    - text: Netcash brand guidelines
+                    - strong [ref=e773]: here
+                  - text: when using any logos, images, icons, labels, descriptions, and references to
+                  - strong [ref=e774]: Netcash
+                  - text: in your software.
+              - generic [ref=e776]:
+                - heading "Labels to be used in host software" [level=4] [ref=e777]: Labels to be used in host software
+                - paragraph [ref=e778]: In an effort to minimize support we recommend standardising labels in integrated software.If the label in Netcash and the integrated software is the same, it eliminates confusion for the end user.
+                - table [ref=e779]:
+                  - rowgroup [ref=e780]:
+                    - row "Service Key (GUiD) Description" [ref=e781]:
+                      - columnheader "Service Key (GUiD)" [ref=e782]:
+                        - text: Service Key (
+                        - link "GUiD" [ref=e783] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary/#g
+                        - text: )
+                      - columnheader "Description" [ref=e784]
+                    - row "Account Number Client Netcash Account number – number starts with “5 ” and is N11" [ref=e785]:
+                      - cell "Account Number" [ref=e786]:
+                        - link "Account Number" [ref=e787] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/glossary#m
+                          - strong [ref=e788]: Account Number
+                      - cell "Client Netcash Account number – number starts with “5 ” and is N11" [ref=e789]:
+                        - link "Client Netcash Account" [ref=e790] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/glossary/#m
+                        - text: number – number starts with “
+                        - emphasis [ref=e791]:
+                          - strong [ref=e792]: "5"
+                        - text: ” and is N11
+                    - row "Account Services Service Key Used for Bank Account Validation and Statements" [ref=e793]:
+                      - cell "Account Services Service Key" [ref=e794]:
+                        - link "Account Services" [ref=e795] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/glossary#a
+                          - strong [ref=e796]: Account Services
+                        - text: Service Key
+                      - cell "Used for Bank Account Validation and Statements" [ref=e797]:
+                        - text: Used for
+                        - link "Bank Account Validation" [ref=e798] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/compulsory-integration/za-bank-account-validation/
+                        - text: and
+                        - link "Statements" [ref=e799] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/standard-integration/netcash-statement/
+                    - row "Debit Order Service Key Used for Debit Order Service" [ref=e800]:
+                      - cell "Debit Order Service Key" [ref=e801]:
+                        - link "Debit Order" [ref=e802] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/glossary#d
+                          - strong [ref=e803]: Debit Order
+                        - text: Service Key
+                      - cell "Used for Debit Order Service" [ref=e804]:
+                        - text: Used for
+                        - link "Debit Order Service" [ref=e805] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/inbound-payments/standard-debit-orders/
+                    - row "Salary Payment Service Key Used for Salary/Wage Payments" [ref=e806]:
+                      - cell "Salary Payment Service Key" [ref=e807]:
+                        - strong [ref=e808]:
+                          - link "Salary Payment" [ref=e809] [cursor=pointer]:
+                            - /url: http://api.netcash.co.za/glossary#s
+                        - text: Service Key
+                      - cell "Used for Salary/Wage Payments" [ref=e810]:
+                        - text: Used for
+                        - link "Salary/Wage Payments" [ref=e811] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/outbound-payments/salary-creditor-payments/
+                    - row "Creditor Payment Service Key Used for Creditor/3rd Party Payments" [ref=e812]:
+                      - cell "Creditor Payment Service Key" [ref=e813]:
+                        - strong [ref=e814]:
+                          - link "Creditor Payment" [ref=e815] [cursor=pointer]:
+                            - /url: http://api.netcash.co.za/glossary#c
+                        - text: Service Key
+                      - cell "Used for Creditor/3rd Party Payments" [ref=e816]:
+                        - text: Used for
+                        - link "Creditor/3rd Party Payments" [ref=e817] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/outbound-payments/salary-creditor-payments/
+                          - text: Creditor/3
+                          - superscript [ref=e818]: rd
+                          - text: Party Payments
+                    - row "Risk Services Service Key Used for Verification and Risk Services" [ref=e819]:
+                      - cell "Risk Services Service Key" [ref=e820]:
+                        - link "Risk Services" [ref=e821] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/glossary#r
+                          - strong [ref=e822]: Risk Services
+                        - text: Service Key
+                      - cell "Used for Verification and Risk Services" [ref=e823]:
+                        - text: Used for
+                        - link "Verification" [ref=e824] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/value-added-services/avs/
+                        - text: and
+                        - link "Risk Services" [ref=e825] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/value-added-services/avs/
+                    - row "Pay Now Service Key Used for all Pay Now services" [ref=e826]:
+                      - cell "Pay Now Service Key" [ref=e827]:
+                        - link "Pay Now" [ref=e828] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/glossary#p
+                          - strong [ref=e829]: Pay Now
+                        - text: Service Key
+                      - cell "Used for all Pay Now services" [ref=e830]:
+                        - text: Used for all
+                        - link "Pay Now services" [ref=e831] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/pay-now/
+                    - row "Vault Service key Used for Credit Card Tokenization" [ref=e832]:
+                      - cell "Vault Service key" [ref=e833]:
+                        - strong [ref=e834]:
+                          - link "Vault" [ref=e835] [cursor=pointer]:
+                            - /url: http://api.netcash.co.za/glossary#v
+                        - text: Service key
+                      - cell "Used for Credit Card Tokenization" [ref=e836]:
+                        - text: Used for
+                        - link "Credit Card Tokenization" [ref=e837] [cursor=pointer]:
+                          - /url: https://api.netcash.co.za/inbound-payments/debit-orders/#Credit-Card-Debit-Orders
+                    - row "Merchant Token* Used by Pay Now QR to identify till points/lanes/pay points" [ref=e838]:
+                      - cell "Merchant Token*" [ref=e839]:
+                        - link "Merchant Token" [ref=e840] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/glossary#m
+                          - strong [ref=e841]: Merchant Token
+                        - strong [ref=e842]:
+                          - superscript [ref=e843]: "*"
+                      - cell "Used by Pay Now QR to identify till points/lanes/pay points" [ref=e844]:
+                        - text: Used by
+                        - link "Pay Now QR" [ref=e845] [cursor=pointer]:
+                          - /url: http://api.netcash.co.za/inbound-payments/pay-now/pay-now-qr-pos/
+                        - text: to identify till points/lanes/pay points
+                - paragraph [ref=e846]:
+                  - superscript [ref=e847]:
+                    - strong [ref=e848]: "*Note"
+                    - text: ":"
+                    - emphasis [ref=e849]:
+                      - text: Multiple Merchant Tokens could exist, depending on the number of “pay points” created. See the recommended user experience
+                      - link "here" [ref=e850] [cursor=pointer]:
+                        - /url: "#tokensetup"
+                      - text: .
+                - paragraph [ref=e851]:
+                  - text: Applications must open
+                  - link "NetAccess" [ref=e852] [cursor=pointer]:
+                    - /url: https://api.netcash.co.za/value-added-services/netaccess/
+                  - text: in a
+                  - link "“frameless pop-up window”" [ref=e853] [cursor=pointer]:
+                    - /url: https://www.webdeveloper.com/forum/d/202754-resolved-frameless-popup-window
+                  - text: . Optimal dimensions are 560w x 650h (pixels).
+            - generic [ref=e867]:
+              - heading "Netcash brand guidelines" [level=4] [ref=e868]
+              - paragraph [ref=e869]:
+                - text: Please refer to the
+                - link "Netcash brand guidelines here" [ref=e870] [cursor=pointer]:
+                  - /url: https://netcash.co.za/tools/#logodownloadcentre
+                  - text: Netcash brand guidelines
+                  - strong [ref=e871]: here
+                - text: when using any logos, images, icons, labels, descriptions, and references to
+                - strong [ref=e872]: Netcash
+                - text: in your software.
+            - generic [ref=e876]:
+              - generic [ref=e878]:
+                - heading "Testing" [level=4] [ref=e879]
+                - paragraph [ref=e880]:
+                  - text: See the
+                  - link "Testing section" [ref=e881] [cursor=pointer]:
+                    - /url: http://api.netcash.co.za/testing/
+                  - text: for more details. If you require any integration assistance contact our
+                  - link "technical support team" [ref=e882] [cursor=pointer]:
+                    - /url: http://api.netcash.co.za/contact-support/
+              - generic [ref=e883]:
+                - generic [ref=e885]: 
+                - paragraph [ref=e886]:
+                  - text: Netcash may provide example/sample/demo
+                  - link "‘code snippets’" [ref=e887] [cursor=pointer]:
+                    - /url: https://en.wikipedia.org/wiki/Snippet_(programming)
+                  - text: and/or
+                  - link "external links" [ref=e888] [cursor=pointer]:
+                    - /url: https://en.wikipedia.org/wiki/Hyperlink
+                  - text: in this Technical Document. Such are for guidance purposes only and may not function on every developer’s system/s. Netcash disclaims any and all liability for the usage of guidance resources provided -and you as the Developer; must accept full responsibility for the usage of such. While every possible effort has been taken to ensure compatibility across multiple system configurations, the contents of this document cannot be guaranteed to work on all systems, with all operating systems -and/or with all system configuration/s.
+        - complementary "Primary sidebar" [ref=e889]:
+          - complementary [ref=e892]:
+            - list [ref=e894]:
+              - listitem [ref=e895]:
+                - link "STANDARD INTEGRATION −" [ref=e896] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: STANDARD INTEGRATION
+                  - generic [ref=e897]: −
+                - list [ref=e898]:
+                  - listitem [ref=e899]:
+                    - link "Before you start" [ref=e900] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/netcash-programmers-guide-v2/
+                    - text: +
+                  - listitem [ref=e901]:
+                    - link "NetConnector Setup" [ref=e902] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/
+                    - text: −
+                    - list [ref=e903]:
+                      - listitem [ref=e904]:
+                        - link "Before you start" [ref=e905] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Before-you-start
+                      - listitem [ref=e906]:
+                        - link "Overview" [ref=e907] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Overview
+                      - listitem [ref=e908]:
+                        - link "Usage" [ref=e909] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Usage
+                      - listitem [ref=e910]:
+                        - link "Input" [ref=e911] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Input
+                      - listitem [ref=e912]:
+                        - link "Response" [ref=e913] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Response
+                      - listitem [ref=e914]:
+                        - link "NetAccess User Detail Storage" [ref=e915] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#NetAccess-User-Detail-Storage
+                      - listitem [ref=e916]:
+                        - link "Web UI Example" [ref=e917] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Web-UI-Example
+                      - listitem [ref=e918]:
+                        - link "NetConnector Configuration" [ref=e919] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#NetConnector-Configuration
+                      - listitem [ref=e920]:
+                        - link "Netcash QR/POS Pay Point Configuration" [ref=e921] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Netcash-QRPOS-Pay-Point-Configuration
+                      - listitem [ref=e922]:
+                        - link "Labels to be used in host software" [ref=e923] [cursor=pointer]:
+                          - /url: /standard-integration/netconnector-setup/#Labels-to-be-used-in-host-software
+                  - listitem [ref=e924]:
+                    - link "Bank Account Validation" [ref=e925] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/standard-integration/bank-account-validation/
+                    - text: +
+                  - listitem [ref=e926]:
+                    - link "Statement" [ref=e927] [cursor=pointer]:
+                      - /url: https://api.netcash.co.za/standard-integration/netcash-statement/
+                    - text: +
+              - listitem [ref=e928]:
+                - link "INBOUND PAYMENTS +" [ref=e929] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: INBOUND PAYMENTS
+                  - generic [ref=e930]: +
+              - listitem [ref=e931]:
+                - link "OUTBOUND PAYMENTS +" [ref=e932] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: OUTBOUND PAYMENTS
+                  - generic [ref=e933]: +
+              - listitem [ref=e934]:
+                - link "VALUE ADDED SERVICES +" [ref=e935] [cursor=pointer]:
+                  - /url: javascript:void(0);
+                  - text: VALUE ADDED SERVICES
+                  - generic [ref=e936]: +
+    - contentinfo [ref=e937]:
+      - generic [ref=e939]:
+        - complementary [ref=e942]:
+          - heading "Standard Integration" [level=4] [ref=e943]
+          - paragraph [ref=e945]:
+            - link "Suggested Integration Process Flow" [ref=e946] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/wp-content/uploads/2020/09/Suggested-Process.pdf
+            - link "NetConnector Setup" [ref=e947] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/standard-integration/netconnector-setup/
+            - link "Bank Acc Validation" [ref=e948] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/standard-integration/bank-account-validation/
+            - link "Statement" [ref=e949] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/standard-integration/netcash-statement/
+        - complementary [ref=e952]:
+          - heading "Inbound Payments" [level=4] [ref=e953]
+          - paragraph [ref=e955]:
+            - link "Standard Debit Orders" [ref=e956] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/inbound-payments/debit-orders/
+            - link "Debicheck debit Orders" [ref=e957] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/inbound-payments/debi-check/
+            - link "Pay Now" [ref=e958] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/inbound-payments/pay-now/
+        - complementary [ref=e961]:
+          - heading "Outbound Payments" [level=4] [ref=e962]
+          - paragraph [ref=e964]:
+            - link "Salary & Creditor Payments" [ref=e965] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/outbound-payments/salary-creditor-payments/
+        - complementary [ref=e968]:
+          - heading "Value Added Services" [level=4] [ref=e969]
+          - paragraph [ref=e971]:
+            - link "Bulk Statement" [ref=e972] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/netcash-bulk-statement/
+            - link "Card Tokenisation GUI" [ref=e973] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/other-documents/card-tokenization-gui/
+            - link "eMandate" [ref=e974] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/emandate/
+            - link "ID Bank Account Verification" [ref=e975] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/avs/
+            - link "ID Validation" [ref=e976] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/id-validation/
+            - link "NetAccess" [ref=e977] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/netaccess/
+            - link "Subscription Update Service" [ref=e978] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/value-added-services/subscription-update-service/
+            - link "Other Documents" [ref=e979] [cursor=pointer]:
+              - /url: https://api.netcash.co.za/other-documents/
+        - complementary [ref=e982]:
+          - heading "Quick Links" [level=4] [ref=e983]
+          - generic [ref=e984]:
+            - paragraph [ref=e985]:
+              - link "Programmers Guide" [ref=e986] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/netcash-programmers-guide/
+              - link "Support" [ref=e987] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/contact-support
+              - link "Change Log" [ref=e988] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/changelog
+              - link "Help Center" [ref=e989] [cursor=pointer]:
+                - /url: https://help.netcash.co.za
+              - link "Glossary" [ref=e990] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/glossary/
+              - link "Testing" [ref=e991] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/testing
+              - link "Contact Author" [ref=e992] [cursor=pointer]:
+                - /url: https://api.netcash.co.za/improve-api/
+            - paragraph [ref=e993]
+      - generic [ref=e997]:
+        - superscript [ref=e999]: © 2026 Copyright Netcash (PTY) Ltd | Document version 2022.1
+        - navigation "social menu"
+  - banner "responsive menu" [ref=e1000]:
+    - link "menu close icon" [ref=e1002] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e1003]: 
+    - generic [ref=e1004]:
+      - link "Support" [ref=e1005] [cursor=pointer]:
+        - /url: https://api.netcash.co.za/contact-support/
+      - navigation "extras menu" [ref=e1006]:
+        - link "search icon" [ref=e1007] [cursor=pointer]:
+          - /url: "#"
+          - img "search icon" [ref=e1008]
+    - text: 
+    - navigation "main menu" [ref=e1011]:
+      - navigation "Main menu" [ref=e1012]:
+        - list [ref=e1013]:
+          - listitem [ref=e1014]:
+            - link "STANDARD INTEGRATION" [ref=e1015] [cursor=pointer]:
+              - /url: "#"
+            - text:   +
+            - link "Toggle submenu" [ref=e1016] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+          - listitem [ref=e1017]:
+            - link "INBOUND PAYMENTS" [ref=e1018] [cursor=pointer]:
+              - /url: "#"
+            - text:   +   +   +    +  +
+            - link "Toggle submenu" [ref=e1019] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+          - listitem [ref=e1020]:
+            - link "OUTBOUND PAYMENTS" [ref=e1021] [cursor=pointer]:
+              - /url: "#"
+            - link "Toggle submenu" [ref=e1022] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+          - listitem [ref=e1023]:
+            - link "VALUE ADDED SERVICES" [ref=e1024] [cursor=pointer]:
+              - /url: "#"
+            - text:    +  +     +  +   +  +    +   +  +   +   +
+            - link "Toggle submenu" [ref=e1025] [cursor=pointer]:
+              - /url: "#"
+              - text: +
+    - navigation "social menu"
+  - link "Back to top icon" [ref=e1026] [cursor=pointer]:
+    - /url: ""
+    - generic [ref=e1027]: 
+  - paragraph [ref=e1030]:
+    - text: We have made changes to our API.
+    - link "Click here" [ref=e1031] [cursor=pointer]:
+      - /url: https://api.netcash.co.za/changelog/?pid=2365
+    - text: to view the change log.
+  - generic: BESbswy
+  - iframe [ref=e1036]:
+    - generic [ref=f1e6]:
+      - text: protected by
+      - strong [ref=f1e7]: reCAPTCHA
