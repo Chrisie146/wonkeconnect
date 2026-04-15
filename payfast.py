@@ -207,21 +207,22 @@ def get_onsite_payment_identifier(
     host = get_validate_host(sandbox)
 
     # Build request data for the onsite transaction API
+    # Only include required fields - PayFast may reject extra empty fields
     data = {
         "merchant_id": merchant_id,
         "merchant_key": merchant_key,
-        "return_url": "",  # Not used for onsite
-        "cancel_url": "",  # Not used for onsite
-        "notify_url": "",  # Not used for onsite (ITN still works)
-        "name_first": name_first,
-        "name_last": name_last,
-        "email_address": email_address,
         "m_payment_id": m_payment_id,
         "amount": amount,
         "item_name": item_name,
-        "custom_int1": "",  # Optional
-        "custom_str1": "",  # Optional
     }
+
+    # Add optional fields only if provided
+    if name_first:
+        data["name_first"] = name_first
+    if name_last:
+        data["name_last"] = name_last
+    if email_address:
+        data["email_address"] = email_address
 
     # Build signature using documented field order
     sig = build_signature(data, passphrase, alphabetical=False)
@@ -239,19 +240,21 @@ def get_onsite_payment_identifier(
         with urllib.request.urlopen(req, timeout=10) as response:
             body = response.read().decode().strip()
 
-        # PayFast returns JSON with the UUID
+        # PayFast returns either JSON with uuid field or UUID string directly
         try:
             result = json.loads(body)
-            if result.get("status") == "success" and result.get("uuid"):
+            # Try different response formats
+            uuid = result.get("uuid") or result.get("data", {}).get("uuid")
+            if uuid:
                 LOGGER.info("Generated onsite payment identifier for %s", m_payment_id)
-                return result["uuid"], "ok"
+                return uuid, "ok"
             else:
-                reason = result.get("error", body)
+                reason = result.get("error") or result.get("message") or str(result)
                 LOGGER.warning("PayFast onsite identifier generation failed: %s", reason)
                 return None, f"PayFast error: {reason}"
         except json.JSONDecodeError:
-            # If not JSON, assume it's the UUID directly
-            if body and len(body) == 36:  # UUID format
+            # If not JSON, assume it's the UUID directly (UUID format is 36 chars)
+            if body and len(body) == 36:
                 LOGGER.info("Generated onsite payment identifier for %s", m_payment_id)
                 return body, "ok"
             LOGGER.warning("PayFast returned unexpected response: %s", body)
