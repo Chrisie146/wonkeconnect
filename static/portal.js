@@ -116,7 +116,7 @@ document.getElementById('error-back-button').addEventListener('click', () => sho
 // ── Payment method toggle ────────────────────────────────────────────────────
 function getSelectedPaymentMethod() {
     const el = document.querySelector('input[name="payment_method"]:checked');
-    return el ? el.value : 'payfast';
+    return el ? el.value : 'netcash';
 }
 
 document.querySelectorAll('input[name="payment_method"]').forEach((radio) => {

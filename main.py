@@ -698,6 +698,9 @@ async def netcash_notify(request: Request) -> dict:
             LOGGER.warning("SMS send failed for Netcash order %s: %s", reference, sms_exc)
 
     return {"ok": True}
+
+
+@app.post("/payment/initiate")
 def initiate_payment(payload: PaymentInitiateRequest) -> dict:
     """Create a pending order and return PayFast payment parameters."""
     plan = fetch_one(
