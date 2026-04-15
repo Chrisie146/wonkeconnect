@@ -17,7 +17,12 @@ from pydantic import BaseModel, Field, field_validator
 
 from fastapi.responses import FileResponse, RedirectResponse
 from database import execute, fetch_all, fetch_one, get_connection, get_settings, init_db, set_settings
-from payfast import build_signature, get_payfast_url, validate_itn
+from payfast import (
+    build_signature,
+    get_onsite_payment_identifier,
+    get_payfast_url,
+    validate_itn,
+)
 from bulksms import send_voucher_sms
 from mikrotik import (
     MikroTikConfigError,
@@ -759,26 +764,29 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
         ),
     )
 
-    params = {
-        "merchant_id": merchant_id,
-        "merchant_key": merchant_key,
-        "return_url": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
-        "cancel_url": f"{server_url}/portal?status=cancel",
-        "notify_url": f"{server_url}/payment/notify",
-        "name_first": payload.name_first,
-        "name_last": payload.name_last,
-        "cell_number": payload.cell_number,
-        "m_payment_id": m_payment_id,
-        "amount": f"{price:.2f}",
-        "item_name": f"Wonke Connect WiFi — {plan['name']}",
-    }
-    if payload.pay_method:
-        params["payment_method"] = payload.pay_method
-    params["signature"] = build_signature(params, passphrase)
+    # Generate onsite payment identifier (requires LIVE mode)
+    identifier, reason = get_onsite_payment_identifier(
+        merchant_id=merchant_id,
+        merchant_key=merchant_key,
+        passphrase=passphrase,
+        sandbox=sandbox,
+        m_payment_id=m_payment_id,
+        amount=f"{price:.2f}",
+        item_name=f"Wonke Connect WiFi — {plan['name']}",
+        name_first=payload.name_first,
+        name_last=payload.name_last,
+        email_address="",  # Optional
+    )
+
+    if not identifier:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Payment processing unavailable: {reason}. Ensure PayFast is in LIVE mode.",
+        )
 
     return {
-        "payfast_url": get_payfast_url(sandbox),
-        "params": params,
+        "uuid": identifier,
+        "onsite_engine_url": "https://www.payfast.co.za/onsite/engine.js",
         "m_payment_id": m_payment_id,
     }
 

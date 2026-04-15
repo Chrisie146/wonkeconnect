@@ -1,7 +1,7 @@
 """PayFast payment utility for Wonke Connect.
 
-Handles signature generation and ITN (Instant Transaction Notification) validation
-for one-time payments via the PayFast hosted checkout page.
+Handles signature generation, ITN validation, and onsite payment identifiers
+for secure payments via PayFast.
 
 Key rules (from PayFast docs):
 - Payment initiation signature: PayFast documented field order (NOT alphabetical).
@@ -9,11 +9,13 @@ Key rules (from PayFast docs):
 - Spaces → '+' (not %20).
 - Passphrase appended last: &passphrase=VALUE.
 - Always respond 200 to ITN immediately, then validate asynchronously.
+- Onsite payments: Requires live mode (testMode=false), no sandbox support.
 """
 
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
 import urllib.error
 import urllib.parse
@@ -164,3 +166,100 @@ def validate_itn(data: dict, passphrase: str, sandbox: bool) -> tuple[bool, str]
     except Exception as exc:  # noqa: BLE001
         LOGGER.error("Unexpected error during ITN validation: %s", exc)
         return False, f"Unexpected error: {exc}"
+
+
+def get_onsite_payment_identifier(
+    merchant_id: str,
+    merchant_key: str,
+    passphrase: str,
+    sandbox: bool,
+    m_payment_id: str,
+    amount: str,
+    item_name: str,
+    name_first: str = "",
+    name_last: str = "",
+    email_address: str = "",
+) -> tuple[str | None, str]:
+    """Generate a PayFast onsite payment identifier (UUID).
+
+    Onsite payments embed the payment form directly in your page with no
+    redirects. Only available in LIVE mode (sandbox must be False).
+
+    Args:
+        merchant_id: PayFast merchant ID.
+        merchant_key: PayFast merchant key.
+        passphrase: Merchant passphrase (empty string if not set).
+        sandbox: Must be False for onsite payments (they're production-only).
+        m_payment_id: Your unique merchant payment ID.
+        amount: Payment amount (e.g., "79.00").
+        item_name: Item/service description.
+        name_first: Customer first name.
+        name_last: Customer last name.
+        email_address: Customer email.
+
+    Returns:
+        (identifier, reason) tuple. identifier is None if generation fails.
+    """
+    if sandbox:
+        LOGGER.error("Onsite payments are NOT available in sandbox mode")
+        return None, "Onsite payments require LIVE mode (sandbox=false)"
+
+    host = get_validate_host(sandbox)
+
+    # Build request data for the onsite transaction API
+    data = {
+        "merchant_id": merchant_id,
+        "merchant_key": merchant_key,
+        "return_url": "",  # Not used for onsite
+        "cancel_url": "",  # Not used for onsite
+        "notify_url": "",  # Not used for onsite (ITN still works)
+        "name_first": name_first,
+        "name_last": name_last,
+        "email_address": email_address,
+        "m_payment_id": m_payment_id,
+        "amount": amount,
+        "item_name": item_name,
+        "custom_int1": "",  # Optional
+        "custom_str1": "",  # Optional
+    }
+
+    # Build signature using documented field order
+    sig = build_signature(data, passphrase, alphabetical=False)
+    data["signature"] = sig
+
+    post_body = urllib.parse.urlencode(data).encode()
+
+    try:
+        req = urllib.request.Request(
+            f"https://{host}/api/onsite/createTransaction",
+            data=post_body,
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            body = response.read().decode().strip()
+
+        # PayFast returns JSON with the UUID
+        try:
+            result = json.loads(body)
+            if result.get("status") == "success" and result.get("uuid"):
+                LOGGER.info("Generated onsite payment identifier for %s", m_payment_id)
+                return result["uuid"], "ok"
+            else:
+                reason = result.get("error", body)
+                LOGGER.warning("PayFast onsite identifier generation failed: %s", reason)
+                return None, f"PayFast error: {reason}"
+        except json.JSONDecodeError:
+            # If not JSON, assume it's the UUID directly
+            if body and len(body) == 36:  # UUID format
+                LOGGER.info("Generated onsite payment identifier for %s", m_payment_id)
+                return body, "ok"
+            LOGGER.warning("PayFast returned unexpected response: %s", body)
+            return None, f"Unexpected response: {body}"
+
+    except urllib.error.URLError as exc:
+        LOGGER.error("PayFast onsite request failed: %s", exc)
+        return None, f"Request failed: {exc}"
+    except Exception as exc:  # noqa: BLE001
+        LOGGER.error("Unexpected error during onsite identifier generation: %s", exc)
+        return None, f"Unexpected error: {exc}"
