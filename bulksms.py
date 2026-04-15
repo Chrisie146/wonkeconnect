@@ -39,7 +39,7 @@ def send_voucher_sms(
     body = f"Your Wonke Connect WiFi code is: {voucher_code}"
     if plan_name:
         body += f" ({plan_name})"
-    body += ". Enter it on the login page to connect. Need help? WhatsApp 081 869 4929"
+    body += ". Enter it on the WiFi login page to connect. For help WhatsApp us."
 
     payload = {
         "to": phone,
