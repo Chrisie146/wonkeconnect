@@ -169,8 +169,8 @@ async function initiatePayment(method, payButton) {
         }
 
         if (method === 'payfast' && data.redirect_url) {
-            // PayFast redirect flow - go to form page
-            window.location.href = data.redirect_url;
+            // Open payment in new browser window (escapes captive portal)
+            window.open(data.redirect_url, '_blank');
         } else if (method === 'netcash') {
             // Netcash - redirect to hosted checkout
             const form = document.createElement('form');
