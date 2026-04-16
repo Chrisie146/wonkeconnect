@@ -168,9 +168,26 @@ async function initiatePayment(method, payButton) {
             sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
         }
 
-        if (method === 'payfast' && data.redirect_url) {
-            // Redirect within same tab to payment form page (works in captive portal)
-            window.location.href = data.redirect_url;
+        if (method === 'payfast' && data.payfast_url && data.payfast_fields) {
+            // Create and submit PayFast form in new window to escape captive portal webview.
+            // This allows HTTPS connections to PayFast's hosted checkout.
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = data.payfast_url;
+            form.target = '_blank';
+            form.style.display = 'none';
+
+            Object.entries(data.payfast_fields).forEach(([key, value]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = String(value);
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
         } else if (method === 'netcash') {
             // Netcash - redirect to hosted checkout
             const form = document.createElement('form');
