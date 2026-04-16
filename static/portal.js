@@ -169,12 +169,12 @@ async function initiatePayment(method, payButton) {
         }
 
         if (method === 'payfast' && data.payfast_url && data.payfast_fields) {
-            // Create and submit PayFast form in new window to escape captive portal webview.
-            // This allows HTTPS connections to PayFast's hosted checkout.
+            // Create and submit PayFast form with target="_top" to navigate the main window.
+            // This escapes the captive portal webview by replacing the top-level window.
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = data.payfast_url;
-            form.target = '_blank';
+            form.target = '_top';
             form.style.display = 'none';
 
             Object.entries(data.payfast_fields).forEach(([key, value]) => {
@@ -187,7 +187,6 @@ async function initiatePayment(method, payButton) {
 
             document.body.appendChild(form);
             form.submit();
-            document.body.removeChild(form);
         } else if (method === 'netcash') {
             // Netcash - redirect to hosted checkout
             const form = document.createElement('form');
