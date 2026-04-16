@@ -802,7 +802,7 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
         "m_payment_id": m_payment_id,
         "amount": f"{price:.2f}",
         "item_name": f"Wonke Connect WiFi — {plan_name}",
-        "payment_method": "eft",
+        "payment_method": "ef",
     }
     params["signature"] = build_signature(params, passphrase)
     payfast_url = get_payfast_url(sandbox)
@@ -849,7 +849,7 @@ def payment_redirect(m_payment_id: str) -> HTMLResponse:
         "m_payment_id": m_payment_id,
         "amount": f"{float(order['amount']):.2f}",
         "item_name": f"Wonke Connect WiFi \u2014 {plan_name}",
-        "payment_method": "eft",
+        "payment_method": "ef",
     }
     params["signature"] = build_signature(params, passphrase)
     payfast_url = get_payfast_url(sandbox)
