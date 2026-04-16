@@ -200,9 +200,12 @@ async function initiatePayment(method, payButton) {
     }
 }
 
-document.getElementById('pay-bank').addEventListener('click', () => {
-    initiatePayment('payfast', document.getElementById('pay-bank'));
-});
+const payBankBtn = document.getElementById('pay-bank');
+if (payBankBtn) {
+    payBankBtn.addEventListener('click', () => {
+        initiatePayment('payfast', payBankBtn);
+    });
+}
 
 document.getElementById('pay-1voucher').addEventListener('click', () => {
     initiatePayment('netcash', document.getElementById('pay-1voucher'));
