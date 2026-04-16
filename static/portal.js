@@ -168,25 +168,10 @@ async function initiatePayment(method, payButton) {
             sessionStorage.setItem('wonke_m_payment_id', data.m_payment_id);
         }
 
-        if (method === 'payfast' && data.payfast_url && data.payfast_fields) {
-            // Create and submit PayFast form with target="_top" to navigate the main window.
-            // This escapes the captive portal webview by replacing the top-level window.
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = data.payfast_url;
-            form.target = '_top';
-            form.style.display = 'none';
-
-            Object.entries(data.payfast_fields).forEach(([key, value]) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = String(value);
-                form.appendChild(input);
-            });
-
-            document.body.appendChild(form);
-            form.submit();
+        if (method === 'payfast' && data.redirect_url) {
+            // Redirect to /payment/redirect endpoint which handles captive portal
+            // This endpoint has CNA detection and form auto-submission logic
+            window.location.href = data.redirect_url;
         } else if (method === 'netcash') {
             // Netcash - redirect to hosted checkout
             const form = document.createElement('form');
