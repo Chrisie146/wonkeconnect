@@ -63,10 +63,26 @@
             </div>
             <div class="accepted-payment">
                 <span class="accepted-payment__label">Accepted payment</span>
-                <img src="/marketing/icons/icon%20Orange.png" alt="1Voucher" class="accepted-payment__icon">
-                <span class="accepted-payment__name">1Voucher</span>
-                <span class="accepted-payment__sep">&amp;</span>
-                <span class="accepted-payment__name">Bank (PayFast)</span>
+                <div class="accepted-payment__logos">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 86 28" aria-label="Visa" class="payment-logo">
+                        <rect width="86" height="28" rx="4" fill="#1A1F71"/>
+                        <text x="43" y="21" font-family="Arial,sans-serif" font-size="18" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">VISA</text>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 28" aria-label="Mastercard" class="payment-logo">
+                        <rect width="52" height="28" rx="4" fill="#FFFFFF"/>
+                        <circle cx="19" cy="14" r="10" fill="#EB001B"/>
+                        <circle cx="33" cy="14" r="10" fill="#F79E1B"/>
+                        <path d="M26 6.2a10 10 0 0 1 0 15.6A10 10 0 0 1 26 6.2z" fill="#FF5F00"/>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 28" aria-label="EFT Payment" class="payment-logo">
+                        <rect width="64" height="28" rx="4" fill="#FFFFFF"/>
+                        <rect x="2" y="2" width="60" height="24" rx="3" fill="none" stroke="#E6E6E6" stroke-width="0.5"/>
+                        <text x="32" y="11" font-family="Arial,sans-serif" font-size="6" font-weight="700" fill="#1A1F71" text-anchor="middle" letter-spacing="0.5">EFT</text>
+                        <text x="32" y="20" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#1A1F71" text-anchor="middle" letter-spacing="0.5">PAYMENT</text>
+                        <line x1="8" y1="14" x2="56" y2="14" stroke="#E6E6E6" stroke-width="0.5"/>
+                    </svg>
+                    <img src="/marketing/icons/icon%20Orange.png" alt="1Voucher" class="payment-logo payment-logo--1v">
+                </div>
             </div>
         </section>
 
@@ -96,20 +112,38 @@
                 <div id="form-error" class="portal-error" style="display:none;"></div>
 
                 <div class="payment-buttons">
-                    <button class="portal-pay-button portal-pay-button--bank" id="pay-bank" type="button">
-                        <span class="pay-btn-label">Pay <span class="pay-amount"></span> by Bank</span>
-                        <span class="pay-btn-loading" style="display:none;">
-                            <span class="btn-spinner"></span> Redirecting to PayFast…
-                        </span>
-                    </button>
-                    <p class="portal-secure-note">
-                        🔒 Processed securely by <strong>PayFast</strong>. We never see your card details.
-                    </p>
-
-                    <div class="pay-divider"><span>or</span></div>
+                    <p class="payment-method-heading">Select your payment method</p>
+                    <div class="payment-method-list">
+                        <div class="payment-method-card payment-method-card--info">
+                            <span class="pm-card-name">Credit and Debit Card</span>
+                            <div class="pm-card-logos">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 86 28" aria-label="Visa" class="pm-logo">
+                                    <rect width="86" height="28" rx="4" fill="#1A1F71"/>
+                                    <text x="43" y="21" font-family="Arial,sans-serif" font-size="18" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">VISA</text>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 28" aria-label="Mastercard" class="pm-logo">
+                                    <rect width="52" height="28" rx="4" fill="#FFFFFF"/>
+                                    <circle cx="19" cy="14" r="10" fill="#EB001B"/>
+                                    <circle cx="33" cy="14" r="10" fill="#F79E1B"/>
+                                    <path d="M26 6.2a10 10 0 0 1 0 15.6A10 10 0 0 1 26 6.2z" fill="#FF5F00"/>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 28" aria-label="EFT Payment" class="pm-logo">
+                                    <rect width="64" height="28" rx="4" fill="#FFFFFF"/>
+                                    <rect x="2" y="2" width="60" height="24" rx="3" fill="none" stroke="#E6E6E6" stroke-width="0.5"/>
+                                    <text x="32" y="11" font-family="Arial,sans-serif" font-size="6" font-weight="700" fill="#1A1F71" text-anchor="middle" letter-spacing="0.5">EFT</text>
+                                    <text x="32" y="20" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#1A1F71" text-anchor="middle" letter-spacing="0.5">PAYMENT</text>
+                                    <line x1="8" y1="14" x2="56" y2="14" stroke="#E6E6E6" stroke-width="0.5"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="payment-method-card payment-method-card--active">
+                            <span class="pm-card-name">1Voucher</span>
+                            <img src="/marketing/icons/icon%20Orange.png" alt="1Voucher" class="pm-logo pm-logo--1v">
+                        </div>
+                    </div>
 
                     <button class="portal-pay-button" id="pay-1voucher" type="button">
-                        <span class="pay-btn-label"><img src="/marketing/icons/icon%20Orange.png" alt="" class="v1-icon" aria-hidden="true">Pay <span class="pay-amount"></span> with 1Voucher</span>
+                        <span class="pay-btn-label">Pay <span class="pay-amount"></span></span>
                         <span class="pay-btn-loading" style="display:none;">
                             <span class="btn-spinner"></span> Redirecting to payment…
                         </span>

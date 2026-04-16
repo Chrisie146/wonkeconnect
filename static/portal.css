@@ -806,8 +806,8 @@ body {
 /* Accepted-payment badge below plan list */
 .accepted-payment {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     margin-top: 20px;
     font-size: 0.82rem;
@@ -821,16 +821,94 @@ body {
     font-weight: 700;
 }
 
-.accepted-payment__icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
+.accepted-payment__logos {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.payment-logo {
+    height: 22px;
+    width: auto;
+    display: block;
+    border-radius: 3px;
+}
+
+.payment-logo--1v {
+    height: 22px;
+    width: 22px;
+    border-radius: 5px;
     object-fit: cover;
 }
 
-.accepted-payment__name {
+/* ── Payment method selector cards ───────────────── */
+.payment-method-heading {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--p-muted);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px;
+}
+
+.payment-method-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1.5px solid var(--p-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.payment-method-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--p-panel);
+    border-bottom: 1.5px solid var(--p-border);
+}
+
+.payment-method-card:last-child {
+    border-bottom: none;
+}
+
+.payment-method-card--info {
+    opacity: 0.55;
+}
+
+.payment-method-card--active {
+    background: rgba(255, 59, 10, 0.04);
+}
+
+.pm-card-name {
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--p-text);
+}
+
+.pm-card-logos {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pm-logo {
+    height: 20px;
+    width: auto;
+    display: block;
+    border-radius: 3px;
+}
+
+.pm-logo--1v {
+    height: 28px;
+    width: 28px;
+    border-radius: 7px;
+    object-fit: cover;
 }
 
 /* 1Voucher icon inside pay button */
