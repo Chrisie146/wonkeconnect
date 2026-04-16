@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from database import execute, fetch_all, fetch_one, get_connection, get_settings, init_db, set_settings
 from payfast import (
     build_signature,
@@ -37,6 +37,8 @@ from mikrotik import (
     disable_hotspot_user,
     get_user_statistics,
     get_available_hotspot_profiles,
+    setup_netcash_walled_garden,
+    setup_payfast_walled_garden,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -53,6 +55,11 @@ def _generate_payment_id() -> str:
     return secrets.token_hex(16)
 
 
+def _is_sandbox(value: str) -> bool:
+    """Return True if the sandbox setting string means 'enabled'."""
+    return value.strip().lower() not in ("false", "0", "no", "off", "")
+
+
 def get_payfast_config() -> dict:
     """Read PayFast settings: env vars take priority over DB (for Railway deployments)."""
     import os
@@ -66,14 +73,19 @@ def get_payfast_config() -> dict:
         "payfast_merchant_key": os.getenv("PAYFAST_MERCHANT_KEY", db.get("payfast_merchant_key", "")),
         "payfast_passphrase":   os.getenv("PAYFAST_PASSPHRASE",   db.get("payfast_passphrase", "")),
         "payfast_server_url":   os.getenv("PAYFAST_SERVER_URL",   db.get("payfast_server_url", "")),
-        "payfast_sandbox":      db.get("payfast_sandbox", "true"),
+        "payfast_sandbox":      os.getenv("PAYFAST_SANDBOX") or db.get("payfast_sandbox", "true"),
         "mikrotik_sync_api_key": os.getenv("MIKROTIK_SYNC_API_KEY", db.get("mikrotik_sync_api_key", "")),
     }
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    init_db()
+    try:
+        init_db()
+        LOGGER.info("Database initialized successfully")
+    except Exception as exc:
+        LOGGER.error("Failed to initialize database during startup: %s", exc, exc_info=True)
+        raise
     yield
 
 
@@ -89,6 +101,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
+
+class PermissionsPolicyMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: StarletteRequest, call_next):
+        response = await call_next(request)
+        response.headers["Permissions-Policy"] = "payment=*"
+        return response
+
+app.add_middleware(PermissionsPolicyMiddleware)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.mount("/marketing", StaticFiles(directory=BASE_DIR / "1voucher_marketing"), name="marketing")
 
@@ -358,7 +381,7 @@ def serve_dashboard() -> FileResponse:
 
 @app.get("/portal")
 def serve_portal() -> FileResponse:
-    return FileResponse(STATIC_DIR / "portal.html")
+    return FileResponse(STATIC_DIR / "portal.html", headers={"Permissions-Policy": "payment=*"})
 
 
 @app.post("/portal")
@@ -402,7 +425,7 @@ def get_payfast_settings() -> PayFastSettingsResponse:
         merchant_key=s.get("payfast_merchant_key", ""),
         passphrase=s.get("payfast_passphrase", ""),
         server_url=s.get("payfast_server_url", ""),
-        sandbox=s.get("payfast_sandbox", "true").lower() != "false",
+        sandbox=_is_sandbox(s.get("payfast_sandbox", "true")),
         configured=bool(merchant_id),
         mikrotik_sync_api_key=s.get("mikrotik_sync_api_key", ""),
     )
@@ -708,7 +731,7 @@ async def netcash_notify(request: Request) -> dict:
 
 @app.post("/payment/initiate")
 def initiate_payment(payload: PaymentInitiateRequest) -> dict:
-    """Create a pending order and return PayFast payment parameters."""
+    """Create a pending order and return redirect URL for PayFast payment form."""
     plan = fetch_one(
         "SELECT id, name, profile, price, active FROM plans WHERE id = ?",
         (payload.plan_id,),
@@ -783,13 +806,102 @@ def initiate_payment(payload: PaymentInitiateRequest) -> dict:
     }
     params["signature"] = build_signature(params, passphrase)
     payfast_url = get_payfast_url(sandbox)
-
     return {
         "redirect_url": f"{server_url}/payment/redirect/{m_payment_id}",
         "m_payment_id": m_payment_id,
         "payfast_url": payfast_url,
         "payfast_fields": params,
     }
+
+
+@app.get("/payment/redirect/{m_payment_id}")
+def payment_redirect(m_payment_id: str) -> HTMLResponse:
+    """Serve auto-submit form for PayFast — opened in Safari to bypass CNA."""
+    import html as html_mod
+
+    order = fetch_one(
+        "SELECT plan_id, buyer_name_first, buyer_name_last, buyer_phone, amount, status "
+        "FROM orders WHERE m_payment_id = ?",
+        (m_payment_id,),
+    )
+    if not order or order["status"] != "pending":
+        raise HTTPException(status_code=404, detail="Order not found or already processed.")
+
+    plan = fetch_one("SELECT name FROM plans WHERE id = ?", (order["plan_id"],))
+    plan_name = plan["name"] if plan else "WiFi"
+
+    pf = get_payfast_config()
+    merchant_id = pf.get("payfast_merchant_id", "")
+    merchant_key = pf.get("payfast_merchant_key", "")
+    server_url = pf.get("payfast_server_url", "").rstrip("/")
+    passphrase = pf.get("payfast_passphrase", "")
+    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
+
+    params = {
+        "merchant_id": merchant_id,
+        "merchant_key": merchant_key,
+        "return_url": f"{server_url}/portal?status=success&m_payment_id={m_payment_id}",
+        "cancel_url": f"{server_url}/portal?status=cancel",
+        "notify_url": f"{server_url}/payment/notify",
+        "name_first": order["buyer_name_first"],
+        "name_last": order["buyer_name_last"],
+        "cell_number": order["buyer_phone"] or "",
+        "m_payment_id": m_payment_id,
+        "amount": f"{float(order['amount']):.2f}",
+        "item_name": f"Wonke Connect WiFi \u2014 {plan_name}",
+        "payment_method": "eft",
+    }
+    params["signature"] = build_signature(params, passphrase)
+    payfast_url = get_payfast_url(sandbox)
+
+    fields_html = "\n".join(
+        f'<input type="hidden" name="{html_mod.escape(k)}" value="{html_mod.escape(v)}">'
+        for k, v in params.items()
+    )
+    # Detect Apple CNA (Captive Network Assistant) via User-Agent.
+    # CNA cannot make HTTPS connections, so we show a prompt to open Safari.
+    # When the user taps "Done" in CNA, iOS opens Safari with the same URL,
+    # and Safari can submit the HTTPS form successfully.
+    page = f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Complete Payment</title>
+<style>
+*{{box-sizing:border-box}}
+body{{font-family:-apple-system,system-ui,sans-serif;margin:0;padding:24px;background:#f5f5f5;color:#333}}
+.cna-notice{{display:none;text-align:center;padding:32px 16px}}
+.cna-notice h2{{font-size:1.3rem;margin:0 0 12px}}
+.cna-notice p{{font-size:1rem;line-height:1.5;color:#555;margin:8px 0}}
+.cna-notice .arrow{{font-size:2rem;margin:16px 0}}
+.cna-notice .highlight{{background:#007aff;color:#fff;padding:4px 12px;border-radius:6px;font-weight:600}}
+.loading{{text-align:center;padding:48px 16px}}
+.loading p{{font-size:1.1rem}}
+</style>
+</head><body>
+<div class="loading" id="loading">
+<p>Redirecting to PayFast&hellip;</p>
+</div>
+<div class="cna-notice" id="cna-notice">
+<h2>One more step</h2>
+<div class="arrow">&uarr;</div>
+<p>Tap <span class="highlight">Done</span> in the top-right corner to open Safari.</p>
+<p>Your payment will continue automatically.</p>
+</div>
+<form id="pf" method="POST" action="{html_mod.escape(payfast_url)}" style="display:none">
+{fields_html}
+</form>
+<script>
+(function(){{
+  var isCNA = /CaptiveNetworkSupport|wispr/i.test(navigator.userAgent);
+  if (isCNA) {{
+    document.getElementById('loading').style.display='none';
+    document.getElementById('cna-notice').style.display='block';
+  }} else {{
+    document.getElementById('pf').submit();
+  }}
+}})();
+</script>
+</body></html>"""
+    return HTMLResponse(content=page)
 
 
 @app.post("/payment/notify", status_code=200)
@@ -800,7 +912,7 @@ async def payment_notify(request: Request) -> dict:
 
     pf = get_payfast_config()
     passphrase = pf.get("payfast_passphrase", "")
-    sandbox = pf.get("payfast_sandbox", "true").lower() != "false"
+    sandbox = _is_sandbox(pf.get("payfast_sandbox", "true"))
 
     LOGGER.info("PayFast ITN received for m_payment_id=%s status=%s data=%s",
                 data.get("m_payment_id"), data.get("payment_status"), data)
@@ -1027,7 +1139,14 @@ if __name__ == "__main__":
 
 @app.get("/health")
 def healthcheck() -> dict[str, str]:
-    return {"status": "ok", "timestamp": utc_now()}
+    try:
+        # Quick DB connectivity check
+        with get_connection() as conn:
+            conn.execute("SELECT 1")
+        return {"status": "ok", "timestamp": utc_now()}
+    except Exception as exc:
+        LOGGER.error("Health check failed: %s", exc)
+        raise HTTPException(status_code=503, detail=str(exc))
 
 
 @app.get("/settings/mikrotik", response_model=MikroTikSettingsResponse)
@@ -1154,6 +1273,32 @@ def add_walled_garden_rule(payload: WalledGardenRequest) -> dict[str, str]:
             "message": f"Walled garden rule for '{payload.dst_host}' added successfully.",
             "dst_host": payload.dst_host,
             "action": payload.action,
+        }
+    except (MikroTikConfigError, MikroTikConnectionError) as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.post("/hotspot/walled-garden/netcash")
+def setup_netcash_walled_garden_rules() -> dict[str, Any]:
+    """Add all Netcash/PayNow domains to the MikroTik walled garden."""
+    try:
+        added = setup_netcash_walled_garden()
+        return {
+            "message": "Netcash walled garden rules applied successfully.",
+            "hosts": added,
+        }
+    except (MikroTikConfigError, MikroTikConnectionError) as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.post("/hotspot/walled-garden/payfast")
+def setup_payfast_walled_garden_rules() -> dict[str, Any]:
+    """Add all PayFast domains to the MikroTik walled garden."""
+    try:
+        added = setup_payfast_walled_garden()
+        return {
+            "message": "PayFast walled garden rules applied successfully.",
+            "hosts": added,
         }
     except (MikroTikConfigError, MikroTikConnectionError) as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc

@@ -176,6 +176,9 @@ def get_onsite_payment_identifier(
     m_payment_id: str,
     amount: str,
     item_name: str,
+    return_url: str = "",
+    cancel_url: str = "",
+    notify_url: str = "",
     name_first: str = "",
     name_last: str = "",
     email_address: str = "",
@@ -193,9 +196,12 @@ def get_onsite_payment_identifier(
         m_payment_id: Your unique merchant payment ID.
         amount: Payment amount (e.g., "79.00").
         item_name: Item/service description.
-        name_first: Customer first name.
-        name_last: Customer last name.
-        email_address: Customer email.
+        return_url: Return URL after payment (required).
+        cancel_url: Cancel URL if user cancels (required).
+        notify_url: Webhook URL for ITN notifications (required).
+        name_first: Customer first name (optional).
+        name_last: Customer last name (optional).
+        email_address: Customer email (optional).
 
     Returns:
         (identifier, reason) tuple. identifier is None if generation fails.
@@ -207,31 +213,43 @@ def get_onsite_payment_identifier(
     host = get_validate_host(sandbox)
 
     # Build request data for the onsite transaction API
+    # Required fields for onsite payments
     data = {
         "merchant_id": merchant_id,
         "merchant_key": merchant_key,
-        "return_url": "",  # Not used for onsite
-        "cancel_url": "",  # Not used for onsite
-        "notify_url": "",  # Not used for onsite (ITN still works)
-        "name_first": name_first,
-        "name_last": name_last,
-        "email_address": email_address,
-        "m_payment_id": m_payment_id,
+        "return_url": return_url,
+        "cancel_url": cancel_url,
+        "notify_url": notify_url,
         "amount": amount,
         "item_name": item_name,
-        "custom_int1": "",  # Optional
-        "custom_str1": "",  # Optional
     }
 
-    # Build signature using documented field order
-    sig = build_signature(data, passphrase, alphabetical=False)
+    # Add optional fields if provided
+    if m_payment_id:
+        data["m_payment_id"] = m_payment_id
+    if name_first:
+        data["name_first"] = name_first
+    if name_last:
+        data["name_last"] = name_last
+    if email_address:
+        data["email_address"] = email_address
+
+    # Build signature using ALPHABETICAL order (required for onsite)
+    sig = build_signature(data, passphrase, alphabetical=True)
     data["signature"] = sig
 
     post_body = urllib.parse.urlencode(data).encode()
 
+    LOGGER.info(
+        "PayFast onsite request for %s: data=%s, signature=%s",
+        m_payment_id,
+        {k: v for k, v in data.items() if k != "signature"},
+        sig,
+    )
+
     try:
         req = urllib.request.Request(
-            f"https://{host}/api/onsite/createTransaction",
+            f"https://{host}/onsite/process",
             data=post_body,
             headers={"Content-Type": "application/x-www-form-urlencoded"},
             method="POST",
@@ -239,24 +257,48 @@ def get_onsite_payment_identifier(
         with urllib.request.urlopen(req, timeout=10) as response:
             body = response.read().decode().strip()
 
-        # PayFast returns JSON with the UUID
+        # Log the raw response
+        LOGGER.info("PayFast onsite response: %s", body)
+
+        # PayFast returns either JSON with uuid field or UUID string directly
         try:
             result = json.loads(body)
-            if result.get("status") == "success" and result.get("uuid"):
+            # Try different response formats
+            uuid = result.get("uuid") or result.get("data", {}).get("uuid")
+            if uuid:
                 LOGGER.info("Generated onsite payment identifier for %s", m_payment_id)
-                return result["uuid"], "ok"
+                return uuid, "ok"
             else:
-                reason = result.get("error", body)
-                LOGGER.warning("PayFast onsite identifier generation failed: %s", reason)
+                reason = result.get("error") or result.get("message") or str(result)
+                LOGGER.error(
+                    "PayFast onsite identifier generation failed: %s (full response: %s)",
+                    reason,
+                    body,
+                )
                 return None, f"PayFast error: {reason}"
         except json.JSONDecodeError:
-            # If not JSON, assume it's the UUID directly
-            if body and len(body) == 36:  # UUID format
+            # If not JSON, assume it's the UUID directly (UUID format is 36 chars)
+            if body and len(body) == 36:
                 LOGGER.info("Generated onsite payment identifier for %s", m_payment_id)
                 return body, "ok"
-            LOGGER.warning("PayFast returned unexpected response: %s", body)
+            LOGGER.error(
+                "PayFast returned unexpected response: %s (expected UUID or JSON)", body
+            )
             return None, f"Unexpected response: {body}"
 
+    except urllib.error.HTTPError as exc:
+        # Capture error response from PayFast
+        try:
+            error_body = exc.read().decode().strip()
+            LOGGER.error(
+                "PayFast onsite request failed with HTTP %d: %s",
+                exc.code,
+                error_body,
+            )
+            return None, f"PayFast error (HTTP {exc.code}): {error_body}"
+        except Exception:  # noqa: BLE001
+            LOGGER.error("PayFast onsite request failed: HTTP %d %s", exc.code, exc.reason)
+            return None, f"PayFast error (HTTP {exc.code}): {exc.reason}"
     except urllib.error.URLError as exc:
         LOGGER.error("PayFast onsite request failed: %s", exc)
         return None, f"Request failed: {exc}"
