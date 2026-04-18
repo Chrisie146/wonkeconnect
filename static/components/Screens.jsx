@@ -170,23 +170,162 @@ const Vouchers = () => {
   );
 };
 
+/* ───────── PLAN MODAL ───────── */
+const EMPTY_PLAN = { name: "", hotspot_user_profile: "", duration_label: "", badge_label: "", note: "Valid for Wonke Connect hotspot access.", price: 0, active: true };
+
+const PlanModal = ({ plan, profiles, onSave, onDelete, onClose }) => {
+  const isNew = !plan.id;
+  const [form, setForm] = useState({ ...EMPTY_PLAN, ...plan });
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDel, setConfirmDel] = useState(false);
+  const [err, setErr] = useState(null);
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const save = async () => {
+    setSaving(true); setErr(null);
+    try {
+      const url = isNew ? "/plans" : `/plans/${plan.id}`;
+      const method = isNew ? "POST" : "PUT";
+      const r = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      const d = await r.json();
+      if (r.ok) { onSave(d.plan); onClose(); }
+      else setErr(d.detail || "Save failed.");
+    } catch { setErr("Network error."); }
+    finally { setSaving(false); }
+  };
+
+  const del = async () => {
+    setDeleting(true); setErr(null);
+    try {
+      const r = await fetch(`/plans/${plan.id}`, { method: "DELETE" });
+      const d = await r.json();
+      if (r.ok) { onDelete(plan.id, d.message); onClose(); }
+      else setErr(d.detail || "Delete failed.");
+    } catch { setErr("Network error."); }
+    finally { setDeleting(false); }
+  };
+
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center" }}
+         onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ background:"var(--surface)", border:"1px solid var(--line)", borderRadius:"var(--r-lg)", width:480, maxHeight:"90vh", overflowY:"auto", boxShadow:"var(--shadow-md)" }}>
+        <div className="card-head">
+          <h3 className="card-title">{isNew ? "New plan" : "Edit plan"}</h3>
+          <button className="btn ghost btn-sm" onClick={onClose}><Icon name="x" size={13}/></button>
+        </div>
+        <div className="card-body">
+          {err && <div className="text-xs" style={{ color:"var(--red)", marginBottom:12 }}>{err}</div>}
+          <div className="form-grid">
+            <div className="field field-full">
+              <label>Plan name</label>
+              <input className="input" value={form.name} onChange={e => set("name", e.target.value)} placeholder="e.g. 1 Day Browse"/>
+            </div>
+            <div className="field field-full">
+              <label>HotSpot profile</label>
+              {profiles.length > 0
+                ? <select className="select" value={form.hotspot_user_profile} onChange={e => set("hotspot_user_profile", e.target.value)}>
+                    <option value="">— select profile —</option>
+                    {profiles.map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                : <input className="input mono" value={form.hotspot_user_profile} onChange={e => set("hotspot_user_profile", e.target.value)} placeholder="e.g. 1day"/>
+              }
+              <span className="hint">Must match exactly the profile name in MikroTik HotSpot.</span>
+            </div>
+            <div className="field">
+              <label>Duration label</label>
+              <input className="input" value={form.duration_label} onChange={e => set("duration_label", e.target.value)} placeholder="e.g. 24 hours"/>
+            </div>
+            <div className="field">
+              <label>Badge label</label>
+              <input className="input" value={form.badge_label} onChange={e => set("badge_label", e.target.value)} placeholder="e.g. 1DAY"/>
+            </div>
+            <div className="field">
+              <label>Price (ZAR)</label>
+              <input className="input" type="number" min="0" step="0.01" value={form.price} onChange={e => set("price", parseFloat(e.target.value) || 0)}/>
+            </div>
+            <div className="field" style={{ justifyContent:"flex-end" }}>
+              <label className="switch" style={{ marginTop:18 }}>
+                <input type="checkbox" checked={form.active} onChange={e => set("active", e.target.checked)}/>
+                <span className="switch-track"/>
+                <span>Active</span>
+              </label>
+            </div>
+            <div className="field field-full">
+              <label>Note</label>
+              <input className="input" value={form.note} onChange={e => set("note", e.target.value)} placeholder="Shown on voucher / portal"/>
+            </div>
+          </div>
+        </div>
+        <div className="card-head" style={{ borderTop:"1px solid var(--line)", borderBottom:0, justifyContent:"flex-end", gap:8 }}>
+          {!isNew && !confirmDel && (
+            <button className="btn ghost btn-sm" style={{ color:"var(--red)", marginRight:"auto" }} onClick={() => setConfirmDel(true)}>Delete plan</button>
+          )}
+          {confirmDel && (
+            <span className="text-xs" style={{ color:"var(--red)", marginRight:"auto" }}>
+              Sure? <button className="btn ghost btn-sm" style={{ color:"var(--red)" }} onClick={del} disabled={deleting}>{deleting ? "Deleting…" : "Yes, delete"}</button>
+              <button className="btn ghost btn-sm" onClick={() => setConfirmDel(false)}>Cancel</button>
+            </span>
+          )}
+          <button className="btn ghost" onClick={onClose}>Cancel</button>
+          <button className="btn brand" onClick={save} disabled={saving}>{saving ? "Saving…" : (isNew ? "Create plan" : "Save changes")}</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 /* ───────── PLANS ───────── */
 const Plans = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [profiles, setProfiles] = useState([]);
+  const [modal, setModal] = useState(null); // null | plan object (empty = new)
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 3000); };
+
+  const load = () => {
+    setLoading(true);
+    fetch("/plans").then(r => r.ok ? r.json() : []).then(p => { setPlans(Array.isArray(p) ? p : []); setLoading(false); }).catch(() => setLoading(false));
+  };
 
   useEffect(() => {
-    fetch("/plans").then(r => r.json()).then(p => { setPlans(p); setLoading(false); }).catch(() => setLoading(false));
+    load();
+    fetch("/hotspot/available-profiles").then(r => r.ok ? r.json() : {}).then(d => {
+      if (d?.profiles) setProfiles(d.profiles.map(p => p.name || p).filter(Boolean));
+    }).catch(() => {});
   }, []);
+
+  const onSave = (plan) => {
+    setPlans(ps => ps.some(p => p.id === plan.id) ? ps.map(p => p.id === plan.id ? plan : p) : [...ps, plan]);
+    showToast("Plan saved.");
+  };
+
+  const onDelete = (id, msg) => {
+    setPlans(ps => ps.filter(p => p.id !== id));
+    showToast(msg || "Plan deleted.");
+  };
 
   const active = plans.filter(p => p.active);
 
   return (
     <>
+      {modal && <PlanModal plan={modal} profiles={profiles} onSave={onSave} onDelete={onDelete} onClose={() => setModal(null)}/>}
+      {toast && (
+        <div style={{ position:"fixed", bottom:24, right:24, background:"var(--surface)", border:"1px solid var(--line)", borderRadius:"var(--r-md)", padding:"10px 16px", fontSize:12.5, boxShadow:"var(--shadow-md)", zIndex:100, color:"var(--teal)" }}>
+          {toast}
+        </div>
+      )}
+
       <div className="page-head">
         <div>
           <h1 className="page-title">Plans</h1>
           <p className="page-subtitle">Map every HotSpot user profile to a price, duration, and usage policy.</p>
+        </div>
+        <div className="page-actions">
+          <button className="btn brand" onClick={() => setModal(EMPTY_PLAN)}><Icon name="plus" size={13}/> New plan</button>
         </div>
       </div>
 
@@ -195,7 +334,7 @@ const Plans = () => {
         : <>
             {active.length > 0 && (
               <div className="grid-3" style={{ gridTemplateColumns: `repeat(${Math.min(active.length, 3)}, 1fr)` }}>
-                {active.slice(0, 3).map(p => <PlanCard key={p.id} plan={p}/>)}
+                {active.slice(0, 3).map(p => <PlanCard key={p.id} plan={p} onEdit={() => setModal(p)}/>)}
               </div>
             )}
 
@@ -205,11 +344,11 @@ const Plans = () => {
                 <p className="card-sub">{plans.length} total · {active.length} active</p>
               </div>
               {plans.length === 0
-                ? <div className="empty">No plans configured. Add them via your MikroTik HotSpot profiles.</div>
+                ? <div className="empty">No plans yet. Click "New plan" to add one.</div>
                 : <table className="tbl">
                     <thead>
                       <tr>
-                        <th>Plan</th><th>Duration</th><th>HotSpot profile</th><th>Price</th><th>Status</th>
+                        <th>Plan</th><th>Duration</th><th>HotSpot profile</th><th>Price</th><th>Status</th><th style={{width:40}}></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -225,6 +364,7 @@ const Plans = () => {
                           <td className="mono text-xs muted">{p.hotspot_user_profile}</td>
                           <td className="num fw-600">R{p.price}</td>
                           <td><Badge kind={p.active ? "active" : "used"}>{p.active ? "active" : "inactive"}</Badge></td>
+                          <td><button className="btn ghost btn-sm" style={{padding:"2px 8px"}} onClick={() => setModal(p)}>Edit</button></td>
                         </tr>
                       ))}
                     </tbody>
@@ -237,11 +377,12 @@ const Plans = () => {
   );
 };
 
-const PlanCard = ({ plan }) => (
-  <div className="card">
+const PlanCard = ({ plan, onEdit }) => (
+  <div className="card" style={{ cursor: onEdit ? "pointer" : "default" }} onClick={onEdit}>
     <div className="card-body">
       <div className="hstack" style={{ justifyContent: "space-between", marginBottom: 10 }}>
         <span className="badge" style={{background:"var(--brand-soft)",color:"var(--brand-ink)",borderColor:"rgba(196,74,6,0.18)"}}>{plan.badge_label || plan.hotspot_user_profile}</span>
+        {onEdit && <span className="text-xs muted">Click to edit</span>}
       </div>
       <div className="fw-700 text-md" style={{ marginBottom: 4 }}>{plan.name}</div>
       <div className="text-xs muted" style={{ marginBottom: 14 }}>{plan.duration_label || "—"}</div>
