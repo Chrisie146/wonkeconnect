@@ -631,4 +631,138 @@ const Placeholder = ({ title, desc }) => (
   </>
 );
 
-Object.assign(window, { Vouchers, Plans, Sessions, Settings, Placeholder });
+/* ───────── BILLING / ORDER HISTORY ───────── */
+const Billing = () => {
+  const [orders, setOrders] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState("all");
+
+  const load = (method) => {
+    setLoading(true);
+    const q = method && method !== "all" ? `?method=${encodeURIComponent(method)}` : "";
+    fetch(`/api/orders${q}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d) { setOrders(d.orders); setTotal(d.total); }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  };
+
+  useEffect(() => { load(tab); }, [tab]);
+
+  const fmtDate = (s) => s ? s.slice(0, 16).replace("T", " ") : "—";
+  const fmtMethod = (m) => {
+    if (!m) return "—";
+    if (m === "ef" || m === "eft") return "PayFast EFT";
+    if (m === "payfast") return "PayFast";
+    if (m === "netcash") return "NetCash";
+    return m;
+  };
+  const fmtStatus = (s) => {
+    if (!s) return "unknown";
+    if (s === "complete" || s === "paid") return "paid";
+    if (s === "pending") return "pending";
+    if (s === "cancelled" || s === "failed") return "failed";
+    return s;
+  };
+
+  const tabs = [
+    { id: "all", label: "All orders" },
+    { id: "netcash", label: "NetCash" },
+    { id: "ef", label: "PayFast EFT" },
+  ];
+
+  const totalRevenue = orders.reduce((sum, o) => sum + (o.amount || 0), 0);
+
+  return (
+    <>
+      <div className="page-head">
+        <div>
+          <h1 className="page-title">Payments</h1>
+          <p className="page-subtitle">Voucher orders from NetCash and PayFast.</p>
+        </div>
+        <div className="page-actions">
+          <button className="btn" onClick={() => load(tab)}><Icon name="refresh" size={13}/> Refresh</button>
+        </div>
+      </div>
+
+      <div className="kpi-grid" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+        <div className="kpi">
+          <div className="kpi-label">Total orders</div>
+          <div className="kpi-value">{total}</div>
+          <div className="kpi-delta"><Icon name="arrowUp" size={11}/> all time</div>
+        </div>
+        <div className="kpi">
+          <div className="kpi-label">Shown</div>
+          <div className="kpi-value">{orders.length}</div>
+          <div className="kpi-delta"><Icon name="arrowUp" size={11}/> latest 100</div>
+        </div>
+        <div className="kpi">
+          <div className="kpi-label">Revenue shown</div>
+          <div className="kpi-value">R{totalRevenue.toFixed(2)}</div>
+          <div className="kpi-delta"><Icon name="arrowUp" size={11}/> from listed orders</div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-head" style={{ borderBottom: "1px solid var(--line)", paddingBottom: 12 }}>
+          <div className="tab-bar" style={{ display: "flex", gap: 4 }}>
+            {tabs.map(t => (
+              <button
+                key={t.id}
+                className={`btn ghost btn-sm${tab === t.id ? " active" : ""}`}
+                style={tab === t.id ? { background: "var(--brand-soft)", color: "var(--brand)" } : {}}
+                onClick={() => setTab(t.id)}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="card-flush">
+          {loading
+            ? <div className="empty">Loading…</div>
+            : orders.length === 0
+              ? <div className="empty">No orders yet.</div>
+              : <table className="tbl">
+                  <thead>
+                    <tr>
+                      <th>Buyer</th>
+                      <th>Phone</th>
+                      <th>Plan</th>
+                      <th>Voucher</th>
+                      <th>Method</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                      <th style={{ textAlign: "right" }}>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((o, i) => {
+                      const name = [o.buyer_name_first, o.buyer_name_last].filter(Boolean).join(" ") || "—";
+                      const status = fmtStatus(o.status);
+                      return (
+                        <tr key={o.m_payment_id || i}>
+                          <td>{name}</td>
+                          <td className="mono" style={{ fontSize: 11 }}>{o.buyer_phone || "—"}</td>
+                          <td>{o.plan_name || "—"}</td>
+                          <td className="code">{o.voucher_code || "—"}</td>
+                          <td><span className="badge unused"><span className="badge-dot"/>{fmtMethod(o.payment_method)}</span></td>
+                          <td><Badge kind={status === "paid" ? "unused" : status === "pending" ? "active" : "used"}>{status}</Badge></td>
+                          <td className="muted text-xs">{fmtDate(o.created_at)}</td>
+                          <td className="num" style={{ textAlign: "right" }}>R{Number(o.amount || 0).toFixed(2)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+          }
+        </div>
+      </div>
+    </>
+  );
+};
+
+Object.assign(window, { Vouchers, Plans, Sessions, Settings, Placeholder, Billing });

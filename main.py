@@ -1045,6 +1045,34 @@ def debug_orders() -> list:
     return [dict(r) for r in rows]
 
 
+@app.get("/api/orders")
+def list_orders(limit: int = 100, offset: int = 0, method: str = "") -> dict:
+    """Return paginated order history with buyer info."""
+    where = "WHERE o.payment_method = ?" if method else ""
+    params = [method, limit, offset] if method else [limit, offset]
+    rows = fetch_all(
+        f"""
+        SELECT o.m_payment_id, o.buyer_name_first, o.buyer_name_last,
+               o.buyer_phone, o.amount, o.status, o.payment_method,
+               o.created_at, o.updated_at,
+               p.name AS plan_name,
+               v.code AS voucher_code
+        FROM orders o
+        JOIN plans p ON p.id = o.plan_id
+        LEFT JOIN vouchers v ON v.id = o.voucher_id
+        {where}
+        ORDER BY o.id DESC
+        LIMIT ? OFFSET ?
+        """,
+        params,
+    )
+    total = fetch_one(
+        f"SELECT COUNT(*) AS n FROM orders o {where}",
+        [method] if method else [],
+    )
+    return {"total": total["n"] if total else 0, "orders": [dict(r) for r in rows]}
+
+
 @app.get("/payment/order/{m_payment_id}", response_model=OrderStatusResponse)
 def get_order_status(m_payment_id: str) -> OrderStatusResponse:
     """Poll order status after returning from PayFast."""

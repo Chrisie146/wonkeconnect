@@ -55,7 +55,7 @@ const CRUMBS = {
   customers: ["Blue Crane Café", "Customers"],
   payments:  ["Blue Crane Café", "Payments"],
   router:    ["Setup", "Router"],
-  billing:   ["Setup", "Billing"],
+  billing:   ["Setup", "Payments"],
   api:       ["Setup", "API keys"],
   settings:  ["Setup", "Settings"],
 };
@@ -78,7 +78,7 @@ const App = () => {
       case "settings":  return <Settings/>;
       case "customers": return <Placeholder title="Customers" desc="Buyers, repeat visitors, and support contact history."/>;
       case "payments":  return <Placeholder title="Payments" desc="Payouts, refunds, and PayFast transaction log."/>;
-      case "billing":   return <Placeholder title="Billing" desc="Your Wonke Connect subscription and invoices."/>;
+      case "billing":   return <Billing/>;
       case "api":       return <Placeholder title="API keys" desc="Personal access tokens and webhook endpoints."/>;
       default: return <Dashboard/>;
     }
