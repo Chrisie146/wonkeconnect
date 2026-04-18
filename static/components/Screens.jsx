@@ -259,7 +259,10 @@ const Sessions = () => {
 
   const load = () => {
     setLoading(true);
-    fetch("/users/active").then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
+    fetch("/users/active")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { setData(d?.users ? d : { total_active: 0, users: [] }); setLoading(false); })
+      .catch(() => { setData({ total_active: 0, users: [] }); setLoading(false); });
   };
 
   useEffect(() => { load(); }, []);

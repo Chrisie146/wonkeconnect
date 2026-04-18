@@ -57,13 +57,18 @@ const Dashboard = () => {
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState(null);
 
+  const safeJson = (r) => r.ok ? r.json() : null;
+
   const loadData = () => {
-    fetch("/stats").then(r => r.json()).then(setStats).catch(() => {});
-    fetch("/vouchers?limit=8").then(r => r.json()).then(setVouchers).catch(() => {});
-    fetch("/users/active").then(r => r.json()).then(setActiveSessions).catch(() => {});
-    fetch("/settings/mikrotik").then(r => r.json()).then(setRouterSettings).catch(() => {});
-    fetch("/settings/mikrotik/test", { method: "POST" })
-      .then(r => r.json()).then(setRouterStatus).catch(() => setRouterStatus({ connected: false, message: "Unreachable" }));
+    fetch("/stats").then(safeJson).then(d => d && setStats(d)).catch(() => {});
+    fetch("/vouchers?limit=8").then(safeJson).then(d => Array.isArray(d) && setVouchers(d)).catch(() => {});
+    fetch("/users/active").then(safeJson)
+      .then(d => setActiveSessions(d?.users ? d : { total_active: 0, users: [] }))
+      .catch(() => setActiveSessions({ total_active: 0, users: [] }));
+    fetch("/settings/mikrotik").then(safeJson).then(d => d && setRouterSettings(d)).catch(() => {});
+    fetch("/settings/mikrotik/test", { method: "POST" }).then(safeJson)
+      .then(d => setRouterStatus(d || { connected: false, message: "Unreachable" }))
+      .catch(() => setRouterStatus({ connected: false, message: "Unreachable" }));
   };
 
   useEffect(() => { loadData(); }, []);
