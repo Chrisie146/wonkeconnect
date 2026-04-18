@@ -1,467 +1,101 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wonke Connect Voucher Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wonke Connect — Operator Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <main class="app-shell">
-        <aside class="app-sidebar">
-            <div>
-                <div class="wc-brand app-brand">
-                    <div class="wc-icon" aria-hidden="true">
-                        <span class="wc-arc top"></span>
-                        <span class="wc-arc mid"></span>
-                        <span class="wc-dot"></span>
-                        <span class="wc-accent left"></span>
-                        <span class="wc-accent left-mid"></span>
-                        <span class="wc-accent right-mid"></span>
-                        <span class="wc-accent right"></span>
-                    </div>
-                    <div class="wc-wordmark">
-                        <span class="wonke">Won<span class="k">k</span>e</span>
-                        <span class="connect">Connect</span>
-                    </div>
-                </div>
+<div id="root"></div>
 
-                <nav class="app-nav">
-                    <button class="app-nav-link is-active" data-screen="dashboard" type="button">Dashboard</button>
-                    <button class="app-nav-link" data-screen="vouchers" type="button">Vouchers</button>
-                    <button class="app-nav-link" data-screen="plans" type="button">Plans</button>
-                    <button class="app-nav-link" data-screen="settings" type="button">MikroTik Settings</button>
-                    <button class="app-nav-link" data-screen="reports" type="button">Reports</button>
-                </nav>
-            </div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-            <div class="app-sidebar-footer">
-                <div class="wc-highlight">Wonke Connect Ops</div>
-                <p class="wc-note">Voucher sales, HotSpot user profiles, and router sync in one operator app.</p>
-            </div>
-        </aside>
+<script type="text/babel" src="/static/components/Shell.jsx"></script>
+<script type="text/babel" src="/static/components/Dashboard.jsx"></script>
+<script type="text/babel" src="/static/components/Screens.jsx"></script>
 
-        <div class="app-sidebar-overlay" id="sidebar-overlay"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
 
-        <section class="app-main">
-            <header class="app-topbar">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Open menu">
-                        <span></span><span></span><span></span>
-                    </button>
-                    <div>
-                        <p class="wc-kicker" id="screen-kicker">Overview</p>
-                        <h1 class="app-screen-title" id="screen-title">Dashboard</h1>
-                    </div>
-                </div>
-                <div class="app-topbar-actions">
-                    <div class="wc-connection-status" id="mikrotik-connection-status" title="MikroTik connection status">
-                        <span class="wc-connection-dot" id="connection-dot"></span>
-                        <span class="wc-connection-text" id="connection-text">Checking...</span>
-                    </div>
-                    <span class="wc-connection-pill wc-connection-idle" id="connection-status-pill" style="display: none;">Not tested</span>
-                    <button class="wc-link-button" id="global-refresh-button" type="button">Refresh</button>
-                </div>
-            </header>
+const TWEAKS = {
+  "theme": "dark",
+  "accent": "orange",
+  "density": "cozy",
+  "sidebar": "rail"
+};
 
-            <section class="app-screen is-active" id="screen-dashboard">
-                <section class="wc-grid wc-stats-grid">
-                    <article class="wc-card wc-stat-card">
-                        <span class="wc-caption">Total vouchers</span>
-                        <strong class="wc-stat-value" id="stat-total">0</strong>
-                    </article>
-                    <article class="wc-card wc-stat-card">
-                        <span class="wc-caption">Used vouchers</span>
-                        <strong class="wc-stat-value" id="stat-used">0</strong>
-                    </article>
-                    <article class="wc-card wc-stat-card">
-                        <span class="wc-caption">Unused vouchers</span>
-                        <strong class="wc-stat-value" id="stat-unused">0</strong>
-                    </article>
-                    <article class="wc-card wc-stat-card wc-stat-action">
-                        <button class="wc-button wc-button-secondary" id="sync-status-button" type="button">Sync MikroTik Status</button>
-                        <p class="wc-note">Marks vouchers as <strong>used</strong> when hotspot activity is detected.</p>
-                    </article>
-                </section>
+const ACCENTS = {
+  orange: { brand: "#ff6a1a", brandInk: "#c44a06", brandSoft: "#fff1e4" },
+  teal:   { brand: "#0f8f8a", brandInk: "#0a6b67", brandSoft: "#d9efed" },
+  indigo: { brand: "#4f46e5", brandInk: "#3730a3", brandSoft: "#e8e7fb" },
+  slate:  { brand: "#1a1714", brandInk: "#000000", brandSoft: "#ece8df" },
+};
 
-                <section class="wc-grid app-dashboard-grid">
-                    <article class="wc-card">
-                        <div class="wc-section-head">
-                            <div>
-                                <p class="wc-kicker">Connection</p>
-                                <h2 class="wc-section-title">Router status</h2>
-                            </div>
-                        </div>
-                        <div class="wc-message" id="settings-message-box">Router settings are not loaded yet.</div>
-                        <div class="wc-note-block">
-                            <p class="wc-note">Use the MikroTik Settings screen to save credentials and test the RouterOS API connection.</p>
-                        </div>
-                    </article>
+const applyTweaks = (t) => {
+  document.documentElement.setAttribute("data-theme", t.theme);
+  document.documentElement.setAttribute("data-density", t.density);
+  document.documentElement.setAttribute("data-sidebar", t.sidebar === "rail" ? "rail" : "full");
+  const a = ACCENTS[t.accent] || ACCENTS.orange;
+  document.documentElement.style.setProperty("--brand", a.brand);
+  document.documentElement.style.setProperty("--brand-ink", a.brandInk);
+  document.documentElement.style.setProperty("--brand-soft", a.brandSoft);
+};
 
-                    <article class="wc-card">
-                        <div class="wc-section-head">
-                            <div>
-                                <p class="wc-kicker">Recent batch</p>
-                                <h2 class="wc-section-title">Latest vouchers</h2>
-                            </div>
-                            <button class="wc-link-button" id="print-sheet-button" type="button">Print Voucher Sheet</button>
-                        </div>
-                        <div class="wc-recent" id="recent-results">
-                            <div class="wc-empty-state">Newly generated vouchers will appear here.</div>
-                        </div>
-                    </article>
-                </section>
-            </section>
+const CRUMBS = {
+  dashboard: ["Blue Crane Café", "Dashboard"],
+  vouchers:  ["Blue Crane Café", "Vouchers"],
+  plans:     ["Blue Crane Café", "Plans"],
+  sessions:  ["Blue Crane Café", "Live sessions"],
+  customers: ["Blue Crane Café", "Customers"],
+  payments:  ["Blue Crane Café", "Payments"],
+  router:    ["Setup", "Router"],
+  billing:   ["Setup", "Billing"],
+  api:       ["Setup", "API keys"],
+  settings:  ["Setup", "Settings"],
+};
 
-            <section class="app-screen" id="screen-vouchers">
-                <div class="app-two-column">
-                    <article class="wc-card">
-                        <div class="wc-section-head">
-                            <div>
-                                <p class="wc-kicker">Generate</p>
-                                <h2 class="wc-section-title">Create vouchers</h2>
-                            </div>
-                        </div>
+const App = () => {
+  const [screen, setScreen] = useState(() => localStorage.getItem("wc-screen") || "dashboard");
+  const [tweaks, setTweaks] = useState(TWEAKS);
 
-                        <label class="wc-toggle-field" style="margin-bottom: 1.5rem;">
-                            <input id="advanced-mode-toggle" type="checkbox">
-                            <span>Advanced options (per-user data limits)</span>
-                        </label>
+  useEffect(() => { applyTweaks(tweaks); }, [tweaks]);
+  useEffect(() => { localStorage.setItem("wc-screen", screen); }, [screen]);
+  useEffect(() => { window.__wcSetScreen = setScreen; }, [setScreen]);
 
-                        <form id="voucher-form" class="wc-form-grid">
-                            <label class="wc-form-field">
-                                <span>HotSpot user profile</span>
-                                <select id="hotspot-user-profile" name="hotspot_user_profile"></select>
-                                <div id="profile-status-indicator" style="margin-top: 8px; font-size: 0.85rem;"></div>
-                            </label>
+  const renderScreen = () => {
+    switch (screen) {
+      case "dashboard": return <Dashboard/>;
+      case "vouchers":  return <Vouchers/>;
+      case "plans":     return <Plans/>;
+      case "sessions":  return <Sessions/>;
+      case "router":
+      case "settings":  return <Settings/>;
+      case "customers": return <Placeholder title="Customers" desc="Buyers, repeat visitors, and support contact history."/>;
+      case "payments":  return <Placeholder title="Payments" desc="Payouts, refunds, and PayFast transaction log."/>;
+      case "billing":   return <Placeholder title="Billing" desc="Your Wonke Connect subscription and invoices."/>;
+      case "api":       return <Placeholder title="API keys" desc="Personal access tokens and webhook endpoints."/>;
+      default: return <Dashboard/>;
+    }
+  };
 
-                            <label class="wc-form-field">
-                                <span>Code length</span>
-                                <select id="code-length" name="code_length">
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8" selected>8</option>
-                                </select>
-                            </label>
+  return (
+    <div className="app" data-screen-label={screen}>
+      <Sidebar active={screen} setActive={setScreen}/>
+      <main className="main">
+        <Topbar crumb={CRUMBS[screen] || CRUMBS.dashboard}/>
+        <div className="page">{renderScreen()}</div>
+      </main>
+    </div>
+  );
+};
 
-                            <label class="wc-form-field">
-                                <span>Bulk quantity</span>
-                                <input id="quantity" name="quantity" type="number" min="1" max="200" value="10">
-                            </label>
-
-                            <div id="advanced-fields" style="display: none; grid-column: 1 / -1; padding: 14px; background: rgba(255, 171, 15, 0.08); border-radius: 12px;">
-                                <p style="margin: 0 0 14px 0; font-size: 0.85rem; color: var(--wc-muted);"><strong>ℹ Per-User Data Limit:</strong> Rate limits and timeouts are configured in the HotSpot Profile, not per-voucher.</p>
-                                
-                                <label class="wc-form-field">
-                                    <span>Data limit (in GB)</span>
-                                    <input id="data-limit-gb" name="data_limit_gb" type="number" min="0.1" max="1000" step="0.1" placeholder="1, 5, 10">
-                                    <small style="display: block; margin-top: 6px; color: var(--wc-muted);">Individual data cap for this voucher (0 = unlimited)</small>
-                                </label>
-                            </div>
-
-                            <div class="wc-form-actions">
-                                <button class="wc-button" type="submit" data-mode="single">Create One</button>
-                                <button class="wc-button wc-button-secondary" type="submit" data-mode="bulk">Create Bulk</button>
-                            </div>
-                        </form>
-
-                        <div class="wc-message" id="message-box">Ready.</div>
-                    </article>
-
-                    <article class="wc-card">
-                        <div class="wc-section-head">
-                            <div>
-                                <p class="wc-kicker">Inventory</p>
-                                <h2 class="wc-section-title">Voucher table</h2>
-                            </div>
-                            <button class="wc-link-button" id="refresh-button" type="button">Refresh</button>
-                        </div>
-
-                        <div class="wc-table-wrap">
-                            <table class="wc-table">
-                                <thead>
-                                    <tr>
-                                        <th>Code</th>
-                                        <th>Profile</th>
-                                        <th>Status</th>
-                                        <th>Created</th>
-                                        <th>Expires</th>
-                                        <th style="width: 80px; text-align: center;">⋰</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="voucher-table-body">
-                                    <tr>
-                                        <td colspan="6" class="wc-table-empty">Loading vouchers...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <section class="app-screen" id="screen-plans">
-                <div class="app-two-column">
-                    <article class="wc-card">
-                        <div class="wc-section-head">
-                            <div>
-                                <p class="wc-kicker">Plans</p>
-                                <h2 class="wc-section-title">Manage HotSpot user profile plans</h2>
-                            </div>
-                        </div>
-
-                        <form id="plan-form" class="wc-form-grid">
-                            <input id="plan-id" type="hidden">
-
-                            <label class="wc-form-field">
-                                <span>Plan name</span>
-                                <input id="plan-name" type="text" placeholder="Starter">
-                            </label>
-
-                            <label class="wc-form-field">
-                                <span>HotSpot user profile</span>
-                                <input id="plan-hotspot-user-profile" type="text" placeholder="1hr">
-                            </label>
-
-                            <label class="wc-form-field">
-                                <span>Duration label</span>
-                                <input id="plan-duration" type="text" placeholder="1 hour">
-                            </label>
-
-                            <label class="wc-form-field">
-                                <span>Badge label</span>
-                                <input id="plan-badge" type="text" placeholder="1HR">
-                            </label>
-
-                            <label class="wc-form-field">
-                                <span>Voucher note</span>
-                                <input id="plan-note" type="text" placeholder="Fast hotspot access. Valid for in-store WiFi use.">
-                            </label>
-
-                            <label class="wc-form-field">
-                                <span>Price (ZAR)</span>
-                                <input id="plan-price" name="price" type="number" min="0" step="0.01" placeholder="0.00">
-                            </label>
-
-                            <label class="wc-toggle-field">
-                                <input id="plan-active" type="checkbox" checked>
-                                <span>Plan is active</span>
-                            </label>
-
-                            <div class="wc-form-actions">
-                                <button class="wc-button" id="save-plan-button" type="submit">Save Plan</button>
-                                <button class="wc-button wc-button-secondary" id="reset-plan-button" type="button">New Plan</button>
-                                <button class="wc-button wc-button-secondary" id="delete-plan-button" type="button">Delete</button>
-                            </div>
-                        </form>
-
-                        <div class="wc-message" id="plan-message-box">Plans load from the database.</div>
-                    </article>
-
-                    <article class="wc-card">
-                        <div class="wc-section-head">
-                            <div>
-                                <p class="wc-kicker">Plan list</p>
-                                <h2 class="wc-section-title">Available plans</h2>
-                            </div>
-                        </div>
-                        <div class="wc-table-wrap wc-plan-list-wrap">
-                            <table class="wc-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>HotSpot user profile</th>
-                                        <th>Price</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="plan-table-body">
-                                    <tr>
-                                        <td colspan="3" class="wc-table-empty">Loading plans...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <section class="app-screen" id="screen-settings">
-                <article class="wc-card">
-                    <div class="wc-section-head">
-                        <div>
-                            <p class="wc-kicker">Settings</p>
-                            <h2 class="wc-section-title">MikroTik connection</h2>
-                        </div>
-                    </div>
-
-                    <form id="settings-form" class="wc-form-grid app-settings-grid">
-                        <label class="wc-form-field">
-                            <span>Host / IP</span>
-                            <input id="mikrotik-host" name="host" type="text" placeholder="192.168.88.1">
-                        </label>
-
-                        <label class="wc-form-field">
-                            <span>Username</span>
-                            <input id="mikrotik-username" name="username" type="text" placeholder="admin">
-                        </label>
-
-                        <label class="wc-form-field">
-                            <span>Password</span>
-                            <input id="mikrotik-password" name="password" type="password" placeholder="Router password">
-                        </label>
-
-                        <label class="wc-form-field">
-                            <span>API port</span>
-                            <input id="mikrotik-port" name="port" type="number" min="1" max="65535" value="8728">
-                        </label>
-
-                        <label class="wc-toggle-field">
-                            <input id="mikrotik-use-ssl" name="use_ssl" type="checkbox">
-                            <span>Use SSL</span>
-                        </label>
-
-                        <label class="wc-toggle-field">
-                            <input id="mikrotik-plaintext-login" name="plaintext_login" type="checkbox" checked>
-                            <span>Use plaintext login</span>
-                        </label>
-
-                        <div class="wc-form-actions">
-                            <button class="wc-button" id="save-settings-button" type="submit">Save Settings</button>
-                            <button class="wc-button wc-button-secondary" id="test-settings-button" type="button">Test Connection</button>
-                        </div>
-                    </form>
-
-                    <div class="wc-message" id="settings-message-box"></div>
-                </article>
-
-                <article class="wc-card" style="margin-top: 20px;">
-                    <div class="wc-section-head">
-                        <div>
-                            <p class="wc-kicker">Payments</p>
-                            <h2 class="wc-section-title">PayFast settings</h2>
-                        </div>
-                        <a class="wc-link-button" href="/portal" target="_blank" rel="noopener">Open portal ↗</a>
-                    </div>
-                    <p style="margin: 0 0 16px; font-size: 0.88rem; color: var(--wc-muted); line-height: 1.55;">
-                        Customers visit <strong>/portal</strong> to buy vouchers and pay via PayFast.<br>
-                        The <strong>Server URL</strong> must be publicly reachable so PayFast can send payment confirmations (ITN).
-                    </p>
-
-                    <form id="payfast-form" class="wc-form-grid app-settings-grid">
-                        <label class="wc-form-field">
-                            <span>Merchant ID</span>
-                            <input id="pf-merchant-id" name="merchant_id" type="text" placeholder="10000100">
-                        </label>
-
-                        <label class="wc-form-field">
-                            <span>Merchant Key</span>
-                            <input id="pf-merchant-key" name="merchant_key" type="text" placeholder="46f0cd694581a">
-                        </label>
-
-                        <label class="wc-form-field" style="grid-column: 1 / -1;">
-                            <span>Passphrase (optional)</span>
-                            <input id="pf-passphrase" name="passphrase" type="password" placeholder="Leave blank if not set">
-                        </label>
-
-                        <label class="wc-form-field" style="grid-column: 1 / -1;">
-                            <span>Server URL (public URL of this server)</span>
-                            <input id="pf-server-url" name="server_url" type="url" placeholder="https://wifi.myshop.co.za">
-                            <small style="margin-top: 6px; display:block; color: var(--wc-muted);">PayFast will POST payment notifications to this URL. Must be reachable from the internet.</small>
-                        </label>
-
-                        <label class="wc-toggle-field">
-                            <input id="pf-sandbox" name="sandbox" type="checkbox" checked>
-                            <span>Use Sandbox (test mode)</span>
-                        </label>
-
-                        <label class="wc-form-field" style="grid-column: 1 / -1;">
-                            <span>MikroTik Sync API Key</span>
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                <input id="pf-sync-key" name="mikrotik_sync_api_key" type="text" placeholder="Auto-generated on first save" style="flex:1;font-family:monospace;font-size:0.85em;" readonly>
-                                <button class="wc-button wc-button--secondary" type="button" id="copy-sync-key-button" title="Copy key">Copy</button>
-                            </div>
-                            <small style="margin-top:6px;display:block;color:var(--wc-muted);">Paste this key into your MikroTik sync script. Generated automatically — keep it secret.</small>
-                        </label>
-
-                        <div class="wc-form-actions">
-                            <button class="wc-button" id="save-payfast-button" type="submit">Save PayFast Settings</button>
-                        </div>
-                    </form>
-
-                    <div class="wc-message" id="payfast-message-box"></div>
-                </article>
-            </section>
-
-            <section class="app-screen" id="screen-reports">
-                <div>
-                    <div class="wc-section-head">
-                        <div>
-                            <p class="wc-kicker">Analytics</p>
-                            <h2 class="wc-section-title">User Monitoring</h2>
-                        </div>
-                        <button id="refresh-monitor-button" class="wc-link-button" type="button">Refresh</button>
-                    </div>
-
-                    <div class="wc-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px;">
-                        <article class="wc-stat-card">
-                            <div class="wc-stat-number" id="stat-active-users">0</div>
-                            <div class="wc-stat-label">Active Users</div>
-                        </article>
-                        <article class="wc-stat-card">
-                            <div class="wc-stat-number" id="stat-total-bandwidth">0 GB</div>
-                            <div class="wc-stat-label">Total Bandwidth</div>
-                        </article>
-                        <article class="wc-stat-card">
-                            <div class="wc-stat-number" id="stat-bytes-in">0 GB</div>
-                            <div class="wc-stat-label">Download</div>
-                        </article>
-                        <article class="wc-stat-card">
-                            <div class="wc-stat-number" id="stat-bytes-out">0 GB</div>
-                            <div class="wc-stat-label">Upload</div>
-                        </article>
-                    </div>
-
-                    <article class="wc-card">
-                        <div class="wc-section-head">
-                            <div>
-                                <p class="wc-kicker">Sessions</p>
-                                <h2 class="wc-section-title">Active users</h2>
-                            </div>
-                        </div>
-
-                        <div class="wc-table-wrap">
-                            <table class="wc-table">
-                                <thead>
-                                    <tr>
-                                        <th>Code</th>
-                                        <th>Profile</th>
-                                        <th>Uptime</th>
-                                        <th>Download</th>
-                                        <th>Upload</th>
-                                        <th>Total</th>
-                                        <th>IP Address</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="active-users-table-body">
-                                    <tr>
-                                        <td colspan="7" class="wc-table-empty">Loading active users...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </article>
-
-                    <div id="monitor-message-box"></div>
-                </div>
-            </section>
-        </section>
-    </main>
-
-    <div id="toast-container" class="wc-toast-container"></div>
-    <script src="/static/app.js"></script>
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
 </body>
 </html>
